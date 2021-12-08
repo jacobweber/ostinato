@@ -1,0 +1,7 @@
+/build
+/JUCE
+/Plug-Ins
+/.vscode
+
+/*.filtergraph
+/*.jpg
