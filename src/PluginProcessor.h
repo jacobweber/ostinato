@@ -3,6 +3,7 @@
 #include <juce_audio_utils/juce_audio_utils.h>
 
 #include "MidiProcessor.h"
+#include "SpinLockedPosInfo.h"
 
 class PluginProcessor : public juce::AudioProcessor
 {
@@ -35,6 +36,10 @@ public:
 
     void getStateInformation(juce::MemoryBlock &destData) override;
     void setStateInformation(const void *data, int sizeInBytes) override;
+
+    void updateCurrentTimeInfoFromHost();
+public:
+    SpinLockedPosInfo lastPosInfo;
 
 private:
     std::atomic<float>* speedParameter = nullptr;

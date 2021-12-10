@@ -85,9 +85,10 @@ bool PluginProcessor::isBusesLayoutSupported(const BusesLayout &layouts) const
 void PluginProcessor::processBlock(juce::AudioBuffer<float> &buffer, juce::MidiBuffer &midiMessages)
 {
     buffer.clear();
-
     auto numSamples = buffer.getNumSamples();
     midiProcessor.process(numSamples, midiMessages, *speedParameter);
+
+    updateCurrentTimeInfoFromHost();
 }
 
 bool PluginProcessor::hasEditor() const
@@ -114,6 +115,27 @@ void PluginProcessor::setStateInformation(const void *data, int sizeInBytes)
     if (xmlState.get() != nullptr)
         if (xmlState->hasTagName(parameters.state.getType()))
             parameters.replaceState(juce::ValueTree::fromXml(*xmlState));
+}
+
+void PluginProcessor::updateCurrentTimeInfoFromHost()
+{
+    const auto newInfo = [&]
+    {
+        if (auto *ph = getPlayHead())
+        {
+            juce::AudioPlayHead::CurrentPositionInfo result;
+
+            if (ph->getCurrentPosition(result))
+                return result;
+        }
+
+        // If the host fails to provide the current time, we'll just use default values
+        juce::AudioPlayHead::CurrentPositionInfo result;
+        result.resetToDefault();
+        return result;
+    }();
+
+    lastPosInfo.set(newInfo);
 }
 
 juce::AudioProcessor *JUCE_CALLTYPE createPluginFilter()
