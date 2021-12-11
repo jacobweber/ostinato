@@ -1,8 +1,10 @@
 #pragma once
 
 #include <juce_audio_utils/juce_audio_utils.h>
+#include <array>
 
 #include "PluginProcessor.h"
+#include "StepStrip.h"
 
 class PluginEditor : public juce::AudioProcessorEditor, private juce::Timer
 {
@@ -32,6 +34,8 @@ private:
   std::unique_ptr<SliderAttachment> speedAttachment;
 
   juce::TextEditor messagesBox;
+
+  std::array<StepStrip, 4> strips;
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PluginEditor)
 };

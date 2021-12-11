@@ -1,10 +1,17 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 
+const size_t NUM_STEPS = 3;
+
 PluginEditor::PluginEditor(PluginProcessor &p, juce::AudioProcessorValueTreeState &vts)
     : AudioProcessorEditor(&p), valueTreeState(vts)
 {
-    setSize(600, 400);
+    setSize(600, 600);
+
+    for (size_t i = 0; i < NUM_STEPS; i++) {
+        strips[i].stepNum = i;
+        addAndMakeVisible(strips[i]);
+    }
 
     speedSlider.setSliderStyle(juce::Slider::LinearBar);
     speedSlider.setRange(0.0, 1.0);
@@ -45,8 +52,13 @@ void PluginEditor::resized()
     auto area = getLocalBounds();
 
     timecodeDisplayLabel.setBounds(area.removeFromTop(26));
-    speedSlider.setBounds(area.removeFromTop(80).reduced(8));
-    messagesBox.setBounds(area.reduced(8));
+    speedSlider.setBounds(area.removeFromTop(50).reduced(8));
+    messagesBox.setBounds(area.removeFromBottom(100).reduced(8));
+
+    juce::FlexBox fb;
+    for (size_t i = 0; i < NUM_STEPS; i++)
+        fb.items.add(juce::FlexItem(strips[i]).withHeight((float) area.getHeight()).withWidth(100));
+    fb.performLayout(area.toFloat());
 }
 
 void PluginEditor::logMessage(const juce::String &m)
