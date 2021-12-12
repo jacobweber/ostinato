@@ -1,17 +1,19 @@
 #pragma once
 
 #include <juce_audio_utils/juce_audio_utils.h>
-#include <array>
+#include <vector>
 
 #include "PluginProcessor.h"
 #include "StepStrip.h"
+#include "State.h"
 
 class PluginEditor : public juce::AudioProcessorEditor, private juce::Timer
 {
 public:
+  const static size_t NUM_STEPS = 3;
   typedef juce::AudioProcessorValueTreeState::SliderAttachment SliderAttachment;
 
-  PluginEditor(PluginProcessor &, juce::AudioProcessorValueTreeState &);
+  PluginEditor(PluginProcessor &, State &);
   ~PluginEditor() override;
 
   void paint(juce::Graphics &) override;
@@ -26,11 +28,11 @@ public:
   void updateTimecodeDisplay(juce::AudioPlayHead::CurrentPositionInfo pos);
 
 private:
-  juce::AudioProcessorValueTreeState &valueTreeState;
+  State &state;
 
   juce::Label timecodeDisplayLabel;
   juce::Slider speedSlider;
-  std::array<StepStrip, 4> strips;
+  std::vector<std::unique_ptr<StepStrip>> strips;
   juce::TextEditor messagesBox;
 
   // use unique_ptr so it can be destroyed when UI is

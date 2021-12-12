@@ -4,6 +4,7 @@
 
 #include "MidiProcessor.h"
 #include "SpinLockedPosInfo.h"
+#include "State.h"
 
 class PluginProcessor : public juce::AudioProcessor
 {
@@ -11,7 +12,7 @@ public:
     PluginProcessor();
     ~PluginProcessor() override;
 
-    juce::AudioProcessorValueTreeState::ParameterLayout PluginProcessor::createParameters();
+    juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
 
     void prepareToPlay(double sampleRate, int samplesPerBlock) override;
     void releaseResources() override;
@@ -46,6 +47,7 @@ public:
 private:
     std::atomic<float>* speedParameter = nullptr;
     juce::AudioProcessorValueTreeState parameters;
+    State state { parameters };
     MidiProcessor midiProcessor;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PluginProcessor)

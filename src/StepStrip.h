@@ -2,21 +2,26 @@
 
 #include <juce_audio_utils/juce_audio_utils.h>
 #include <juce_gui_basics/juce_gui_basics.h>
-#include <array>
+#include <vector>
 
-const size_t NUM_VOICES = 4;
+#include "State.h"
 
 class StepStrip : public juce::Component
 {
 public:
-  StepStrip()
+  const static size_t NUM_VOICES = 4;
+  typedef juce::AudioProcessorValueTreeState::ButtonAttachment ButtonAttachment;
+
+  StepStrip(State &s, size_t n) : stepNum(n), state(s)
   {
     for (size_t i = 0; i < NUM_VOICES; i++)
     {
-      voices[i].setClickingTogglesState(true);
-      voices[i].setButtonText(std::to_string(i + 1));
-      voices[i].setColour(juce::TextButton::ColourIds::buttonOnColourId, juce::Colours::red);
-      addAndMakeVisible(voices[i]);
+      voices.push_back(std::unique_ptr<juce::TextButton>(new juce::TextButton()));
+      voices[i]->setClickingTogglesState(true);
+      voices[i]->setButtonText(std::to_string(i + 1));
+      voices[i]->setColour(juce::TextButton::ColourIds::buttonOnColourId, juce::Colours::red);
+      addAndMakeVisible(*voices[i]);
+      voicesAttachments.push_back(std::unique_ptr<ButtonAttachment>(new ButtonAttachment(state.parameters, "voice_" + std::to_string(stepNum) + "_" + std::to_string(i), *voices[i])));
     }
   }
 
@@ -35,16 +40,20 @@ public:
     auto area = getLocalBounds().reduced(4);
     area.removeFromTop(20);
     for (size_t i = 0; i < NUM_VOICES; i++)
-    {
-      voices[i].setBounds(area.removeFromTop(20));
-      area.removeFromTop(2);
-    }
+      if (voices.size() > i)
+      {
+        voices[i]->setBounds(area.removeFromTop(20));
+        area.removeFromTop(2);
+      }
   }
 
-  size_t stepNum = 0;
-
 private:
-  std::array<juce::TextButton, 4> voices;
+  size_t stepNum = 0;
+  State &state;
+
+  std::vector<std::unique_ptr<juce::TextButton>> voices;
+
+  std::vector<std::unique_ptr<ButtonAttachment>> voicesAttachments;
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(StepStrip)
 };

@@ -2,12 +2,13 @@
 
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
+#include "StepStrip.h"
 
 PluginProcessor::PluginProcessor()
     : AudioProcessor(BusesProperties()
                          .withInput("Input", juce::AudioChannelSet::stereo(), true)
                          .withOutput("Output", juce::AudioChannelSet::stereo(), true)),
-      parameters(*this, nullptr, juce::Identifier("Ostinato"), createParameters())
+      parameters(*this, nullptr, juce::Identifier("Ostinato"), createParameterLayout())
 {
     speedParameter = parameters.getRawParameterValue("speed");
 }
@@ -16,11 +17,14 @@ PluginProcessor::~PluginProcessor()
 {
 }
 
-juce::AudioProcessorValueTreeState::ParameterLayout PluginProcessor::createParameters()
+juce::AudioProcessorValueTreeState::ParameterLayout PluginProcessor::createParameterLayout()
 {
-    std::vector<std::unique_ptr<juce::RangedAudioParameter>> parameters;
-    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("speed", "Arpeggiator Speed", 0.0f, 1.0f, 0.5f));
-    return { parameters.begin(), parameters.end() };
+    juce::AudioProcessorValueTreeState::ParameterLayout layout;
+    layout.add(std::make_unique<juce::AudioParameterFloat>("speed", "Arpeggiator Speed", 0.0f, 1.0f, 0.5f));
+    for (size_t i = 0; i < PluginEditor::NUM_STEPS; i++)
+        for (size_t j = 0; j < StepStrip::NUM_VOICES; j++)
+            layout.add(std::make_unique<juce::AudioParameterBool>("voice_" + std::to_string(i) + "_" + std::to_string(j), "Voice On", false));
+    return layout;
 }
 
 const juce::String PluginProcessor::getName() const
@@ -102,13 +106,13 @@ bool PluginProcessor::hasEditor() const
 
 juce::AudioProcessorEditor *PluginProcessor::createEditor()
 {
-    return new PluginEditor(*this, parameters);
+    return new PluginEditor(*this, state);
 }
 
 void PluginProcessor::getStateInformation(juce::MemoryBlock &destData)
 {
-    auto state = parameters.copyState();
-    std::unique_ptr<juce::XmlElement> xml(state.createXml());
+    auto parametersCopy = parameters.copyState();
+    std::unique_ptr<juce::XmlElement> xml(parametersCopy.createXml());
     copyXmlToBinary(*xml, destData);
 }
 

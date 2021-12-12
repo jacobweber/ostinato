@@ -1,16 +1,12 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 
-const size_t NUM_STEPS = 3;
-
-PluginEditor::PluginEditor(PluginProcessor &p, juce::AudioProcessorValueTreeState &vts)
-    : AudioProcessorEditor(&p), valueTreeState(vts)
+PluginEditor::PluginEditor(PluginProcessor &p, State &s)
+    : AudioProcessorEditor(&p), state(s)
 {
-    setSize(600, 600);
-
     for (size_t i = 0; i < NUM_STEPS; i++) {
-        strips[i].stepNum = i;
-        addAndMakeVisible(strips[i]);
+        strips.push_back(std::unique_ptr<StepStrip>(new StepStrip(state, i)));
+        addAndMakeVisible(*strips[i]);
     }
 
     speedSlider.setSliderStyle(juce::Slider::LinearBar);
@@ -19,7 +15,7 @@ PluginEditor::PluginEditor(PluginProcessor &p, juce::AudioProcessorValueTreeStat
     speedSlider.setPopupDisplayEnabled(true, false, this);
     speedSlider.setTextValueSuffix(" Speed");
     addAndMakeVisible(speedSlider);
-    speedAttachment.reset(new SliderAttachment(valueTreeState, "speed", speedSlider));
+    speedAttachment.reset(new SliderAttachment(state.parameters, "speed", speedSlider));
 
     addAndMakeVisible(messagesBox);
     messagesBox.setMultiLine(true);
@@ -35,6 +31,7 @@ PluginEditor::PluginEditor(PluginProcessor &p, juce::AudioProcessorValueTreeStat
     addAndMakeVisible(timecodeDisplayLabel);
     timecodeDisplayLabel.setFont(juce::Font(juce::Font::getDefaultMonospacedFontName(), 15.0f, juce::Font::plain));
 
+    setSize(600, 600); // resize after initialization
     startTimerHz(30);
 }
 
@@ -57,7 +54,8 @@ void PluginEditor::resized()
 
     juce::FlexBox fb;
     for (size_t i = 0; i < NUM_STEPS; i++)
-        fb.items.add(juce::FlexItem(strips[i]).withHeight((float) area.getHeight()).withWidth(100));
+        if (strips.size() > i)
+            fb.items.add(juce::FlexItem(*strips[i]).withHeight((float) area.getHeight()).withWidth(100));
     fb.performLayout(area.toFloat());
 }
 
