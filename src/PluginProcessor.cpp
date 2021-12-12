@@ -1,8 +1,8 @@
 #include <vector>
 
 #include "PluginProcessor.h"
-#include "PluginEditor.h"
-#include "StepStrip.h"
+#include "Components/PluginEditor.h"
+#include "Components/StepStrip.h"
 
 PluginProcessor::PluginProcessor()
         : AudioProcessor(BusesProperties()

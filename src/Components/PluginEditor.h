@@ -1,11 +1,11 @@
 #pragma once
 
-#include <juce_audio_utils/juce_audio_utils.h>
+#include "juce_audio_utils/juce_audio_utils.h"
 #include <vector>
 
-#include "PluginProcessor.h"
+#include "../PluginProcessor.h"
 #include "StepStrip.h"
-#include "State.h"
+#include "../State.h"
 
 class PluginEditor : public juce::AudioProcessorEditor, private juce::Timer {
 public:

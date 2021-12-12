@@ -48,21 +48,21 @@ FetchContent_MakeAvailable(JUCE)
 # Check the readme at `docs/CMake API.md` in the JUCE repo for the full list.
 
 juce_add_plugin(Ostinato
-    # VERSION ...                               # Set this if the plugin version is different to the project version
-    # ICON_BIG ...                              # ICON_* arguments specify a path to an image file to use as an icon for the Standalone
-    # ICON_SMALL ...
-    COMPANY_NAME chunkymonkey                   # Specify the name of the plugin's author
-    IS_SYNTH TRUE                               # Is this a synth or an effect?
-    NEEDS_MIDI_INPUT TRUE                       # Does the plugin need midi input?
-    NEEDS_MIDI_OUTPUT TRUE                      # Does the plugin need midi output?
-    IS_MIDI_EFFECT TRUE                         # Is this plugin a MIDI effect?
-    # EDITOR_WANTS_KEYBOARD_FOCUS TRUE/FALSE    # Does the editor need keyboard focus?
-    COPY_PLUGIN_AFTER_BUILD TRUE                # Should the plugin be installed to a default location after building?
-    PLUGIN_MANUFACTURER_CODE Chun               # A four-character manufacturer id with at least one upper-case character
-    PLUGIN_CODE Osti                            # A unique four-character plugin id with exactly one upper-case character
-                                                # GarageBand 10.3 requires the first letter to be upper-case, and the remaining letters to be lower-case
-    FORMATS AU VST3 Standalone                  # The formats to build. Other valid formats are: AAX Unity VST AU AUv3
-    PRODUCT_NAME "Ostinato")                    # The name of the final executable, which can differ from the target name
+        # VERSION ...                               # Set this if the plugin version is different to the project version
+        # ICON_BIG ...                              # ICON_* arguments specify a path to an image file to use as an icon for the Standalone
+        # ICON_SMALL ...
+        COMPANY_NAME chunkymonkey                   # Specify the name of the plugin's author
+        IS_SYNTH TRUE                               # Is this a synth or an effect?
+        NEEDS_MIDI_INPUT TRUE                       # Does the plugin need midi input?
+        NEEDS_MIDI_OUTPUT TRUE                      # Does the plugin need midi output?
+        IS_MIDI_EFFECT TRUE                         # Is this plugin a MIDI effect?
+        # EDITOR_WANTS_KEYBOARD_FOCUS TRUE/FALSE    # Does the editor need keyboard focus?
+        COPY_PLUGIN_AFTER_BUILD TRUE                # Should the plugin be installed to a default location after building?
+        PLUGIN_MANUFACTURER_CODE Chun               # A four-character manufacturer id with at least one upper-case character
+        PLUGIN_CODE Osti                            # A unique four-character plugin id with exactly one upper-case character
+        # GarageBand 10.3 requires the first letter to be upper-case, and the remaining letters to be lower-case
+        FORMATS AU VST3 Standalone                  # The formats to build. Other valid formats are: AAX Unity VST AU AUv3
+        PRODUCT_NAME "Ostinato")                    # The name of the final executable, which can differ from the target name
 
 # `juce_generate_juce_header` will create a JuceHeader.h for a given target, which will be generated
 # into your build tree. This should be included with `#include <JuceHeader.h>`. The include path for
@@ -78,8 +78,8 @@ juce_add_plugin(Ostinato
 # CMake command.
 
 target_sources(Ostinato
-    PRIVATE
-        src/PluginEditor.cpp
+        PRIVATE
+        src/Components/PluginEditor.cpp
         src/PluginProcessor.cpp
         src/MidiProcessor.cpp)
 
@@ -91,7 +91,7 @@ target_sources(Ostinato
 # definitions, pick unique names that are unlikely to collide! This is a standard CMake command.
 
 target_compile_definitions(Ostinato
-    PUBLIC
+        PUBLIC
         # JUCE_WEB_BROWSER and JUCE_USE_CURL would be on by default, but you might not need them.
         JUCE_WEB_BROWSER=0  # If you remove this, add `NEEDS_WEB_BROWSER TRUE` to the `juce_add_plugin` call
         JUCE_USE_CURL=0     # If you remove this, add `NEEDS_CURL TRUE` to the `juce_add_plugin` call
@@ -113,10 +113,10 @@ target_compile_definitions(Ostinato
 # here too. This is a standard CMake command.
 
 target_link_libraries(Ostinato
-    PRIVATE
+        PRIVATE
         # AudioPluginData           # If we'd created a binary data target, we'd link to it here
         juce::juce_audio_utils
-    PUBLIC
+        PUBLIC
         juce::juce_recommended_config_flags
         juce::juce_recommended_lto_flags
         juce::juce_recommended_warning_flags)

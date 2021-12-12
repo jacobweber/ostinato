@@ -1,6 +1,6 @@
-#include "PluginProcessor.h"
+#include "../PluginProcessor.h"
 #include "PluginEditor.h"
-#include "Timecode.h"
+#include "../Timecode.h"
 
 PluginEditor::PluginEditor(PluginProcessor &p, State &s)
         : AudioProcessorEditor(&p), state(s) {
