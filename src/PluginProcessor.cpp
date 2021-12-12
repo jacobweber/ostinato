@@ -10,6 +10,13 @@ PluginProcessor::PluginProcessor()
                                  .withOutput("Output", juce::AudioChannelSet::stereo(), true)),
           parameters(*this, nullptr, juce::Identifier("Ostinato"), createParameterLayout()) {
     speedParameter = parameters.getRawParameterValue("speed");
+    for (size_t i = 0; i < PluginEditor::NUM_STEPS; i++) {
+        for (size_t j = 0; j < StepStrip::NUM_VOICES; j++) {
+            juce::AudioParameterBool *p = dynamic_cast<juce::AudioParameterBool *> (parameters.getParameter(
+                    "voice_" + std::to_string(i) + "_" + std::to_string(j)));
+            stepData[i].voiceParameters[j] = p ? p : nullptr;
+        }
+    }
 }
 
 PluginProcessor::~PluginProcessor() {

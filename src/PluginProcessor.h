@@ -5,6 +5,8 @@
 #include "MidiProcessor.h"
 #include "SpinLockedPosInfo.h"
 #include "State.h"
+#include "StripData.h"
+#include "Components/StepStrip.h"
 
 class PluginProcessor : public juce::AudioProcessor {
 public:
@@ -57,6 +59,8 @@ public:
 
 private:
     std::atomic<float> *speedParameter = nullptr;
+    std::array<StripData, StepStrip::NUM_VOICES> stepData;
+
     juce::AudioProcessorValueTreeState parameters;
     State state{parameters};
     MidiProcessor midiProcessor;
