@@ -2,13 +2,11 @@
 
 #include <juce_audio_utils/juce_audio_utils.h>
 
-class State
-{
+class State {
 public:
-  State(juce::AudioProcessorValueTreeState &p) : parameters(p)
-  {
-  }
+    State(juce::AudioProcessorValueTreeState &p) : parameters(p) {
+    }
 
 public:
-  juce::AudioProcessorValueTreeState &parameters;
+    juce::AudioProcessorValueTreeState &parameters;
 };

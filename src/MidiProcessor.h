@@ -3,8 +3,7 @@
 #include <juce_audio_utils/juce_audio_utils.h>
 #include <juce_core/juce_core.h>
 
-class MidiProcessor
-{
+class MidiProcessor {
 public:
     void init(double sampleRate);
 

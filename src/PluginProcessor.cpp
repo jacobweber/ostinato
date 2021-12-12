@@ -5,93 +5,78 @@
 #include "StepStrip.h"
 
 PluginProcessor::PluginProcessor()
-    : AudioProcessor(BusesProperties()
-                         .withInput("Input", juce::AudioChannelSet::stereo(), true)
-                         .withOutput("Output", juce::AudioChannelSet::stereo(), true)),
-      parameters(*this, nullptr, juce::Identifier("Ostinato"), createParameterLayout())
-{
+        : AudioProcessor(BusesProperties()
+                                 .withInput("Input", juce::AudioChannelSet::stereo(), true)
+                                 .withOutput("Output", juce::AudioChannelSet::stereo(), true)),
+          parameters(*this, nullptr, juce::Identifier("Ostinato"), createParameterLayout()) {
     speedParameter = parameters.getRawParameterValue("speed");
 }
 
-PluginProcessor::~PluginProcessor()
-{
+PluginProcessor::~PluginProcessor() {
 }
 
-juce::AudioProcessorValueTreeState::ParameterLayout PluginProcessor::createParameterLayout()
-{
+juce::AudioProcessorValueTreeState::ParameterLayout PluginProcessor::createParameterLayout() {
     juce::AudioProcessorValueTreeState::ParameterLayout layout;
     layout.add(std::make_unique<juce::AudioParameterFloat>("speed", "Arpeggiator Speed", 0.0f, 1.0f, 0.5f));
     for (size_t i = 0; i < PluginEditor::NUM_STEPS; i++)
         for (size_t j = 0; j < StepStrip::NUM_VOICES; j++)
-            layout.add(std::make_unique<juce::AudioParameterBool>("voice_" + std::to_string(i) + "_" + std::to_string(j), "Voice On", false));
+            layout.add(
+                    std::make_unique<juce::AudioParameterBool>("voice_" + std::to_string(i) + "_" + std::to_string(j),
+                                                               "Voice On", false));
     return layout;
 }
 
-const juce::String PluginProcessor::getName() const
-{
+const juce::String PluginProcessor::getName() const {
     return "Ostinato";
 }
 
-bool PluginProcessor::acceptsMidi() const
-{
+bool PluginProcessor::acceptsMidi() const {
     return true;
 }
 
-bool PluginProcessor::producesMidi() const
-{
+bool PluginProcessor::producesMidi() const {
     return true;
 }
 
-bool PluginProcessor::isMidiEffect() const
-{
+bool PluginProcessor::isMidiEffect() const {
     return true;
 }
 
-double PluginProcessor::getTailLengthSeconds() const
-{
+double PluginProcessor::getTailLengthSeconds() const {
     return 0.0;
 }
 
-int PluginProcessor::getNumPrograms()
-{
+int PluginProcessor::getNumPrograms() {
     return 1;
 }
 
-int PluginProcessor::getCurrentProgram()
-{
+int PluginProcessor::getCurrentProgram() {
     return 0;
 }
 
-void PluginProcessor::setCurrentProgram(int)
-{
+void PluginProcessor::setCurrentProgram(int) {
 }
 
-const juce::String PluginProcessor::getProgramName(int)
-{
+const juce::String PluginProcessor::getProgramName(int) {
     return {};
 }
 
-void PluginProcessor::changeProgramName(int, const juce::String &)
-{
+void PluginProcessor::changeProgramName(int, const juce::String &) {
 }
 
-void PluginProcessor::prepareToPlay(double sampleRate, int)
-{
+void PluginProcessor::prepareToPlay(double sampleRate, int) {
     midiProcessor.init(sampleRate);
 }
 
-void PluginProcessor::releaseResources()
-{
+void PluginProcessor::releaseResources() {
 }
 
-bool PluginProcessor::isBusesLayoutSupported(const BusesLayout &layouts) const
-{
+bool PluginProcessor::isBusesLayoutSupported(const BusesLayout &layouts) const {
     juce::ignoreUnused(layouts);
     return true;
 }
 
-void PluginProcessor::processBlock(juce::AudioBuffer<float> &buffer, juce::MidiBuffer &midiMessages)
-{
+void PluginProcessor::processBlock(juce::AudioBuffer<float> &buffer, juce::MidiBuffer &midiMessages) {
     buffer.clear();
     auto numSamples = buffer.getNumSamples();
     midiProcessor.process(numSamples, midiMessages, *speedParameter);
@@ -99,25 +84,21 @@ void PluginProcessor::processBlock(juce::AudioBuffer<float> &buffer, juce::MidiB
     updateCurrentTimeInfoFromHost();
 }
 
-bool PluginProcessor::hasEditor() const
-{
+bool PluginProcessor::hasEditor() const {
     return true;
 }
 
-juce::AudioProcessorEditor *PluginProcessor::createEditor()
-{
+juce::AudioProcessorEditor *PluginProcessor::createEditor() {
     return new PluginEditor(*this, state);
 }
 
-void PluginProcessor::getStateInformation(juce::MemoryBlock &destData)
-{
+void PluginProcessor::getStateInformation(juce::MemoryBlock &destData) {
     auto parametersCopy = parameters.copyState();
     std::unique_ptr<juce::XmlElement> xml(parametersCopy.createXml());
     copyXmlToBinary(*xml, destData);
 }
 
-void PluginProcessor::setStateInformation(const void *data, int sizeInBytes)
-{
+void PluginProcessor::setStateInformation(const void *data, int sizeInBytes) {
     std::unique_ptr<juce::XmlElement> xmlState(getXmlFromBinary(data, sizeInBytes));
 
     if (xmlState.get() != nullptr)
@@ -125,12 +106,9 @@ void PluginProcessor::setStateInformation(const void *data, int sizeInBytes)
             parameters.replaceState(juce::ValueTree::fromXml(*xmlState));
 }
 
-void PluginProcessor::updateCurrentTimeInfoFromHost()
-{
-    const auto newInfo = [&]
-    {
-        if (auto *ph = getPlayHead())
-        {
+void PluginProcessor::updateCurrentTimeInfoFromHost() {
+    const auto newInfo = [&] {
+        if (auto *ph = getPlayHead()) {
             juce::AudioPlayHead::CurrentPositionInfo result;
 
             if (ph->getCurrentPosition(result))
@@ -146,7 +124,6 @@ void PluginProcessor::updateCurrentTimeInfoFromHost()
     lastPosInfo.set(newInfo);
 }
 
-juce::AudioProcessor *JUCE_CALLTYPE createPluginFilter()
-{
+juce::AudioProcessor *JUCE_CALLTYPE createPluginFilter() {
     return new PluginProcessor();
 }

@@ -3,8 +3,7 @@
 #include "Timecode.h"
 
 PluginEditor::PluginEditor(PluginProcessor &p, State &s)
-    : AudioProcessorEditor(&p), state(s)
-{
+        : AudioProcessorEditor(&p), state(s) {
     for (size_t i = 0; i < NUM_STEPS; i++) {
         strips.push_back(std::unique_ptr<StepStrip>(new StepStrip(state, i)));
         addAndMakeVisible(*strips[i]);
@@ -36,17 +35,14 @@ PluginEditor::PluginEditor(PluginProcessor &p, State &s)
     startTimerHz(30);
 }
 
-PluginEditor::~PluginEditor()
-{
+PluginEditor::~PluginEditor() {
 }
 
-void PluginEditor::paint(juce::Graphics &g)
-{
+void PluginEditor::paint(juce::Graphics &g) {
     g.fillAll(getLookAndFeel().findColour(juce::ResizableWindow::backgroundColourId));
 }
 
-void PluginEditor::resized()
-{
+void PluginEditor::resized() {
     auto area = getLocalBounds();
 
     timecodeDisplayLabel.setBounds(area.removeFromTop(26));
@@ -60,19 +56,16 @@ void PluginEditor::resized()
     fb.performLayout(area.toFloat());
 }
 
-void PluginEditor::logMessage(const juce::String &m)
-{
+void PluginEditor::logMessage(const juce::String &m) {
     messagesBox.moveCaretToEnd();
     messagesBox.insertTextAtCaret(m + juce::newLine);
 }
 
-void PluginEditor::timerCallback()
-{
+void PluginEditor::timerCallback() {
     juce::String newText = updateTimecodeDisplay(getProcessor().lastPosInfo.get());
     timecodeDisplayLabel.setText(newText, juce::dontSendNotification);
 }
 
-PluginProcessor &PluginEditor::getProcessor() const
-{
+PluginProcessor &PluginEditor::getProcessor() const {
     return static_cast<PluginProcessor &>(processor);
 }
