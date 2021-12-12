@@ -27,7 +27,7 @@ juce::String quarterNotePositionToBarsBeatsString(double quarterNotes, int numer
     return juce::String::formatted("%d|%d|%03d", bar, beat, ticks);
 }
 
-void updateTimecodeDisplay(juce::AudioPlayHead::CurrentPositionInfo pos)
+juce::String updateTimecodeDisplay(juce::AudioPlayHead::CurrentPositionInfo pos)
 {
     // ppqPosition = 0-based beat number since start; in 6/8 counts 3 beats per bar
     // ppqPositionOfLastBarStart = 0-based beat number of bar start; can be fractional e.g. in 7/8 bar 2 is 3.5
@@ -44,5 +44,5 @@ void updateTimecodeDisplay(juce::AudioPlayHead::CurrentPositionInfo pos)
     else if (pos.isPlaying)
         displayText << "  (playing)";
 
-    timecodeDisplayLabel.setText(displayText.toString(), juce::dontSendNotification);
+    return displayText.toString();
 }

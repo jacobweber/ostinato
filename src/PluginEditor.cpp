@@ -68,7 +68,8 @@ void PluginEditor::logMessage(const juce::String &m)
 
 void PluginEditor::timerCallback()
 {
-    updateTimecodeDisplay(getProcessor().lastPosInfo.get());
+    juce::String newText = updateTimecodeDisplay(getProcessor().lastPosInfo.get());
+    timecodeDisplayLabel.setText(newText, juce::dontSendNotification);
 }
 
 PluginProcessor &PluginEditor::getProcessor() const
