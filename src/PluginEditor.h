@@ -23,10 +23,6 @@ public:
   void timerCallback() override;
   PluginProcessor &getProcessor() const;
 
-  static juce::String timeToTimecodeString(double seconds);
-  static juce::String quarterNotePositionToBarsBeatsString(double quarterNotes, int numerator, int denominator);
-  void updateTimecodeDisplay(juce::AudioPlayHead::CurrentPositionInfo pos);
-
 private:
   State &state;
 
