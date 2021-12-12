@@ -29,13 +29,13 @@ private:
   juce::AudioProcessorValueTreeState &valueTreeState;
 
   juce::Label timecodeDisplayLabel;
-
   juce::Slider speedSlider;
-  std::unique_ptr<SliderAttachment> speedAttachment;
-
+  std::array<StepStrip, 4> strips;
   juce::TextEditor messagesBox;
 
-  std::array<StepStrip, 4> strips;
+  // use unique_ptr so it can be destroyed when UI is
+  // declare after components so it's destroyed before them
+  std::unique_ptr<SliderAttachment> speedAttachment;
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PluginEditor)
 };

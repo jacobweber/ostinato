@@ -11,6 +11,8 @@ public:
     PluginProcessor();
     ~PluginProcessor() override;
 
+    juce::AudioProcessorValueTreeState::ParameterLayout PluginProcessor::createParameters();
+
     void prepareToPlay(double sampleRate, int samplesPerBlock) override;
     void releaseResources() override;
 

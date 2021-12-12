@@ -1,3 +1,5 @@
+#include <vector>
+
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 
@@ -5,18 +7,20 @@ PluginProcessor::PluginProcessor()
     : AudioProcessor(BusesProperties()
                          .withInput("Input", juce::AudioChannelSet::stereo(), true)
                          .withOutput("Output", juce::AudioChannelSet::stereo(), true)),
-      parameters(*this, nullptr, juce::Identifier("Ostinato"),
-                 {std::make_unique<juce::AudioParameterFloat>("speed",
-                                                              "Arpeggiator Speed",
-                                                              0.0f,
-                                                              1.0f,
-                                                              0.5f)})
+      parameters(*this, nullptr, juce::Identifier("Ostinato"), createParameters())
 {
     speedParameter = parameters.getRawParameterValue("speed");
 }
 
 PluginProcessor::~PluginProcessor()
 {
+}
+
+juce::AudioProcessorValueTreeState::ParameterLayout PluginProcessor::createParameters()
+{
+    std::vector<std::unique_ptr<juce::RangedAudioParameter>> parameters;
+    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("speed", "Arpeggiator Speed", 0.0f, 1.0f, 0.5f));
+    return { parameters.begin(), parameters.end() };
 }
 
 const juce::String PluginProcessor::getName() const
