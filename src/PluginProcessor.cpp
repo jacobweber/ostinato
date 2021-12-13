@@ -9,7 +9,7 @@ PluginProcessor::PluginProcessor()
                                  .withInput("Input", juce::AudioChannelSet::stereo(), true)
                                  .withOutput("Output", juce::AudioChannelSet::stereo(), true)),
           parameters(*this, nullptr, juce::Identifier("Ostinato"), createParameterLayout()) {
-    speedParameter = parameters.getRawParameterValue("speed");
+    speedParameter = dynamic_cast<juce::AudioParameterFloat *> (parameters.getParameter("speed"));
     for (size_t i = 0; i < PluginEditor::NUM_STEPS; i++) {
         for (size_t j = 0; j < StepStrip::NUM_VOICES; j++) {
             juce::AudioParameterBool *p = dynamic_cast<juce::AudioParameterBool *> (parameters.getParameter(
@@ -86,7 +86,7 @@ bool PluginProcessor::isBusesLayoutSupported(const BusesLayout &layouts) const {
 void PluginProcessor::processBlock(juce::AudioBuffer<float> &buffer, juce::MidiBuffer &midiMessages) {
     buffer.clear();
     auto numSamples = buffer.getNumSamples();
-    midiProcessor.process(numSamples, midiMessages, *speedParameter);
+    midiProcessor.process(numSamples, midiMessages, speedParameter->get());
 
     updateCurrentTimeInfoFromHost();
 }

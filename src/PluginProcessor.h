@@ -58,7 +58,7 @@ public:
     SpinLockedPosInfo lastPosInfo;
 
 private:
-    std::atomic<float> *speedParameter = nullptr;
+    juce::AudioParameterFloat *speedParameter = nullptr;
     std::array<StripData, StepStrip::NUM_VOICES> stepData;
 
     juce::AudioProcessorValueTreeState parameters;
