@@ -42,5 +42,8 @@ juce::String updateTimecodeDisplay(juce::AudioPlayHead::CurrentPositionInfo pos)
     else if (pos.isPlaying)
         displayText << "  (playing)";
 
+    displayText << " (" << juce::String(pos.ppqPosition, 2) << "|" << juce::String(pos.ppqPositionOfLastBarStart, 2)
+                << ")";
+
     return displayText.toString();
 }

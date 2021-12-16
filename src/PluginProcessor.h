@@ -52,7 +52,7 @@ public:
 
     void setStateInformation(const void *data, int sizeInBytes) override;
 
-    void updateCurrentTimeInfoFromHost();
+    juce::AudioPlayHead::CurrentPositionInfo updateCurrentTimeInfoFromHost();
 
 public:
     SpinLockedPosInfo lastPosInfo;

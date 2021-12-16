@@ -85,10 +85,12 @@ bool PluginProcessor::isBusesLayoutSupported(const BusesLayout &layouts) const {
 
 void PluginProcessor::processBlock(juce::AudioBuffer<float> &buffer, juce::MidiBuffer &midiMessages) {
     buffer.clear();
-    auto numSamples = buffer.getNumSamples();
-    midiProcessor.process(numSamples, midiMessages, speedParameter->get());
 
-    updateCurrentTimeInfoFromHost();
+    const auto newInfo = updateCurrentTimeInfoFromHost();
+    lastPosInfo.set(newInfo);
+
+    auto numSamples = buffer.getNumSamples();
+    midiProcessor.process(numSamples, midiMessages, newInfo, speedParameter->get());
 }
 
 bool PluginProcessor::hasEditor() const {
@@ -113,8 +115,8 @@ void PluginProcessor::setStateInformation(const void *data, int sizeInBytes) {
             parameters.replaceState(juce::ValueTree::fromXml(*xmlState));
 }
 
-void PluginProcessor::updateCurrentTimeInfoFromHost() {
-    const auto newInfo = [&] {
+juce::AudioPlayHead::CurrentPositionInfo PluginProcessor::updateCurrentTimeInfoFromHost() {
+    return [&] {
         if (auto *ph = getPlayHead()) {
             juce::AudioPlayHead::CurrentPositionInfo result;
 
@@ -127,8 +129,6 @@ void PluginProcessor::updateCurrentTimeInfoFromHost() {
         result.resetToDefault();
         return result;
     }();
-
-    lastPosInfo.set(newInfo);
 }
 
 juce::AudioProcessor *JUCE_CALLTYPE createPluginFilter() {
