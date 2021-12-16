@@ -2,7 +2,8 @@
 /cmake-build-debug/
 /Plug-Ins
 /.vscode
+/.idea
 
 /*.filtergraph
 /*.jpg
-/*.RPP
+/*.RPP*
