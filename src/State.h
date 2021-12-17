@@ -11,9 +11,9 @@ public:
         speedParameter = dynamic_cast<juce::AudioParameterFloat *> (parameters.getParameter("speed"));
         for (size_t i = 0; i < NUM_STEPS; i++) {
             for (size_t j = 0; j < NUM_VOICES; j++) {
-                juce::AudioParameterBool *p = dynamic_cast<juce::AudioParameterBool *> (parameters.getParameter(
+                juce::AudioParameterBool *param = dynamic_cast<juce::AudioParameterBool *> (parameters.getParameter(
                         "voice_" + std::to_string(i) + "_" + std::to_string(j)));
-                stepData[i].voiceParameters[j] = p ? p : nullptr;
+                stepData[i].voiceParameters[j] = param ? param : nullptr;
             }
         }
     }

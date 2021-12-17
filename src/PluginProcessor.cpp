@@ -83,7 +83,6 @@ void PluginProcessor::processBlock(juce::AudioBuffer<float> &buffer, juce::MidiB
     lastPosInfo.set(posInfo);
 
     auto numSamples = buffer.getNumSamples();
-    //speedParameter->get()
     midiProcessor.process(numSamples, midiMessages, posInfo, state);
 }
 

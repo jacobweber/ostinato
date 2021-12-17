@@ -103,14 +103,19 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midi,
 
     if (sampleOffsetWithinFrame != -1) {
         // play a step within this frame
-        size_t voiceNum = nextStepIndex % NUM_VOICES; // for now
-        auto noteIndex = static_cast<size_t>(juce::jmin((int) voiceNum, pressedNotes.size() -
-                                                                        1)); // repeat top note if we don't have enough
-        MidiValue noteValue = pressedNotes[static_cast<int>(noteIndex)];
-        stopPlaying(midi, samplesUntilNextStep);
-        midi.addEvent(juce::MidiMessage::noteOn(noteValue.channel, noteValue.note, (juce::uint8) 90),
-                      sampleOffsetWithinFrame);
-        playingNotes.add(noteValue);
+        // should reset nextStepIndex to 0 if no longer a step
+        stopPlaying(midi, sampleOffsetWithinFrame);
+        for (size_t voiceNum = 0; voiceNum < NUM_VOICES; voiceNum++) {
+            if (state.stepData[nextStepIndex].voiceParameters[voiceNum]->get()) {
+                auto noteIndex = static_cast<size_t>(juce::jmin(static_cast<int>(NUM_VOICES - 1 - voiceNum),
+                                                                pressedNotes.size() -
+                                                                1)); // repeat top note if we don't have enough
+                MidiValue noteValue = pressedNotes[static_cast<int>(noteIndex)];
+                midi.addEvent(juce::MidiMessage::noteOn(noteValue.channel, noteValue.note, (juce::uint8) 90),
+                              sampleOffsetWithinFrame);
+                playingNotes.add(noteValue);
+            }
+        }
 
         // prepare next step
         nextStepIndex = (nextStepIndex + 1) % NUM_STEPS;
