@@ -5,6 +5,7 @@
 
 #include "SpinLockedPosInfo.h"
 #include "MidiValue.h"
+#include "State.h"
 
 class MidiProcessor {
 public:
@@ -13,10 +14,10 @@ public:
     void stopPlaying(juce::MidiBuffer &midi, int offset);
 
     void
-    process(int numSamples, juce::MidiBuffer &midi, const juce::AudioPlayHead::CurrentPositionInfo &posInfo);
+    process(int numSamples, juce::MidiBuffer &midi, const juce::AudioPlayHead::CurrentPositionInfo &posInfo,
+            State &state);
 
 private:
-
     double sampleRate;
 
     juce::SortedSet<MidiValue> pressedNotes;

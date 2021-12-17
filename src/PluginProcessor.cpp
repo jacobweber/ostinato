@@ -10,14 +10,6 @@ PluginProcessor::PluginProcessor()
                                  .withInput("Input", juce::AudioChannelSet::stereo(), true)
                                  .withOutput("Output", juce::AudioChannelSet::stereo(), true)),
           parameters(*this, nullptr, juce::Identifier("Ostinato"), createParameterLayout()) {
-    speedParameter = dynamic_cast<juce::AudioParameterFloat *> (parameters.getParameter("speed"));
-    for (size_t i = 0; i < NUM_STEPS; i++) {
-        for (size_t j = 0; j < NUM_VOICES; j++) {
-            juce::AudioParameterBool *p = dynamic_cast<juce::AudioParameterBool *> (parameters.getParameter(
-                    "voice_" + std::to_string(i) + "_" + std::to_string(j)));
-            stepData[i].voiceParameters[j] = p ? p : nullptr;
-        }
-    }
 }
 
 PluginProcessor::~PluginProcessor() {
@@ -87,12 +79,12 @@ bool PluginProcessor::isBusesLayoutSupported(const BusesLayout &layouts) const {
 void PluginProcessor::processBlock(juce::AudioBuffer<float> &buffer, juce::MidiBuffer &midiMessages) {
     buffer.clear();
 
-    const auto newInfo = updateCurrentTimeInfoFromHost();
-    lastPosInfo.set(newInfo);
+    const auto posInfo = updateCurrentTimeInfoFromHost();
+    lastPosInfo.set(posInfo);
 
     auto numSamples = buffer.getNumSamples();
     //speedParameter->get()
-    midiProcessor.process(numSamples, midiMessages, newInfo);
+    midiProcessor.process(numSamples, midiMessages, posInfo, state);
 }
 
 bool PluginProcessor::hasEditor() const {

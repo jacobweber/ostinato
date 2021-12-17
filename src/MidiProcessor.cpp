@@ -22,7 +22,7 @@ void MidiProcessor::stopPlaying(juce::MidiBuffer &midi, int offset) {
 
 void
 MidiProcessor::process(int numSamples, juce::MidiBuffer &midi,
-                       const juce::AudioPlayHead::CurrentPositionInfo &posInfo) {
+                       const juce::AudioPlayHead::CurrentPositionInfo &posInfo, State &state) {
     for (const auto metadata: midi) {
         const auto msg = metadata.getMessage();
         MidiValue noteValue{msg.getNoteNumber(), msg.getChannel()};
