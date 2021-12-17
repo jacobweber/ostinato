@@ -60,9 +60,11 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midi,
             nextStepIndex = 0;
             if (transportOn) {
                 // start at next beat; don't try to align to bars
-                nextStepPpqPos = std::ceil(posInfo.ppqPosition);
-                // should start here in case we start after beat, but align next one to beat
-                // nextStepPpqPos = posInfo.ppqPosition;
+                nextStepPpqPos = std::floor(posInfo.ppqPosition);
+                if (posInfo.ppqPosition - nextStepPpqPos > 0.05) {
+                    // Reaper seems to start a little late
+                    nextStepPpqPos += 1;
+                }
                 // don't calculate in samples, since tempo may change
                 DBG("first step at " << nextStepPpqPos << " ppq, " << pressedNotes.size()
                                      << " pressed notes");
@@ -92,7 +94,7 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midi,
         prevPpqPos = posInfo.ppqPosition;
         double frameEndPpqPos = posInfo.ppqPosition + ppqPerFrame;
         if (nextStepPpqPos < frameEndPpqPos) {
-            double ppqOffset = nextStepPpqPos - posInfo.ppqPosition;
+            double ppqOffset = juce::jmax(nextStepPpqPos - posInfo.ppqPosition, 0.0);
             sampleOffsetWithinFrame = static_cast<int>(std::floor(numSamples * (ppqOffset / ppqPerFrame)));
         }
     } else {
