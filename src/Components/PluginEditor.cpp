@@ -41,9 +41,9 @@ PluginEditor::PluginEditor(PluginProcessor &p, State &s)
     rateLabel.attachToComponent(&rateMenu, false);
     rateMenu.addItem("Whole", 1);
     rateMenu.addItem("Half", 2);
-    rateMenu.addItem("Quarter", 4);
-    rateMenu.addItem("Eighth", 8);
-    rateMenu.addItem("Sixteenth", 16);
+    rateMenu.addItem("Quarter", 3);
+    rateMenu.addItem("Eighth", 4);
+    rateMenu.addItem("Sixteenth", 5);
     addAndMakeVisible(rateMenu);
     rateAttachment.reset(new ComboBoxAttachment(state.parameters, "rate", rateMenu));
 

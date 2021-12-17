@@ -1,3 +1,5 @@
+#include <math.h>
+
 #include "MidiProcessor.h"
 #include "Constants.h"
 
@@ -119,7 +121,9 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midi,
 
         // prepare next step
         nextStepIndex = (nextStepIndex + 1) % MAX_STEPS;
-        double ppqPosPerStep = 4.0f / STEP_VALUE;
+        DBG("rate: " << std::pow(2, state.rateParameter->getIndex()));
+
+        double ppqPosPerStep = 4.0f / std::pow(2, state.rateParameter->getIndex());
         if (transportOn) {
             nextStepPpqPos += ppqPosPerStep;
             DBG("next step in " << ppqPosPerStep << " ppq at " << nextStepPpqPos << " ppq, " << pressedNotes.size()
