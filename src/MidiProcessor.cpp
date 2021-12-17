@@ -54,13 +54,14 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midi,
 
     if (!cycleOn) {
         if (pressedNotes.size() > 0) { // notes pressed, so start cycle
-            DBG("start cycle");
+            DBG("start cycle at " << posInfo.ppqPosition);
             cycleOn = true;
             nextStepIndex = 0;
             if (transportOn) {
                 // start at next beat; don't try to align to bars
-                // nextStepPpqPos = std::ceil(posInfo.ppqPosition);
-                nextStepPpqPos = posInfo.ppqPosition;
+                nextStepPpqPos = std::ceil(posInfo.ppqPosition);
+                // should start here in case we start after beat, but align next one to beat
+                // nextStepPpqPos = posInfo.ppqPosition;
                 // don't calculate in samples, since tempo may change
                 DBG("first step at " << nextStepPpqPos << " ppq, " << pressedNotes.size()
                                      << " pressed notes");
@@ -117,13 +118,13 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midi,
         if (transportOn) {
             nextStepPpqPos += ppqPosPerStep;
             DBG("next step in " << ppqPosPerStep << " ppq at " << nextStepPpqPos << " ppq, " << pressedNotes.size()
-                                << " pressed notes");
+                                << " pressed notes, " << posInfo.bpm << " bpm");
         } else {
-            double stepsPerSec = (posInfo.bpm / 60) * ppqPosPerStep;
+            double stepsPerSec = (posInfo.bpm / 60) / ppqPosPerStep;
             samplesUntilNextStep = static_cast<int>(std::ceil(sampleRate / stepsPerSec));
-            DBG("next step in " << samplesUntilNextStep << " samples or "
+            DBG("next step in " << ppqPosPerStep << " ppq or " << samplesUntilNextStep << " samples or "
                                 << (1 / stepsPerSec) << " secs, " << pressedNotes.size()
-                                << " pressed notes");
+                                << " pressed notes, " << posInfo.bpm << " bpm");
         }
     }
 }
