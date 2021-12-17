@@ -10,6 +10,7 @@
 class PluginEditor : public juce::AudioProcessorEditor, private juce::Timer {
 public:
     typedef juce::AudioProcessorValueTreeState::SliderAttachment SliderAttachment;
+    typedef juce::AudioProcessorValueTreeState::ComboBoxAttachment ComboBoxAttachment;
 
     PluginEditor(PluginProcessor &, State &);
 
@@ -30,12 +31,24 @@ private:
 
     juce::Label timecodeDisplayLabel;
     juce::Slider speedSlider;
+
+    juce::Font textFont{12.0f};
+
+    juce::Label stepsLabel{{}, "Number of steps"};
+    juce::ComboBox stepsMenu;
+    juce::Label voicesLabel{{}, "Number of voices"};
+    juce::ComboBox voicesMenu;
+    juce::Label rateLabel{{}, "Step length"};
+    juce::ComboBox rateMenu;
     std::vector<std::unique_ptr<StepStrip>> strips;
     juce::TextEditor messagesBox;
 
     // use unique_ptr so it can be destroyed when UI is
     // declare after components so it's destroyed before them
     std::unique_ptr<SliderAttachment> speedAttachment;
+    std::unique_ptr<ComboBoxAttachment> stepsAttachment;
+    std::unique_ptr<ComboBoxAttachment> voicesAttachment;
+    std::unique_ptr<ComboBoxAttachment> rateAttachment;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PluginEditor)
 };

@@ -18,6 +18,26 @@ PluginProcessor::~PluginProcessor() {
 juce::AudioProcessorValueTreeState::ParameterLayout PluginProcessor::createParameterLayout() {
     juce::AudioProcessorValueTreeState::ParameterLayout layout;
     layout.add(std::make_unique<juce::AudioParameterFloat>("speed", "Arpeggiator Speed", 0.0f, 1.0f, 0.5f));
+
+    juce::StringArray stepsChoices;
+    for (size_t i = 1; i <= MAX_STEPS; i++) {
+        stepsChoices.add(std::to_string(i));
+    }
+    layout.add(std::make_unique<juce::AudioParameterChoice>("steps", "Number of Steps", stepsChoices, 3));
+
+    juce::StringArray voicesChoices;
+    for (size_t i = 1; i <= MAX_VOICES; i++) {
+        voicesChoices.add(std::to_string(i));
+    }
+    layout.add(std::make_unique<juce::AudioParameterChoice>("voices", "Number of Voices", voicesChoices, 3));
+
+    juce::StringArray rateChoices;
+    rateChoices.add("Whole");
+    rateChoices.add("Half");
+    rateChoices.add("Quarter");
+    rateChoices.add("Eighth");
+    rateChoices.add("Sixteenth");
+    layout.add(std::make_unique<juce::AudioParameterChoice>("rate", "Step Length", rateChoices, 2));
     for (size_t i = 0; i < MAX_STEPS; i++)
         for (size_t j = 0; j < MAX_VOICES; j++)
             layout.add(
