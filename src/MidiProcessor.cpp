@@ -40,7 +40,6 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midi,
     if (posInfo.isRecording || posInfo.isPlaying) {
         if (!transportOn) { // started transport
             DBG("started transport");
-            stopPlaying(midi, 0); // Reaper does this automatically
             cycleOn = false;
             transportOn = true;
             prevPpqPos = posInfo.ppqPosition;
@@ -55,15 +54,20 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midi,
 
     if (!cycleOn) {
         if (pressedNotes.size() > 0) { // notes pressed, so start cycle
-            DBG("start cycle, pressed notes: " << pressedNotes.size());
+            DBG("start cycle");
             cycleOn = true;
             nextStepIndex = 0;
             if (transportOn) {
-                nextStepPpqPos = std::ceil(posInfo.ppqPosition);
                 // start at next beat; don't try to align to bars
+                // nextStepPpqPos = std::ceil(posInfo.ppqPosition);
+                nextStepPpqPos = posInfo.ppqPosition;
                 // don't calculate in samples, since tempo may change
+                DBG("first step at " << nextStepPpqPos << " ppq, " << pressedNotes.size()
+                                     << " pressed notes");
             } else {
                 samplesUntilNextStep = static_cast<int>(PLAY_DELAY_SEC * sampleRate);
+                DBG("first step in " << samplesUntilNextStep << " samples, " << pressedNotes.size()
+                                     << " pressed notes");
             }
         } else {
             return;
@@ -112,12 +116,14 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midi,
         double ppqPosPerStep = 4.0f / STEP_VALUE;
         if (transportOn) {
             nextStepPpqPos += ppqPosPerStep;
-            DBG("next ppq pos: +" << ppqPosPerStep << ", pressed notes: " << pressedNotes.size());
+            DBG("next step in " << ppqPosPerStep << " ppq at " << nextStepPpqPos << " ppq, " << pressedNotes.size()
+                                << " pressed notes");
         } else {
-            double stepsPerSec = ((posInfo.bpm / 60) * ppqPosPerStep);
-            DBG("next ppq pos: +" << ppqPosPerStep << ", steps per sec: " << stepsPerSec << ", pressed notes: "
-                                  << pressedNotes.size());
+            double stepsPerSec = (posInfo.bpm / 60) * ppqPosPerStep;
             samplesUntilNextStep = static_cast<int>(std::ceil(sampleRate / stepsPerSec));
+            DBG("next step in " << samplesUntilNextStep << " samples or "
+                                << (1 / stepsPerSec) << " secs, " << pressedNotes.size()
+                                << " pressed notes");
         }
     }
 }
