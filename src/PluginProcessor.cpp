@@ -18,8 +18,8 @@ PluginProcessor::~PluginProcessor() {
 juce::AudioProcessorValueTreeState::ParameterLayout PluginProcessor::createParameterLayout() {
     juce::AudioProcessorValueTreeState::ParameterLayout layout;
     layout.add(std::make_unique<juce::AudioParameterFloat>("speed", "Arpeggiator Speed", 0.0f, 1.0f, 0.5f));
-    for (size_t i = 0; i < NUM_STEPS; i++)
-        for (size_t j = 0; j < NUM_VOICES; j++)
+    for (size_t i = 0; i < MAX_STEPS; i++)
+        for (size_t j = 0; j < MAX_VOICES; j++)
             layout.add(
                     std::make_unique<juce::AudioParameterBool>("voice_" + std::to_string(i) + "_" + std::to_string(j),
                                                                "Voice On", false));

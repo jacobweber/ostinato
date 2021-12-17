@@ -60,7 +60,7 @@ public:
 
 private:
     juce::AudioParameterFloat *speedParameter = nullptr;
-    std::array<StripData, NUM_VOICES> stepData;
+    std::array<StripData, MAX_VOICES> stepData;
 
     juce::AudioProcessorValueTreeState parameters;
     State state{parameters};

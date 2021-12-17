@@ -5,7 +5,7 @@
 
 PluginEditor::PluginEditor(PluginProcessor &p, State &s)
         : AudioProcessorEditor(&p), state(s) {
-    for (size_t i = 0; i < NUM_STEPS; i++) {
+    for (size_t i = 0; i < MAX_STEPS; i++) {
         strips.push_back(std::unique_ptr<StepStrip>(new StepStrip(state, i)));
         addAndMakeVisible(*strips[i]);
     }
@@ -51,7 +51,7 @@ void PluginEditor::resized() {
     messagesBox.setBounds(area.removeFromBottom(100).reduced(8));
 
     juce::FlexBox fb;
-    for (size_t i = 0; i < NUM_STEPS; i++)
+    for (size_t i = 0; i < MAX_STEPS; i++)
         if (strips.size() > i)
             fb.items.add(juce::FlexItem(*strips[i]).withHeight((float) area.getHeight()).withWidth(100));
     fb.performLayout(area.toFloat());

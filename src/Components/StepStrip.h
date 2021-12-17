@@ -12,7 +12,7 @@ public:
     typedef juce::AudioProcessorValueTreeState::ButtonAttachment ButtonAttachment;
 
     StepStrip(State &s, size_t n) : stepNum(n), state(s) {
-        for (size_t i = 0; i < NUM_VOICES; i++) {
+        for (size_t i = 0; i < MAX_VOICES; i++) {
             voices.push_back(std::unique_ptr<juce::TextButton>(new juce::TextButton()));
             voices[i]->setClickingTogglesState(true);
             voices[i]->setButtonText(std::to_string(i + 1));
@@ -37,7 +37,7 @@ public:
     void resized() override {
         auto area = getLocalBounds().reduced(4);
         area.removeFromTop(20);
-        for (size_t i = 0; i < NUM_VOICES; i++)
+        for (size_t i = 0; i < MAX_VOICES; i++)
             if (voices.size() > i) {
                 voices[i]->setBounds(area.removeFromTop(20));
                 area.removeFromTop(2);
