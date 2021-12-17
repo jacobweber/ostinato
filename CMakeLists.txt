@@ -128,7 +128,8 @@ enable_testing()
 # All test .cpp files should be listed here
 set(TestFiles
         test/CatchMain.cpp
-        test/PluginInfo.cpp)
+        test/PluginInfo.cpp
+        test/MidiValue.cpp)
 
 # Download the tagged version of Catch2
 Include(FetchContent)

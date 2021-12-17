@@ -18,8 +18,8 @@ void MidiProcessor::init(double sr) {
 }
 
 void MidiProcessor::stopPlaying(juce::MidiBuffer &midi, int offset) {
-    for (auto const &i: playingNotes) {
-        midi.addEvent(juce::MidiMessage::noteOff(1, i), offset);
+    for (auto const &noteValue: playingNotes) {
+        midi.addEvent(juce::MidiMessage::noteOff(noteValue.channel, noteValue.note), offset);
     }
     playingNotes.clear();
 }
@@ -29,10 +29,11 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midi,
                        const juce::AudioPlayHead::CurrentPositionInfo &posInfo) {
     for (const auto metadata: midi) {
         const auto msg = metadata.getMessage();
+        MidiValue noteValue{msg.getNoteNumber(), msg.getChannel()};
         if (msg.isNoteOn()) {
-            pressedNotes.add(msg.getNoteNumber());
+            pressedNotes.add(noteValue);
         } else if (msg.isNoteOff()) {
-            pressedNotes.removeValue(msg.getNoteNumber());
+            pressedNotes.removeValue(noteValue);
         }
     }
 
@@ -107,9 +108,10 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midi,
         size_t voiceNum = nextStepIndex % NUM_VOICES; // for now
         auto noteIndex = static_cast<size_t>(juce::jmin((int) voiceNum, pressedNotes.size() -
                                                                         1)); // repeat top note if we don't have enough
-        int noteValue = pressedNotes[static_cast<int>(noteIndex)];
+        MidiValue noteValue = pressedNotes[static_cast<int>(noteIndex)];
         stopPlaying(midi, samplesUntilNextStep);
-        midi.addEvent(juce::MidiMessage::noteOn(1, noteValue, (juce::uint8) 90), sampleOffsetWithinFrame);
+        midi.addEvent(juce::MidiMessage::noteOn(noteValue.channel, noteValue.note, (juce::uint8) 90),
+                      sampleOffsetWithinFrame);
         playingNotes.add(noteValue);
 
         // prepare next step
