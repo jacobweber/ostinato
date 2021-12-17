@@ -5,10 +5,10 @@
 #include <vector>
 
 #include "../State.h"
+#include "../Constants.h"
 
 class StepStrip : public juce::Component {
 public:
-    const static size_t NUM_VOICES = 4;
     typedef juce::AudioProcessorValueTreeState::ButtonAttachment ButtonAttachment;
 
     StepStrip(State &s, size_t n) : stepNum(n), state(s) {

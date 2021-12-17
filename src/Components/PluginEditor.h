@@ -9,7 +9,6 @@
 
 class PluginEditor : public juce::AudioProcessorEditor, private juce::Timer {
 public:
-    const static size_t NUM_STEPS = 3;
     typedef juce::AudioProcessorValueTreeState::SliderAttachment SliderAttachment;
 
     PluginEditor(PluginProcessor &, State &);

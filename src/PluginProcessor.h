@@ -7,6 +7,7 @@
 #include "State.h"
 #include "StripData.h"
 #include "Components/StepStrip.h"
+#include "Constants.h"
 
 class PluginProcessor : public juce::AudioProcessor {
 public:
@@ -59,7 +60,7 @@ public:
 
 private:
     juce::AudioParameterFloat *speedParameter = nullptr;
-    std::array<StripData, StepStrip::NUM_VOICES> stepData;
+    std::array<StripData, NUM_VOICES> stepData;
 
     juce::AudioProcessorValueTreeState parameters;
     State state{parameters};

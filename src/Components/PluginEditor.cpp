@@ -1,6 +1,7 @@
 #include "../PluginProcessor.h"
 #include "PluginEditor.h"
 #include "../Timecode.h"
+#include "../Constants.h"
 
 PluginEditor::PluginEditor(PluginProcessor &p, State &s)
         : AudioProcessorEditor(&p), state(s) {

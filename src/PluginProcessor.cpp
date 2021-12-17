@@ -3,6 +3,7 @@
 #include "PluginProcessor.h"
 #include "Components/PluginEditor.h"
 #include "Components/StepStrip.h"
+#include "Constants.h"
 
 PluginProcessor::PluginProcessor()
         : AudioProcessor(BusesProperties()
@@ -10,8 +11,8 @@ PluginProcessor::PluginProcessor()
                                  .withOutput("Output", juce::AudioChannelSet::stereo(), true)),
           parameters(*this, nullptr, juce::Identifier("Ostinato"), createParameterLayout()) {
     speedParameter = dynamic_cast<juce::AudioParameterFloat *> (parameters.getParameter("speed"));
-    for (size_t i = 0; i < PluginEditor::NUM_STEPS; i++) {
-        for (size_t j = 0; j < StepStrip::NUM_VOICES; j++) {
+    for (size_t i = 0; i < NUM_STEPS; i++) {
+        for (size_t j = 0; j < NUM_VOICES; j++) {
             juce::AudioParameterBool *p = dynamic_cast<juce::AudioParameterBool *> (parameters.getParameter(
                     "voice_" + std::to_string(i) + "_" + std::to_string(j)));
             stepData[i].voiceParameters[j] = p ? p : nullptr;
@@ -25,8 +26,8 @@ PluginProcessor::~PluginProcessor() {
 juce::AudioProcessorValueTreeState::ParameterLayout PluginProcessor::createParameterLayout() {
     juce::AudioProcessorValueTreeState::ParameterLayout layout;
     layout.add(std::make_unique<juce::AudioParameterFloat>("speed", "Arpeggiator Speed", 0.0f, 1.0f, 0.5f));
-    for (size_t i = 0; i < PluginEditor::NUM_STEPS; i++)
-        for (size_t j = 0; j < StepStrip::NUM_VOICES; j++)
+    for (size_t i = 0; i < NUM_STEPS; i++)
+        for (size_t j = 0; j < NUM_VOICES; j++)
             layout.add(
                     std::make_unique<juce::AudioParameterBool>("voice_" + std::to_string(i) + "_" + std::to_string(j),
                                                                "Voice On", false));
