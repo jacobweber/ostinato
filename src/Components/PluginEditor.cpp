@@ -80,7 +80,7 @@ void PluginEditor::resized() {
     messagesBox.setBounds(area.removeFromBottom(100).reduced(8));
 
     juce::FlexBox top;
-    juce::Rectangle<int> topArea = area.removeFromTop(20).reduced(8);
+    juce::Rectangle<int> topArea = area.removeFromTop(40).reduced(8);
     top.items.add(juce::FlexItem(stepsMenu).withHeight((float) topArea.getHeight()).withWidth(150));
     top.items.add(juce::FlexItem(voicesMenu).withHeight((float) topArea.getHeight()).withWidth(150));
     top.items.add(juce::FlexItem(rateMenu).withHeight((float) topArea.getHeight()).withWidth(150));
