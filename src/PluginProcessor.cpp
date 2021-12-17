@@ -117,19 +117,17 @@ void PluginProcessor::setStateInformation(const void *data, int sizeInBytes) {
 }
 
 juce::AudioPlayHead::CurrentPositionInfo PluginProcessor::updateCurrentTimeInfoFromHost() {
-    return [&] {
-        if (auto *ph = getPlayHead()) {
-            juce::AudioPlayHead::CurrentPositionInfo result;
-
-            if (ph->getCurrentPosition(result))
-                return result;
-        }
-
-        // If the host fails to provide the current time, we'll just use default values
+    if (auto *ph = getPlayHead()) {
         juce::AudioPlayHead::CurrentPositionInfo result;
-        result.resetToDefault();
-        return result;
-    }();
+
+        if (ph->getCurrentPosition(result))
+            return result;
+    }
+
+    // If the host fails to provide the current time, we'll just use default values
+    juce::AudioPlayHead::CurrentPositionInfo result;
+    result.resetToDefault();
+    return result;
 }
 
 juce::AudioProcessor *JUCE_CALLTYPE createPluginFilter() {
