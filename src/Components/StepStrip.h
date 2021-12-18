@@ -56,7 +56,7 @@ public:
                 addAndMakeVisible(*voices[i]);
                 voicesAttachments.push_back(std::unique_ptr<ButtonAttachment>(
                         new ButtonAttachment(state.parameters,
-                                             "voice_" + std::to_string(stepNum) + "_" + std::to_string(i),
+                                             "step" + std::to_string(stepNum) + "_voice" + std::to_string(i),
                                              *voices[i])));
             }
             oldNumVoices = newNumVoices;

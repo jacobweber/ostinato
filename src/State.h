@@ -14,7 +14,7 @@ public:
         for (size_t i = 0; i < MAX_STEPS; i++) {
             for (size_t j = 0; j < MAX_VOICES; j++) {
                 juce::AudioParameterBool *param = dynamic_cast<juce::AudioParameterBool *> (parameters.getParameter(
-                        "voice_" + std::to_string(i) + "_" + std::to_string(j)));
+                        "step" + std::to_string(i) + "_voice" + std::to_string(j)));
                 stepData[i].voiceParameters[j] = param ? param : nullptr;
             }
         }
