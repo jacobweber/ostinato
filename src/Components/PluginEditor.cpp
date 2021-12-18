@@ -50,6 +50,8 @@ PluginEditor::PluginEditor(PluginProcessor &p, State &s)
     rateMenu.addItem("Quarter", 3);
     rateMenu.addItem("Eighth", 4);
     rateMenu.addItem("Sixteenth", 5);
+    rateMenu.addItem("Thirty-Second", 6);
+    rateMenu.addItem("Sixty-Fourth", 7);
     addAndMakeVisible(rateMenu);
     rateAttachment.reset(new ComboBoxAttachment(state.parameters, "rate", rateMenu));
 

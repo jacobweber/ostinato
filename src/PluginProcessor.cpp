@@ -37,6 +37,8 @@ juce::AudioProcessorValueTreeState::ParameterLayout PluginProcessor::createParam
     rateChoices.add("Quarter");
     rateChoices.add("Eighth");
     rateChoices.add("Sixteenth");
+    rateChoices.add("Thirty-Second");
+    rateChoices.add("Sixty-Fourth");
     layout.add(std::make_unique<juce::AudioParameterChoice>("rate", "Step Length", rateChoices, 2));
     for (size_t i = 0; i < MAX_STEPS; i++)
         for (size_t j = 0; j < MAX_VOICES; j++)
