@@ -34,9 +34,9 @@ private:
 
     juce::Font textFont{12.0f};
 
-    juce::Label stepsLabel{{}, "Number of steps"};
+    juce::Label stepsLabel{{}, "Steps"};
     juce::ComboBox stepsMenu;
-    juce::Label voicesLabel{{}, "Number of voices"};
+    juce::Label voicesLabel{{}, "Voices"};
     juce::ComboBox voicesMenu;
     juce::Label rateLabel{{}, "Step length"};
     juce::ComboBox rateMenu;

@@ -75,6 +75,7 @@ void PluginEditor::resized() {
     auto area = getLocalBounds();
 
     timecodeDisplayLabel.setBounds(area.removeFromTop(26));
+    area.removeFromTop(10);
     messagesBox.setBounds(area.removeFromBottom(100).reduced(8));
 
     juce::FlexBox top;
