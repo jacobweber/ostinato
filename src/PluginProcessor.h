@@ -59,7 +59,6 @@ public:
     SpinLockedPosInfo lastPosInfo;
 
 private:
-    juce::AudioParameterFloat *speedParameter = nullptr;
     std::array<StepData, MAX_VOICES> stepData;
 
     juce::AudioProcessorValueTreeState parameters;

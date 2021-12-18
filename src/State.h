@@ -8,7 +8,6 @@
 class State {
 public:
     State(juce::AudioProcessorValueTreeState &p) : parameters(p) {
-        speedParameter = dynamic_cast<juce::AudioParameterFloat *> (parameters.getParameter("speed"));
         stepsParameter = dynamic_cast<juce::AudioParameterChoice *> (parameters.getParameter("steps"));
         voicesParameter = dynamic_cast<juce::AudioParameterChoice *> (parameters.getParameter("voices"));
         rateParameter = dynamic_cast<juce::AudioParameterChoice *> (parameters.getParameter("rate"));
@@ -24,7 +23,6 @@ public:
 public:
     juce::AudioProcessorValueTreeState &parameters;
 
-    juce::AudioParameterFloat *speedParameter = nullptr;
     juce::AudioParameterChoice *stepsParameter = nullptr;
     juce::AudioParameterChoice *voicesParameter = nullptr;
     juce::AudioParameterChoice *rateParameter = nullptr;

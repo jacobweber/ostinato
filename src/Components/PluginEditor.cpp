@@ -8,14 +8,6 @@ PluginEditor::PluginEditor(PluginProcessor &p, State &s)
     addAndMakeVisible(timecodeDisplayLabel);
     timecodeDisplayLabel.setFont(juce::Font(juce::Font::getDefaultMonospacedFontName(), 15.0f, juce::Font::plain));
 
-    speedSlider.setSliderStyle(juce::Slider::LinearBar);
-    speedSlider.setRange(0.0, 1.0);
-    speedSlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 90, 0);
-    speedSlider.setPopupDisplayEnabled(true, false, this);
-    speedSlider.setTextValueSuffix(" Speed");
-    addAndMakeVisible(speedSlider);
-    speedAttachment.reset(new SliderAttachment(state.parameters, "speed", speedSlider));
-
     addAndMakeVisible(stepsLabel);
     stepsLabel.setFont(textFont);
     stepsLabel.attachToComponent(&stepsMenu, false);
@@ -83,7 +75,6 @@ void PluginEditor::resized() {
     auto area = getLocalBounds();
 
     timecodeDisplayLabel.setBounds(area.removeFromTop(26));
-    speedSlider.setBounds(area.removeFromTop(50).reduced(8));
     messagesBox.setBounds(area.removeFromBottom(100).reduced(8));
 
     juce::FlexBox top;

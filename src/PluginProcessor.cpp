@@ -17,7 +17,6 @@ PluginProcessor::~PluginProcessor() {
 
 juce::AudioProcessorValueTreeState::ParameterLayout PluginProcessor::createParameterLayout() {
     juce::AudioProcessorValueTreeState::ParameterLayout layout;
-    layout.add(std::make_unique<juce::AudioParameterFloat>("speed", "Arpeggiator Speed", 0.0f, 1.0f, 0.5f));
 
     juce::StringArray stepsChoices;
     for (size_t i = 1; i <= MAX_STEPS; i++) {

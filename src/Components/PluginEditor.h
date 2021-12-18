@@ -31,7 +31,6 @@ private:
     State &state;
 
     juce::Label timecodeDisplayLabel;
-    juce::Slider speedSlider;
 
     juce::Font textFont{12.0f};
 
@@ -46,7 +45,6 @@ private:
 
     // use unique_ptr so it can be destroyed when UI is
     // declare after components so it's destroyed before them
-    std::unique_ptr<SliderAttachment> speedAttachment;
     std::unique_ptr<ComboBoxAttachment> stepsAttachment;
     std::unique_ptr<ComboBoxAttachment> voicesAttachment;
     std::unique_ptr<ComboBoxAttachment> rateAttachment;
