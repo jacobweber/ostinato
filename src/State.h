@@ -28,5 +28,5 @@ public:
     juce::AudioParameterChoice *stepsParameter = nullptr;
     juce::AudioParameterChoice *voicesParameter = nullptr;
     juce::AudioParameterChoice *rateParameter = nullptr;
-    std::array<StepData, MAX_VOICES> stepData;
+    std::array<StepData, MAX_STEPS> stepData;
 };
