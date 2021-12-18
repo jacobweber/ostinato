@@ -27,7 +27,7 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midi,
                        const juce::AudioPlayHead::CurrentPositionInfo &posInfo, State &state) {
     for (const auto metadata: midi) {
         const auto msg = metadata.getMessage();
-        MidiValue noteValue{msg.getNoteNumber(), msg.getChannel()};
+        MidiValue noteValue{msg.getNoteNumber(), msg.getChannel(), msg.getVelocity()};
         if (msg.isNoteOn()) {
             pressedNotes.add(noteValue);
         } else if (msg.isNoteOff()) {
@@ -113,7 +113,7 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midi,
                                                                 pressedNotes.size() -
                                                                 1)); // repeat top note if we don't have enough
                 MidiValue noteValue = pressedNotes[static_cast<int>(noteIndex)];
-                midi.addEvent(juce::MidiMessage::noteOn(noteValue.channel, noteValue.note, (juce::uint8) 90),
+                midi.addEvent(juce::MidiMessage::noteOn(noteValue.channel, noteValue.note, (juce::uint8) noteValue.vel),
                               sampleOffsetWithinFrame);
                 playingNotes.add(noteValue);
             }

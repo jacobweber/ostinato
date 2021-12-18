@@ -1,7 +1,7 @@
 #pragma once
 
 struct MidiValue {
-    int note, channel;
+    int note, channel, vel;
 
     bool operator==(const MidiValue &r) const { return note == r.note && channel == r.channel; }
 
