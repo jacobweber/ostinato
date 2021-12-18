@@ -13,17 +13,7 @@ public:
 
     StepStrip(State &s, size_t n) : stepNum(n), state(s) {
         DBG("created strip " << stepNum);
-        size_t numVoices = static_cast<size_t>(state.voicesParameter->getIndex() + 1);
-        for (size_t i = 0; i < numVoices; i++) {
-            voices.push_back(std::unique_ptr<juce::TextButton>(new juce::TextButton()));
-            voices[i]->setClickingTogglesState(true);
-            voices[i]->setButtonText(std::to_string(i + 1));
-            voices[i]->setColour(juce::TextButton::ColourIds::buttonOnColourId, juce::Colours::red);
-            addAndMakeVisible(*voices[i]);
-            voicesAttachments.push_back(std::unique_ptr<ButtonAttachment>(
-                    new ButtonAttachment(state.parameters, "voice_" + std::to_string(stepNum) + "_" + std::to_string(i),
-                                         *voices[i])));
-        }
+        refresh();
     }
 
     ~StepStrip() override {

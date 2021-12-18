@@ -11,11 +11,7 @@
 class ChannelStrips : public juce::Component {
 public:
     ChannelStrips(State &s) : state(s) {
-        size_t numSteps = static_cast<size_t>(state.stepsParameter->getIndex() + 1);
-        for (size_t i = 0; i < numSteps; i++) {
-            strips.push_back(std::unique_ptr<StepStrip>(new StepStrip(state, i)));
-            addAndMakeVisible(*strips[i]);
-        }
+        refresh();
     }
 
     void paint(juce::Graphics &) override {
