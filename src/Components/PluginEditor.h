@@ -25,6 +25,8 @@ public:
 
     PluginProcessor &getProcessor() const;
 
+    void refreshSize();
+
 private:
     State &state;
 

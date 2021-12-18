@@ -22,7 +22,10 @@ PluginEditor::PluginEditor(PluginProcessor &p, State &s)
     for (size_t i = 1; i <= MAX_STEPS; i++) {
         stepsMenu.addItem(std::to_string(i), static_cast<int>(i));
     }
-    stepsMenu.onChange = [this] { channelStrips.refresh(); };
+    stepsMenu.onChange = [this] {
+        refreshSize();
+        channelStrips.refresh();
+    };
     addAndMakeVisible(stepsMenu);
     stepsAttachment.reset(new ComboBoxAttachment(state.parameters, "steps", stepsMenu));
 
@@ -32,7 +35,10 @@ PluginEditor::PluginEditor(PluginProcessor &p, State &s)
     for (size_t i = 1; i <= MAX_VOICES; i++) {
         voicesMenu.addItem(std::to_string(i), static_cast<int>(i));
     }
-    voicesMenu.onChange = [this] { channelStrips.refresh(); };
+    voicesMenu.onChange = [this] {
+        refreshSize();
+        channelStrips.refresh();
+    };
     addAndMakeVisible(voicesMenu);
     voicesAttachment.reset(new ComboBoxAttachment(state.parameters, "voices", voicesMenu));
 
@@ -60,7 +66,7 @@ PluginEditor::PluginEditor(PluginProcessor &p, State &s)
     messagesBox.setColour(juce::TextEditor::outlineColourId, juce::Colour(0x1c000000));
     messagesBox.setColour(juce::TextEditor::shadowColourId, juce::Colour(0x16000000));
 
-    setSize(600, 600); // resize after initialization
+    refreshSize(); // resize after initialization
     startTimerHz(30);
 }
 
@@ -100,4 +106,10 @@ void PluginEditor::timerCallback() {
 
 PluginProcessor &PluginEditor::getProcessor() const {
     return static_cast<PluginProcessor &>(processor);
+}
+
+void PluginEditor::refreshSize() {
+    int numSteps = state.stepsParameter->getIndex() + 1;
+    int width = juce::jmin(1200, juce::jmax(600, 100 * numSteps));
+    setSize(width, 600);
 }
