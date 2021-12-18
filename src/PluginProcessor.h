@@ -5,7 +5,7 @@
 #include "MidiProcessor.h"
 #include "SpinLockedPosInfo.h"
 #include "State.h"
-#include "StripData.h"
+#include "StepData.h"
 #include "Components/StepStrip.h"
 #include "Constants.h"
 
@@ -60,7 +60,7 @@ public:
 
 private:
     juce::AudioParameterFloat *speedParameter = nullptr;
-    std::array<StripData, MAX_VOICES> stepData;
+    std::array<StepData, MAX_VOICES> stepData;
 
     juce::AudioProcessorValueTreeState parameters;
     State state{parameters};

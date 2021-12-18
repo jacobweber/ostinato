@@ -2,7 +2,7 @@
 
 #include <juce_audio_utils/juce_audio_utils.h>
 
-#include "StripData.h"
+#include "StepData.h"
 #include "Constants.h"
 
 class State {
@@ -28,5 +28,5 @@ public:
     juce::AudioParameterChoice *stepsParameter = nullptr;
     juce::AudioParameterChoice *voicesParameter = nullptr;
     juce::AudioParameterChoice *rateParameter = nullptr;
-    std::array<StripData, MAX_VOICES> stepData;
+    std::array<StepData, MAX_VOICES> stepData;
 };
