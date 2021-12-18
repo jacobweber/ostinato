@@ -1,11 +1,10 @@
 #pragma once
 
 #include "juce_audio_utils/juce_audio_utils.h"
-#include <vector>
 
 #include "../PluginProcessor.h"
-#include "StepStrip.h"
 #include "../State.h"
+#include "ChannelStrips.h"
 
 class PluginEditor : public juce::AudioProcessorEditor, private juce::Timer {
 public:
@@ -40,7 +39,7 @@ private:
     juce::ComboBox voicesMenu;
     juce::Label rateLabel{{}, "Step length"};
     juce::ComboBox rateMenu;
-    std::vector<std::unique_ptr<StepStrip>> strips;
+    ChannelStrips channelStrips{state};
     juce::TextEditor messagesBox;
 
     // use unique_ptr so it can be destroyed when UI is

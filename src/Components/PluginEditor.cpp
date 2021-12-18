@@ -5,10 +5,8 @@
 
 PluginEditor::PluginEditor(PluginProcessor &p, State &s)
         : AudioProcessorEditor(&p), state(s) {
-    for (size_t i = 0; i < MAX_STEPS; i++) {
-        strips.push_back(std::unique_ptr<StepStrip>(new StepStrip(state, i)));
-        addAndMakeVisible(*strips[i]);
-    }
+    addAndMakeVisible(timecodeDisplayLabel);
+    timecodeDisplayLabel.setFont(juce::Font(juce::Font::getDefaultMonospacedFontName(), 15.0f, juce::Font::plain));
 
     speedSlider.setSliderStyle(juce::Slider::LinearBar);
     speedSlider.setRange(0.0, 1.0);
@@ -47,6 +45,8 @@ PluginEditor::PluginEditor(PluginProcessor &p, State &s)
     addAndMakeVisible(rateMenu);
     rateAttachment.reset(new ComboBoxAttachment(state.parameters, "rate", rateMenu));
 
+    addAndMakeVisible(channelStrips);
+
     addAndMakeVisible(messagesBox);
     messagesBox.setMultiLine(true);
     messagesBox.setReturnKeyStartsNewLine(true);
@@ -57,9 +57,6 @@ PluginEditor::PluginEditor(PluginProcessor &p, State &s)
     messagesBox.setColour(juce::TextEditor::backgroundColourId, juce::Colour(0x32ffffff));
     messagesBox.setColour(juce::TextEditor::outlineColourId, juce::Colour(0x1c000000));
     messagesBox.setColour(juce::TextEditor::shadowColourId, juce::Colour(0x16000000));
-
-    addAndMakeVisible(timecodeDisplayLabel);
-    timecodeDisplayLabel.setFont(juce::Font(juce::Font::getDefaultMonospacedFontName(), 15.0f, juce::Font::plain));
 
     setSize(600, 600); // resize after initialization
     startTimerHz(30);
@@ -86,11 +83,7 @@ void PluginEditor::resized() {
     top.items.add(juce::FlexItem(rateMenu).withHeight((float) topArea.getHeight()).withWidth(150));
     top.performLayout(topArea.toFloat());
 
-    juce::FlexBox channelStrip;
-    for (size_t i = 0; i < MAX_STEPS; i++)
-        if (strips.size() > i)
-            channelStrip.items.add(juce::FlexItem(*strips[i]).withHeight((float) area.getHeight()).withWidth(100));
-    channelStrip.performLayout(area.toFloat());
+    channelStrips.setBounds(area);
 }
 
 void PluginEditor::logMessage(const juce::String &m) {
