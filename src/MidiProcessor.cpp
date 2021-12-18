@@ -107,9 +107,10 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midi,
         // play a step within this frame
         // should reset nextStepIndex to 0 if no longer a step
         stopPlaying(midi, sampleOffsetWithinFrame);
-        for (size_t voiceNum = 0; voiceNum < MAX_VOICES; voiceNum++) {
+        size_t numVoices = static_cast<size_t>(state.voicesParameter->getIndex()) + 1;
+        for (size_t voiceNum = 0; voiceNum < numVoices; voiceNum++) {
             if (state.stepData[nextStepIndex].voiceParameters[voiceNum]->get()) {
-                auto noteIndex = static_cast<size_t>(juce::jmin(static_cast<int>(MAX_VOICES - 1 - voiceNum),
+                auto noteIndex = static_cast<size_t>(juce::jmin(static_cast<int>(numVoices - 1 - voiceNum),
                                                                 pressedNotes.size() -
                                                                 1)); // repeat top note if we don't have enough
                 MidiValue noteValue = pressedNotes[static_cast<int>(noteIndex)];

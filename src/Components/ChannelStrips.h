@@ -31,6 +31,10 @@ public:
 
     void refresh() {
         refreshSteps();
+        size_t numSteps = strips.size();
+        for (size_t i = 0; i < numSteps; i++) {
+            strips[i]->refresh();
+        }
     }
 
     void refreshSteps() {

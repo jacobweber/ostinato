@@ -13,7 +13,8 @@ public:
 
     StepStrip(State &s, size_t n) : stepNum(n), state(s) {
         DBG("created strip " << stepNum);
-        for (size_t i = 0; i < MAX_VOICES; i++) {
+        size_t numVoices = static_cast<size_t>(state.voicesParameter->getIndex() + 1);
+        for (size_t i = 0; i < numVoices; i++) {
             voices.push_back(std::unique_ptr<juce::TextButton>(new juce::TextButton()));
             voices[i]->setClickingTogglesState(true);
             voices[i]->setButtonText(std::to_string(i + 1));
@@ -42,11 +43,43 @@ public:
     void resized() override {
         auto area = getLocalBounds().reduced(4);
         area.removeFromTop(20);
-        for (size_t i = 0; i < MAX_VOICES; i++)
+        for (size_t i = 0; i < voices.size(); i++)
             if (voices.size() > i) {
                 voices[i]->setBounds(area.removeFromTop(20));
                 area.removeFromTop(2);
             }
+    }
+
+    void refresh() {
+        refreshVoices();
+    }
+
+    void refreshVoices() {
+        size_t oldNumVoices = voices.size();
+        size_t newNumVoices = static_cast<size_t>(state.voicesParameter->getIndex() + 1);
+        if (newNumVoices > oldNumVoices) {
+            for (size_t i = oldNumVoices; i < newNumVoices; i++) {
+                voices.push_back(std::unique_ptr<juce::TextButton>(new juce::TextButton()));
+                voices[i]->setClickingTogglesState(true);
+                voices[i]->setButtonText(std::to_string(i + 1));
+                voices[i]->setColour(juce::TextButton::ColourIds::buttonOnColourId, juce::Colours::red);
+                addAndMakeVisible(*voices[i]);
+                voicesAttachments.push_back(std::unique_ptr<ButtonAttachment>(
+                        new ButtonAttachment(state.parameters,
+                                             "voice_" + std::to_string(stepNum) + "_" + std::to_string(i),
+                                             *voices[i])));
+            }
+            oldNumVoices = newNumVoices;
+            resized();
+        } else if (newNumVoices < oldNumVoices) {
+            for (size_t i = oldNumVoices - 1; i >= newNumVoices; i--) {
+                removeChildComponent(voices[i].get());
+                voicesAttachments.pop_back();
+                voices.pop_back();
+            }
+            oldNumVoices = newNumVoices;
+            resized();
+        }
     }
 
 private:
