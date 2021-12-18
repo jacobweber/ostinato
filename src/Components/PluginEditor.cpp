@@ -22,6 +22,7 @@ PluginEditor::PluginEditor(PluginProcessor &p, State &s)
     for (size_t i = 1; i <= MAX_STEPS; i++) {
         stepsMenu.addItem(std::to_string(i), static_cast<int>(i));
     }
+    stepsMenu.onChange = [this] { channelStrips.refresh(); };
     addAndMakeVisible(stepsMenu);
     stepsAttachment.reset(new ComboBoxAttachment(state.parameters, "steps", stepsMenu));
 
@@ -31,6 +32,7 @@ PluginEditor::PluginEditor(PluginProcessor &p, State &s)
     for (size_t i = 1; i <= MAX_VOICES; i++) {
         voicesMenu.addItem(std::to_string(i), static_cast<int>(i));
     }
+    voicesMenu.onChange = [this] { channelStrips.refresh(); };
     addAndMakeVisible(voicesMenu);
     voicesAttachment.reset(new ComboBoxAttachment(state.parameters, "voices", voicesMenu));
 

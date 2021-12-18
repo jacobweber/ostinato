@@ -12,6 +12,7 @@ public:
     typedef juce::AudioProcessorValueTreeState::ButtonAttachment ButtonAttachment;
 
     StepStrip(State &s, size_t n) : stepNum(n), state(s) {
+        DBG("created strip " << stepNum);
         for (size_t i = 0; i < MAX_VOICES; i++) {
             voices.push_back(std::unique_ptr<juce::TextButton>(new juce::TextButton()));
             voices[i]->setClickingTogglesState(true);
@@ -22,6 +23,10 @@ public:
                     new ButtonAttachment(state.parameters, "voice_" + std::to_string(stepNum) + "_" + std::to_string(i),
                                          *voices[i])));
         }
+    }
+
+    ~StepStrip() override {
+        DBG("destroyed strip " << stepNum);
     }
 
     void paint(juce::Graphics &g) override {
