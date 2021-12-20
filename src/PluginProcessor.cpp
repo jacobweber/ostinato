@@ -46,7 +46,8 @@ juce::AudioProcessorValueTreeState::ParameterLayout PluginProcessor::createParam
                             "step" + std::to_string(i) + "_voice" + std::to_string(j),
                             "Step " + std::to_string(i + 1) + " Voice " +
                             std::to_string(j + 1) + " On", false));
-        layout.add(std::make_unique<juce::AudioParameterFloat>("step" + std::to_string(i) + "_length", "length", 0.0f,
+        layout.add(std::make_unique<juce::AudioParameterFloat>("step" + std::to_string(i) + "_length",
+                                                               "Step " + std::to_string(i + 1) + " Note Length", 0.0f,
                                                                1.0f, 0.5f));
     }
     return layout;
