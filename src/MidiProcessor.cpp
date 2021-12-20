@@ -58,11 +58,12 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midiIn, juce::MidiBuffe
             DBG("start cycle at " << posInfo.ppqPosition);
             cycleOn = true;
             nextStepIndex = 0;
+            // we're not taking into account offset within frame of pressing notes
             if (transportOn) {
-                // start at next beat; don't try to align to bars
+                // start at current beat; don't try to align to bars
                 nextStepPpqPos = std::floor(posInfo.ppqPosition);
                 if (posInfo.ppqPosition - nextStepPpqPos > 0.05) {
-                    // Reaper seems to start a little late
+                    // Reaper seems to start a little late, otherwise start at next beat
                     nextStepPpqPos += 1;
                 }
                 // don't calculate in samples, since tempo may change
@@ -72,25 +73,19 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midiIn, juce::MidiBuffe
                 DBG("first step in " << samplesUntilNextStep << " samples, " << pressedNotes.size()
                                      << " pressed notes");
             }
-        } else {
-            return;
         }
     } else {
         if (pressedNotes.size() == 0) { // no notes pressed, so stop cycle
             DBG("stop cycle");
             stopPlaying(midiOut, 0);
             cycleOn = false;
-            return;
         }
     }
 
-    jassert(pressedNotes.size() > 0);
-
-    // see if we're playing or releasing a step within this frame
-    int playSampleOffsetWithinFrame = -1;
-    int releaseSampleOffsetWithinFrame = -1;
+    // make sure we're tracking ppq correctly
+    double ppqPerFrame = 0;
     if (transportOn) {
-        double ppqPerFrame = posInfo.ppqPosition - prevPpqPos; // changes depending on tempo/meter
+        ppqPerFrame = posInfo.ppqPosition - prevPpqPos; // changes depending on tempo/meter
         if (ppqPerFrame <= 0) { // jumped back, so we may be looping; can't use prevPpqPos
             // in the unlikely event that this happens on the first frame, we won't have nextPpqPos, so just play now
             if (nextPpqPos == 0) {
@@ -103,7 +98,15 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midiIn, juce::MidiBuffe
             DBG("looping back to " << posInfo.ppqPosition << " ppq, moved next step to " << nextStepPpqPos << " ppq");
         }
         prevPpqPos = posInfo.ppqPosition;
-        nextPpqPos = posInfo.ppqPosition + ppqPerFrame;
+        nextPpqPos = posInfo.ppqPosition + ppqPerFrame; // fix: shouldn't use ppqPerFrame if we looped
+    }
+
+    if (!cycleOn) return;
+
+    // see if we're playing or releasing a step within this frame
+    int playSampleOffsetWithinFrame = -1;
+    int releaseSampleOffsetWithinFrame = -1;
+    if (transportOn) {
         if (nextStepPpqPos < nextPpqPos) {
             double ppqOffset = juce::jmax(nextStepPpqPos - posInfo.ppqPosition, 0.0);
             playSampleOffsetWithinFrame = static_cast<int>(std::floor(numSamples * (ppqOffset / ppqPerFrame)));
