@@ -13,6 +13,7 @@ void MidiProcessor::init(double sr) {
     transportOn = false;
     prevPpqPos = 0;
     nextPpqPos = 0;
+    looped = false;
     nextStepIndex = 0;
 }
 
@@ -53,6 +54,29 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midiIn, juce::MidiBuffe
         transportOn = false;
     }
 
+    // make sure we're tracking ppq correctly
+    double ppqPerFrame = 0;
+    if (transportOn) {
+        if (posInfo.ppqPosition <= prevPpqPos) { // jumped back, so we may be looping; can't use prevPpqPos
+            looped = true;
+            prevPpqPos = posInfo.ppqPosition;
+            return; // skip a frame so we can calculate ppq per frame
+        }
+
+        ppqPerFrame = posInfo.ppqPosition - prevPpqPos; // changes depending on tempo/meter
+        prevPpqPos = posInfo.ppqPosition;
+
+        if (looped && cycleOn) {
+            // move scheduled release/play times back relative to their expected nextPpqPos
+            releasePpqPos -= nextPpqPos - posInfo.ppqPosition;
+            nextStepPpqPos -= nextPpqPos - posInfo.ppqPosition;
+            DBG("looping back to " << posInfo.ppqPosition << " ppq, moved next step to " << nextStepPpqPos << " ppq");
+        }
+
+        nextPpqPos = posInfo.ppqPosition + ppqPerFrame;
+    }
+    looped = false;
+
     if (!cycleOn) {
         if (pressedNotes.size() > 0) { // notes pressed, so start cycle
             DBG("start cycle at " << posInfo.ppqPosition);
@@ -80,25 +104,6 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midiIn, juce::MidiBuffe
             stopPlaying(midiOut, 0);
             cycleOn = false;
         }
-    }
-
-    // make sure we're tracking ppq correctly
-    double ppqPerFrame = 0;
-    if (transportOn) {
-        ppqPerFrame = posInfo.ppqPosition - prevPpqPos; // changes depending on tempo/meter
-        if (ppqPerFrame <= 0) { // jumped back, so we may be looping; can't use prevPpqPos
-            // in the unlikely event that this happens on the first frame, we won't have nextPpqPos, so just play now
-            if (nextPpqPos == 0) {
-                nextStepPpqPos = posInfo.ppqPosition;
-                releasePpqPos = nextStepPpqPos + 1; // fix
-            } else {
-                nextStepPpqPos -= nextPpqPos - posInfo.ppqPosition;
-                releasePpqPos -= nextPpqPos - posInfo.ppqPosition;
-            }
-            DBG("looping back to " << posInfo.ppqPosition << " ppq, moved next step to " << nextStepPpqPos << " ppq");
-        }
-        prevPpqPos = posInfo.ppqPosition;
-        nextPpqPos = posInfo.ppqPosition + ppqPerFrame; // fix: shouldn't use ppqPerFrame if we looped
     }
 
     if (!cycleOn) return;
