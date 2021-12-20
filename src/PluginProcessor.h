@@ -5,7 +5,6 @@
 #include "MidiProcessor.h"
 #include "SpinLockedPosInfo.h"
 #include "State.h"
-#include "StepState.h"
 #include "Components/StepStrip.h"
 #include "Constants.h"
 
