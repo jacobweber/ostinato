@@ -129,7 +129,8 @@ enable_testing()
 set(TestFiles
         test/CatchMain.cpp
         test/PluginInfo.cpp
-        test/MidiValue.cpp)
+        test/MidiValue.cpp
+        test/MidiProcessor.cpp)
 
 # Download the tagged version of Catch2
 Include(FetchContent)
