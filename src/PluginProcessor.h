@@ -5,7 +5,7 @@
 #include "MidiProcessor.h"
 #include "SpinLockedPosInfo.h"
 #include "State.h"
-#include "StepData.h"
+#include "StepState.h"
 #include "Components/StepStrip.h"
 #include "Constants.h"
 
@@ -59,7 +59,7 @@ public:
     SpinLockedPosInfo lastPosInfo;
 
 private:
-    std::array<StepData, MAX_VOICES> stepData;
+    std::array<StepState, MAX_VOICES> stepData;
 
     juce::AudioProcessorValueTreeState parameters;
     State state{parameters};

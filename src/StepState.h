@@ -2,7 +2,7 @@
 
 #include "Constants.h"
 
-class StepData {
+class StepState {
 public:
     juce::AudioParameterBool *voiceParameters[MAX_VOICES];
     juce::AudioParameterFloat *lengthParameter = nullptr;
