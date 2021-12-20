@@ -59,8 +59,6 @@ public:
     SpinLockedPosInfo lastPosInfo;
 
 private:
-    std::array<StepState, MAX_VOICES> stepData;
-
     juce::AudioProcessorValueTreeState parameters;
     State state{parameters};
     MidiProcessor midiProcessor;
