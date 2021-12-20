@@ -11,14 +11,14 @@ class MidiProcessor {
 public:
     void init(double sampleRate);
 
-    void stopPlaying(juce::MidiBuffer &midi, int offset);
+    void stopPlaying(juce::MidiBuffer &midiOut, int offset);
 
     void
-    process(int numSamples, juce::MidiBuffer &midi, const juce::AudioPlayHead::CurrentPositionInfo &posInfo,
+    process(int numSamples, juce::MidiBuffer &midiIn, juce::MidiBuffer &midiOut,
+            const juce::AudioPlayHead::CurrentPositionInfo &posInfo,
             State &state);
 
 private:
-    juce::MidiBuffer nextMidi;
     double sampleRate;
 
     juce::SortedSet<MidiValue> pressedNotes;

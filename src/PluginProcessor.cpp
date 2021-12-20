@@ -110,7 +110,9 @@ void PluginProcessor::processBlock(juce::AudioBuffer<float> &buffer, juce::MidiB
     lastPosInfo.set(posInfo);
 
     auto numSamples = buffer.getNumSamples();
-    midiProcessor.process(numSamples, midiMessages, posInfo, state);
+    midiOut.clear();
+    midiProcessor.process(numSamples, midiMessages, midiOut, posInfo, state);
+    midiMessages.swapWith(midiOut);
 }
 
 bool PluginProcessor::hasEditor() const {
