@@ -39,13 +39,16 @@ juce::AudioProcessorValueTreeState::ParameterLayout PluginProcessor::createParam
     rateChoices.add("Thirty-Second");
     rateChoices.add("Sixty-Fourth");
     layout.add(std::make_unique<juce::AudioParameterChoice>("rate", "Step Length", rateChoices, 2));
-    for (size_t i = 0; i < MAX_STEPS; i++)
+    for (size_t i = 0; i < MAX_STEPS; i++) {
         for (size_t j = 0; j < MAX_VOICES; j++)
             layout.add(
                     std::make_unique<juce::AudioParameterBool>(
                             "step" + std::to_string(i) + "_voice" + std::to_string(j),
                             "Step " + std::to_string(i + 1) + " Voice " +
                             std::to_string(j + 1) + " On", false));
+        layout.add(std::make_unique<juce::AudioParameterFloat>("step" + std::to_string(i) + "_length", "length", 0.0f,
+                                                               1.0f, 0.5f));
+    }
     return layout;
 }
 

@@ -10,9 +10,19 @@
 class StepStrip : public juce::Component {
 public:
     typedef juce::AudioProcessorValueTreeState::ButtonAttachment ButtonAttachment;
+    typedef juce::AudioProcessorValueTreeState::SliderAttachment SliderAttachment;
 
     StepStrip(State &s, size_t n) : stepNum(n), state(s) {
         DBG("created strip " << stepNum);
+
+        lengthSlider.setSliderStyle(juce::Slider::LinearBar);
+        lengthSlider.setRange(0.0, 1.0);
+        lengthSlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 90, 0);
+        lengthSlider.setPopupDisplayEnabled(true, false, this);
+        addAndMakeVisible(lengthSlider);
+        lengthAttachment.reset(
+                new SliderAttachment(state.parameters, "step" + std::to_string(stepNum) + "_length", lengthSlider));
+
         refresh();
     }
 
@@ -38,6 +48,8 @@ public:
                 voices[i]->setBounds(area.removeFromTop(20));
                 area.removeFromTop(2);
             }
+        area.removeFromTop(20);
+        lengthSlider.setBounds(area.removeFromTop(20));
     }
 
     void refresh() {
@@ -76,8 +88,10 @@ private:
     size_t stepNum = 0;
     State &state;
 
+    juce::Slider lengthSlider;
     std::vector<std::unique_ptr<juce::TextButton>> voices;
 
+    std::unique_ptr<SliderAttachment> lengthAttachment;
     std::vector<std::unique_ptr<ButtonAttachment>> voicesAttachments;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(StepStrip)
