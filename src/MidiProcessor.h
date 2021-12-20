@@ -28,6 +28,8 @@ private:
     bool transportOn;
     size_t nextStepIndex;
     double prevPpqPos;
+    double nextPpqPos; // predicted, in case we jump back in time and can't use prevPpqPos
+
     double nextStepPpqPos; // if transport running, ppq from start
     int samplesUntilNextStep; // if transport not running, samples left in current note
 };

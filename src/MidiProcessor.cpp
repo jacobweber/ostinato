@@ -12,6 +12,7 @@ void MidiProcessor::init(double sr) {
     cycleOn = false;
     transportOn = false;
     prevPpqPos = 0;
+    nextPpqPos = 0;
     nextStepIndex = 0;
 }
 
@@ -90,9 +91,15 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midiIn, juce::MidiBuffe
     int sampleOffsetWithinFrame = -1;
     if (transportOn) {
         double ppqPerFrame = posInfo.ppqPosition - prevPpqPos; // changes depending on tempo/meter
+        if (ppqPerFrame <= 0) { // jumped back, so we may be looping; can't use prevPpqPos
+            // in the unlikely event that this happens on the first frame, we won't have nextPpqPos, so just play now
+            if (nextPpqPos == 0) nextStepPpqPos = posInfo.ppqPosition;
+            else nextStepPpqPos -= nextPpqPos - posInfo.ppqPosition;
+            DBG("looping back to " << posInfo.ppqPosition << " ppq, moved next step to " << nextStepPpqPos << " ppq");
+        }
         prevPpqPos = posInfo.ppqPosition;
-        double frameEndPpqPos = posInfo.ppqPosition + ppqPerFrame;
-        if (nextStepPpqPos < frameEndPpqPos) {
+        nextPpqPos = posInfo.ppqPosition + ppqPerFrame;
+        if (nextStepPpqPos < nextPpqPos) {
             double ppqOffset = juce::jmax(nextStepPpqPos - posInfo.ppqPosition, 0.0);
             sampleOffsetWithinFrame = static_cast<int>(std::floor(numSamples * (ppqOffset / ppqPerFrame)));
         }
