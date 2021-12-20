@@ -25,6 +25,7 @@ void MidiProcessor::stopPlaying(juce::MidiBuffer &midi, int offset) {
 void
 MidiProcessor::process(int numSamples, juce::MidiBuffer &midi,
                        const juce::AudioPlayHead::CurrentPositionInfo &posInfo, State &state) {
+    nextMidi.clear();
     for (const auto metadata: midi) {
         const auto msg = metadata.getMessage();
         MidiValue noteValue{msg.getNoteNumber(), msg.getChannel(), msg.getVelocity()};
@@ -32,21 +33,23 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midi,
             pressedNotes.add(noteValue);
         } else if (msg.isNoteOff()) {
             pressedNotes.removeValue(noteValue);
+        } else {
+            nextMidi.addEvent(msg, metadata.samplePosition);
         }
     }
 
-    midi.clear();
     if (posInfo.isRecording || posInfo.isPlaying) {
         if (!transportOn) { // started transport
             DBG("started transport");
             cycleOn = false;
             transportOn = true;
             prevPpqPos = posInfo.ppqPosition;
+            midi.swapWith(nextMidi);
             return; // skip a frame so we can calculate ppq per frame
         }
     } else if (transportOn) { // stopped transport
         DBG("stopped transport");
-        stopPlaying(midi, 0);
+        stopPlaying(nextMidi, 0);
         cycleOn = false;
         transportOn = false;
     }
@@ -72,13 +75,15 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midi,
                                      << " pressed notes");
             }
         } else {
+            midi.swapWith(nextMidi);
             return;
         }
     } else {
         if (pressedNotes.size() == 0) { // no notes pressed, so stop cycle
             DBG("stop cycle");
-            stopPlaying(midi, 0);
+            stopPlaying(nextMidi, 0);
             cycleOn = false;
+            midi.swapWith(nextMidi);
             return;
         }
     }
@@ -106,7 +111,7 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midi,
     if (sampleOffsetWithinFrame != -1) {
         // play a step within this frame
         // should reset nextStepIndex to 0 if no longer a step
-        stopPlaying(midi, sampleOffsetWithinFrame);
+        stopPlaying(nextMidi, sampleOffsetWithinFrame);
         size_t numVoices = static_cast<size_t>(state.voicesParameter->getIndex()) + 1;
         for (size_t voiceNum = 0; voiceNum < numVoices; voiceNum++) {
             if (state.stepData[nextStepIndex].voiceParameters[voiceNum]->get()) {
@@ -114,8 +119,9 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midi,
                                                                 pressedNotes.size() -
                                                                 1)); // repeat top note if we don't have enough
                 MidiValue noteValue = pressedNotes[static_cast<int>(noteIndex)];
-                midi.addEvent(juce::MidiMessage::noteOn(noteValue.channel, noteValue.note, (juce::uint8) noteValue.vel),
-                              sampleOffsetWithinFrame);
+                nextMidi.addEvent(
+                        juce::MidiMessage::noteOn(noteValue.channel, noteValue.note, (juce::uint8) noteValue.vel),
+                        sampleOffsetWithinFrame);
                 playingNotes.add(noteValue);
             }
         }
@@ -140,4 +146,5 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midi,
                                 << " pressed notes, " << posInfo.bpm << " bpm");
         }
     }
+    midi.swapWith(nextMidi);
 }

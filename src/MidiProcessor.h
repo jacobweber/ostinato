@@ -18,6 +18,7 @@ public:
             State &state);
 
 private:
+    juce::MidiBuffer nextMidi;
     double sampleRate;
 
     juce::SortedSet<MidiValue> pressedNotes;
