@@ -66,8 +66,7 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midiIn, juce::MidiBuffe
                     nextStepPpqPos += 1;
                 }
                 // don't calculate in samples, since tempo may change
-                DBG("first step at " << nextStepPpqPos << " ppq, " << pressedNotes.size()
-                                     << " pressed notes");
+                DBG("first step at " << nextStepPpqPos << " ppq, " << pressedNotes.size() << " pressed notes");
             } else {
                 samplesUntilNextStep = static_cast<int>(PLAY_DELAY_SEC * sampleRate);
                 DBG("first step in " << samplesUntilNextStep << " samples, " << pressedNotes.size()
@@ -87,34 +86,57 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midiIn, juce::MidiBuffe
 
     jassert(pressedNotes.size() > 0);
 
-    // see if we're playing a step within this frame
-    int sampleOffsetWithinFrame = -1;
+    // see if we're playing or releasing a step within this frame
+    int playSampleOffsetWithinFrame = -1;
+    int releaseSampleOffsetWithinFrame = -1;
     if (transportOn) {
         double ppqPerFrame = posInfo.ppqPosition - prevPpqPos; // changes depending on tempo/meter
         if (ppqPerFrame <= 0) { // jumped back, so we may be looping; can't use prevPpqPos
             // in the unlikely event that this happens on the first frame, we won't have nextPpqPos, so just play now
-            if (nextPpqPos == 0) nextStepPpqPos = posInfo.ppqPosition;
-            else nextStepPpqPos -= nextPpqPos - posInfo.ppqPosition;
+            if (nextPpqPos == 0) {
+                nextStepPpqPos = posInfo.ppqPosition;
+                releasePpqPos = nextStepPpqPos + 1; // fix
+            } else {
+                nextStepPpqPos -= nextPpqPos - posInfo.ppqPosition;
+                releasePpqPos -= nextPpqPos - posInfo.ppqPosition;
+            }
             DBG("looping back to " << posInfo.ppqPosition << " ppq, moved next step to " << nextStepPpqPos << " ppq");
         }
         prevPpqPos = posInfo.ppqPosition;
         nextPpqPos = posInfo.ppqPosition + ppqPerFrame;
         if (nextStepPpqPos < nextPpqPos) {
             double ppqOffset = juce::jmax(nextStepPpqPos - posInfo.ppqPosition, 0.0);
-            sampleOffsetWithinFrame = static_cast<int>(std::floor(numSamples * (ppqOffset / ppqPerFrame)));
+            playSampleOffsetWithinFrame = static_cast<int>(std::floor(numSamples * (ppqOffset / ppqPerFrame)));
+        }
+        if (releasePpqPos < nextPpqPos) {
+            double ppqOffset = juce::jmax(releasePpqPos - posInfo.ppqPosition, 0.0);
+            releaseSampleOffsetWithinFrame = static_cast<int>(std::floor(numSamples * (ppqOffset / ppqPerFrame)));
         }
     } else {
         if (samplesUntilNextStep < numSamples) {
-            sampleOffsetWithinFrame = samplesUntilNextStep;
+            playSampleOffsetWithinFrame = samplesUntilNextStep;
         } else {
             samplesUntilNextStep -= numSamples;
         }
+        if (samplesUntilRelease < numSamples) {
+            releaseSampleOffsetWithinFrame = samplesUntilRelease;
+        } else {
+            samplesUntilRelease -= numSamples;
+        }
     }
 
-    if (sampleOffsetWithinFrame != -1) {
+    if (releaseSampleOffsetWithinFrame != -1) {
+        // release a step within this frame
+        stopPlaying(midiOut, releaseSampleOffsetWithinFrame);
+    }
+
+    if (playSampleOffsetWithinFrame != -1) {
         // play a step within this frame
-        // should reset nextStepIndex to 0 if no longer a step
-        stopPlaying(midiOut, sampleOffsetWithinFrame);
+        size_t lastStepIndex = static_cast<size_t>(state.stepsParameter->getIndex());
+        if (nextStepIndex > lastStepIndex) {
+            nextStepIndex = 0;
+        }
+
         size_t numVoices = static_cast<size_t>(state.voicesParameter->getIndex()) + 1;
         for (size_t voiceNum = 0; voiceNum < numVoices; voiceNum++) {
             if (state.stepState[nextStepIndex].voiceParameters[voiceNum]->get()) {
@@ -124,26 +146,30 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midiIn, juce::MidiBuffe
                 MidiValue noteValue = pressedNotes[static_cast<int>(noteIndex)];
                 midiOut.addEvent(
                         juce::MidiMessage::noteOn(noteValue.channel, noteValue.note, (juce::uint8) noteValue.vel),
-                        sampleOffsetWithinFrame);
+                        playSampleOffsetWithinFrame);
                 playingNotes.add(noteValue);
             }
         }
+        double length = state.stepState[nextStepIndex].lengthParameter->get();
 
-        // prepare next step
+        // prepare current release and next step
         nextStepIndex++;
-        if (nextStepIndex > static_cast<size_t>(state.stepsParameter->getIndex())) {
+        if (nextStepIndex > lastStepIndex) {
             nextStepIndex = 0;
         }
         DBG("next step: " << nextStepIndex << ", rate: " << std::pow(2, state.rateParameter->getIndex()));
 
         double ppqPosPerStep = 4.0f / std::pow(2, state.rateParameter->getIndex());
         if (transportOn) {
+            releasePpqPos = nextStepPpqPos + (length * ppqPosPerStep);
             nextStepPpqPos += ppqPosPerStep;
             DBG("next step in " << ppqPosPerStep << " ppq at " << nextStepPpqPos << " ppq, " << pressedNotes.size()
                                 << " pressed notes, " << posInfo.bpm << " bpm");
         } else {
             double stepsPerSec = (posInfo.bpm / 60) / ppqPosPerStep;
-            samplesUntilNextStep = static_cast<int>(std::ceil(sampleRate / stepsPerSec));
+            int samplesPerStep = static_cast<int>(std::ceil(sampleRate / stepsPerSec));
+            samplesUntilRelease = static_cast<int>(length * samplesPerStep);
+            samplesUntilNextStep = samplesPerStep;
             DBG("next step in " << ppqPosPerStep << " ppq or " << samplesUntilNextStep << " samples or "
                                 << (1 / stepsPerSec) << " secs, " << pressedNotes.size()
                                 << " pressed notes, " << posInfo.bpm << " bpm");

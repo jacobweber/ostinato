@@ -30,6 +30,9 @@ private:
     double prevPpqPos;
     double nextPpqPos; // predicted, in case we jump back in time and can't use prevPpqPos
 
+    double releasePpqPos; // if transport running, ppq from start
     double nextStepPpqPos; // if transport running, ppq from start
-    int samplesUntilNextStep; // if transport not running, samples left in current note
+
+    int samplesUntilRelease; // if transport not running, samples left in current note
+    int samplesUntilNextStep; // if transport not running, samples left in current step
 };
