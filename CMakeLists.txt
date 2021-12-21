@@ -148,7 +148,7 @@ target_compile_features(Tests PRIVATE cxx_std_20)
 
 # Pull in our plugin code for tests
 target_include_directories(Tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
-target_link_libraries(Tests PRIVATE Catch2::Catch2 Ostinato juce::juce_audio_utils)
+target_link_libraries(Tests PRIVATE Catch2::Catch2 Ostinato OstinatoData juce::juce_audio_utils)
 
 # Make an Xcode Scheme for the test executable so we can run tests in the IDE
 set_target_properties(Tests PROPERTIES XCODE_GENERATE_SCHEME ON)
