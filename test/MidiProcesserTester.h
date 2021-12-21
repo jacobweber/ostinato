@@ -51,15 +51,21 @@ public:
     }
 
     void processBlocks(int numBlocks) {
+        processBlocks(numBlocks, 0);
+    }
+
+    void processBlocks(int numBlocks, float ppqPerBlock) {
         blocksMidiOutString = "";
         for (int i = 0; i < numBlocks; i++) {
             midiOut.clear();
             if (lastBlockStartSample == -1) {
                 lastBlockStartSample = 0;
+                posInfo.ppqPosition += 0;
             } else {
                 lastBlockStartSample += bufferSize;
+                posInfo.ppqPosition += ppqPerBlock;
             }
-            DBG("-- frame " << i << " at " << lastBlockStartSample << " --");
+            DBG("-- frame " << i << " at " << lastBlockStartSample << " samples, " << posInfo.ppqPosition << " ppq --");
             mp.process(bufferSize, midiIn, midiOut, posInfo, state);
             midiIn.clear();
 
