@@ -182,7 +182,8 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midiIn, juce::MidiBuffe
             if (nextStepIndex > lastStepIndex) {
                 nextStepIndex = 0;
             }
-            DBG("next step: " << nextStepIndex << ", rate: " << std::pow(2, state.rateParameter->getIndex()));
+            DBG("next step index: " << nextStepIndex << ", rate: 1/" << std::pow(2, state.rateParameter->getIndex())
+                                    << ", length: " << length);
 
             double ppqPosPerStep = 4.0f / std::pow(2, state.rateParameter->getIndex());
             if (transportOn) {
