@@ -25,6 +25,27 @@ public:
         channelStrips.performLayout(area.toFloat());
     }
 
+    void refreshActiveStep() {
+        if (state.playing) {
+            if (oldPlaying) {
+                if (oldStepIndex != state.stepIndex) {
+                    strips[oldStepIndex]->refreshActiveLight();
+                    strips[state.stepIndex]->refreshActiveLight();
+                    oldStepIndex = state.stepIndex;
+                }
+            } else { // start
+                strips[state.stepIndex]->refreshActiveLight();
+                oldPlaying = state.playing;
+                oldStepIndex = state.stepIndex;
+            }
+        } else {
+            if (oldPlaying) { // stop
+                strips[oldStepIndex]->refreshActiveLight();
+                oldPlaying = state.playing;
+            }
+        }
+    }
+
     void refresh() {
         refreshSteps();
         size_t numSteps = strips.size();
@@ -55,6 +76,8 @@ public:
 
 private:
     State &state;
+    bool oldPlaying{false};
+    size_t oldStepIndex{0};
 
     // vectors move items into their own storage, but components can't be copied/moved
     // but unique_ptr can be moved, so the vector assumes ownership

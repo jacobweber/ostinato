@@ -61,7 +61,7 @@ PluginEditor::PluginEditor(PluginProcessor &p, State &s)
     messagesBox.setColour(juce::TextEditor::shadowColourId, juce::Colour(0x16000000));
 
     refreshSize(); // resize after initialization
-    startTimerHz(30);
+    startTimerHz(60);
 }
 
 PluginEditor::~PluginEditor() {
@@ -96,6 +96,7 @@ void PluginEditor::logMessage(const juce::String &m) {
 void PluginEditor::timerCallback() {
     juce::String newText = updateTimecodeDisplay(getProcessor().lastPosInfo.get());
     timecodeDisplayLabel.setText(newText, juce::dontSendNotification);
+    channelStrips.refreshActiveStep();
 }
 
 PluginProcessor &PluginEditor::getProcessor() const {

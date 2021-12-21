@@ -29,4 +29,7 @@ public:
     juce::AudioParameterChoice *voicesParameter = nullptr;
     juce::AudioParameterChoice *rateParameter = nullptr;
     std::array<StepState, MAX_STEPS> stepState;
+
+    std::atomic<size_t> stepIndex{0};
+    std::atomic<bool> playing{false};
 };

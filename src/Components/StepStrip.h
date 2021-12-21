@@ -6,6 +6,7 @@
 
 #include "../State.h"
 #include "../Constants.h"
+#include "ActiveLight.h"
 
 class StepStrip : public juce::Component {
 public:
@@ -14,6 +15,8 @@ public:
 
     StepStrip(State &s, size_t n) : stepNum(n), state(s) {
         DBG("created strip " << stepNum);
+
+        addAndMakeVisible(activeLight);
 
         lengthSlider.setSliderStyle(juce::Slider::LinearBar);
         lengthSlider.setRange(0.0, 1.0);
@@ -43,6 +46,10 @@ public:
     void resized() override {
         auto area = getLocalBounds().reduced(4);
         area.removeFromTop(20);
+
+        auto lightArea = area.removeFromTop(30).reduced(5);
+        activeLight.setBounds(lightArea.withSizeKeepingCentre(lightArea.getHeight(), lightArea.getHeight()));
+
         for (size_t i = 0; i < voices.size(); i++)
             if (voices.size() > i) {
                 voices[i]->setBounds(area.removeFromTop(20));
@@ -50,6 +57,10 @@ public:
             }
         area.removeFromTop(20);
         lengthSlider.setBounds(area.removeFromTop(20));
+    }
+
+    void refreshActiveLight() {
+        activeLight.repaint();
     }
 
     void refresh() {
@@ -85,9 +96,10 @@ public:
     }
 
 private:
-    size_t stepNum = 0;
+    size_t stepNum{0};
     State &state;
 
+    ActiveLight activeLight{state, stepNum};
     juce::Slider lengthSlider;
     std::vector<std::unique_ptr<juce::TextButton>> voices;
 

@@ -51,6 +51,7 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midiIn, juce::MidiBuffe
         DBG("stopped transport");
         stopPlaying(midiOut, 0);
         cycleOn = false;
+        state.playing = false;
         transportOn = false;
     }
 
@@ -82,6 +83,8 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midiIn, juce::MidiBuffe
             DBG("start cycle at " << posInfo.ppqPosition << " ppq");
             cycleOn = true;
             nextStepIndex = 0;
+            state.playing = true;
+            state.stepIndex = 0;
             // we're not taking into account offset within frame of pressing notes
             if (transportOn) {
                 // start at current beat; don't try to align to bars
@@ -105,6 +108,7 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midiIn, juce::MidiBuffe
             DBG("stop cycle");
             stopPlaying(midiOut, 0);
             cycleOn = false;
+            state.playing = false;
         }
     }
 
@@ -160,6 +164,7 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midiIn, juce::MidiBuffe
             if (nextStepIndex > lastStepIndex) {
                 nextStepIndex = 0;
             }
+            state.stepIndex = nextStepIndex;
 
             size_t numVoices = static_cast<size_t>(state.voicesParameter->getIndex()) + 1;
             for (size_t voiceNum = 0; voiceNum < numVoices; voiceNum++) {
