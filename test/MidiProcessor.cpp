@@ -15,9 +15,9 @@ TEST_CASE("MidiProcessor")
     TestAudioProcessor ap{ParametersFactory::create()};
     State state{ap.state};
 
-    *(state.stepsParameter) = 4; // index + 1
-    *(state.voicesParameter) = 4; // index + 1
-    *(state.rateParameter) = 3; // index + 1
+    *(state.stepsParameter) = 3; // index
+    *(state.voicesParameter) = 3; // index
+    *(state.rateParameter) = 2; // index
     for (size_t i = 0; i < 4; i++) {
         *(state.stepState[i].lengthParameter) = .5;
         for (size_t j = 0; j < 4; j++) {
@@ -43,8 +43,8 @@ TEST_CASE("MidiProcessor")
 
     juce::String out = "";
     for (const auto metadata: midiOut) {
-        out += metadata.getMessage().getDescription() + "\n";
+        out << metadata.samplePosition << ": " << metadata.getMessage().getDescription() << "\n";
     }
 
-    REQUIRE(out == "Note on C3 Velocity 100 Channel 1\n");
+    REQUIRE(out == "100: Note on C3 Velocity 100 Channel 1\n");
 }
