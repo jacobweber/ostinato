@@ -56,7 +56,6 @@ public:
 
     void resized() override {
         auto area = getLocalBounds().reduced(4);
-        area.removeFromTop(20);
 
         auto iconArea = area.removeFromTop(30);
         juce::FlexBox stepsBox;
