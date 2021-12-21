@@ -42,6 +42,15 @@ public:
         lengthAttachment.reset(
                 new SliderAttachment(state.parameters, "step" + std::to_string(stepNum) + "_length", lengthSlider));
 
+        volSlider.setSliderStyle(juce::Slider::LinearBarVertical);
+        volSlider.setRange(0.0, 1.0);
+        volSlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 90, 0);
+        volSlider.setPopupDisplayEnabled(true, false, this);
+        volSlider.setColour(juce::Slider::ColourIds::trackColourId, juce::Colours::grey);
+        addAndMakeVisible(volSlider);
+        volAttachment.reset(
+                new SliderAttachment(state.parameters, "step" + std::to_string(stepNum) + "_volume", volSlider));
+
         refresh();
     }
 
@@ -71,8 +80,12 @@ public:
                 voices[i]->setBounds(area.removeFromTop(20));
                 area.removeFromTop(2);
             }
+
         area.removeFromTop(20);
         lengthSlider.setBounds(area.removeFromTop(20));
+
+        area.removeFromTop(20);
+        volSlider.setBounds(area);
     }
 
     void refreshActiveLight() {
@@ -122,9 +135,11 @@ private:
     juce::TextButton fillButton;
     juce::Slider lengthSlider;
     std::vector<std::unique_ptr<juce::TextButton>> voices;
+    juce::Slider volSlider;
 
     std::unique_ptr<SliderAttachment> lengthAttachment;
     std::vector<std::unique_ptr<ButtonAttachment>> voicesAttachments;
+    std::unique_ptr<SliderAttachment> volAttachment;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(StepStrip)
 };

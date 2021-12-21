@@ -167,19 +167,21 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midiIn, juce::MidiBuffe
             state.stepIndex = nextStepIndex;
 
             size_t numVoices = static_cast<size_t>(state.voicesParameter->getIndex()) + 1;
+            double volume = state.stepState[nextStepIndex].volParameter->get();
             for (size_t voiceNum = 0; voiceNum < numVoices; voiceNum++) {
                 if (state.stepState[nextStepIndex].voiceParameters[voiceNum]->get()) {
                     auto noteIndex = static_cast<size_t>(juce::jmin(static_cast<int>(numVoices - 1 - voiceNum),
                                                                     pressedNotes.size() -
                                                                     1)); // repeat top note if we don't have enough
                     MidiValue noteValue = pressedNotes[static_cast<int>(noteIndex)];
+                    double vel = juce::jmin(volume * 2 * noteValue.vel, 127.0);
                     midiOut.addEvent(
-                            juce::MidiMessage::noteOn(noteValue.channel, noteValue.note, (juce::uint8) noteValue.vel),
+                            juce::MidiMessage::noteOn(noteValue.channel, noteValue.note, (juce::uint8) vel),
                             playSampleOffsetWithinFrame);
                     playingNotes.add(noteValue);
                 }
             }
-            DBG("play step at " << playSampleOffsetWithinFrame << " samples into frame");
+            DBG("play step at " << playSampleOffsetWithinFrame << " samples into frame, vol " << volume);
             double length = state.stepState[nextStepIndex].lengthParameter->get();
 
             // prepare current release and next step

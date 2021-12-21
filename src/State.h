@@ -14,6 +14,8 @@ public:
         for (size_t i = 0; i < MAX_STEPS; i++) {
             stepState[i].lengthParameter = dynamic_cast<juce::AudioParameterFloat *> (parameters.getParameter(
                     "step" + std::to_string(i) + "_length"));
+            stepState[i].volParameter = dynamic_cast<juce::AudioParameterFloat *> (parameters.getParameter(
+                    "step" + std::to_string(i) + "_volume"));
             for (size_t j = 0; j < MAX_VOICES; j++) {
                 juce::AudioParameterBool *param = dynamic_cast<juce::AudioParameterBool *> (parameters.getParameter(
                         "step" + std::to_string(i) + "_voice" + std::to_string(j)));

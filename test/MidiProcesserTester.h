@@ -20,6 +20,7 @@ public:
         *(state.rateParameter) = 2; // index
         for (size_t i = 0; i < MAX_STEPS; i++) {
             *(state.stepState[i].lengthParameter) = .5;
+            *(state.stepState[i].volParameter) = .5;
             for (size_t j = 0; j < MAX_VOICES; j++) {
                 *(state.stepState[i].voiceParameters[j]) = false;
             }
