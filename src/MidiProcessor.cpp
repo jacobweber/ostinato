@@ -79,7 +79,7 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midiIn, juce::MidiBuffe
 
     if (!cycleOn) {
         if (pressedNotes.size() > 0) { // notes pressed, so start cycle
-            DBG("start cycle at " << posInfo.ppqPosition);
+            DBG("start cycle at " << posInfo.ppqPosition << " ppq");
             cycleOn = true;
             nextStepIndex = 0;
             // we're not taking into account offset within frame of pressing notes
