@@ -12,9 +12,9 @@ public:
     void paint(juce::Graphics &g) override {
         g.setColour(juce::Colours::red);
         juce::Rectangle<float> outer = getLocalBounds().toFloat();
-        g.drawEllipse(outer.reduced(4), 1.0f);
+        g.drawEllipse(outer.reduced(1), 1.5f);
         if (state.playing && state.stepIndex == stepNum)
-            g.fillEllipse(outer.reduced(4));
+            g.fillEllipse(outer.reduced(3));
     }
 
 private:
