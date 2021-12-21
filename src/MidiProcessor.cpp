@@ -90,10 +90,12 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midiIn, juce::MidiBuffe
                     // Reaper seems to start a little late, otherwise start at next beat
                     nextStepPpqPos += 1;
                 }
+                releasePpqPos = -1;
                 // don't calculate in samples, since tempo may change
                 DBG("first step at " << nextStepPpqPos << " ppq, " << pressedNotes.size() << " pressed notes");
             } else {
                 samplesUntilNextStep = static_cast<int>(PLAY_DELAY_SEC * sampleRate);
+                samplesUntilRelease = -1;
                 DBG("first step in " << samplesUntilNextStep << " samples, " << pressedNotes.size()
                                      << " pressed notes");
             }
@@ -108,79 +110,97 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midiIn, juce::MidiBuffe
 
     if (!cycleOn) return;
 
-    // see if we're playing or releasing a step within this frame
-    int playSampleOffsetWithinFrame = -1;
-    int releaseSampleOffsetWithinFrame = -1;
-    if (transportOn) {
-        if (nextStepPpqPos < nextPpqPos) {
-            double ppqOffset = juce::jmax(nextStepPpqPos - posInfo.ppqPosition, 0.0);
-            playSampleOffsetWithinFrame = static_cast<int>(std::floor(numSamples * (ppqOffset / ppqPerFrame)));
-        }
-        if (releasePpqPos < nextPpqPos) {
-            double ppqOffset = juce::jmax(releasePpqPos - posInfo.ppqPosition, 0.0);
-            releaseSampleOffsetWithinFrame = static_cast<int>(std::floor(numSamples * (ppqOffset / ppqPerFrame)));
-        }
-    } else {
-        if (samplesUntilNextStep < numSamples) {
-            playSampleOffsetWithinFrame = samplesUntilNextStep;
+    while (true) {
+        // see if we're releasing a step within this frame
+        int releaseSampleOffsetWithinFrame = -1;
+        if (transportOn) {
+            if (releasePpqPos != -1) {
+                if (releasePpqPos < nextPpqPos) {
+                    double ppqOffset = juce::jmax(releasePpqPos - posInfo.ppqPosition, 0.0);
+                    releaseSampleOffsetWithinFrame = static_cast<int>(std::floor(
+                            numSamples * (ppqOffset / ppqPerFrame)));
+                    releasePpqPos = -1;
+                }
+            }
         } else {
-            samplesUntilNextStep -= numSamples;
-        }
-        if (samplesUntilRelease < numSamples) {
-            releaseSampleOffsetWithinFrame = samplesUntilRelease;
-        } else {
-            samplesUntilRelease -= numSamples;
-        }
-    }
-
-    if (releaseSampleOffsetWithinFrame != -1) {
-        // release a step within this frame
-        stopPlaying(midiOut, releaseSampleOffsetWithinFrame);
-    }
-
-    if (playSampleOffsetWithinFrame != -1) {
-        // play a step within this frame
-        size_t lastStepIndex = static_cast<size_t>(state.stepsParameter->getIndex());
-        if (nextStepIndex > lastStepIndex) {
-            nextStepIndex = 0;
-        }
-
-        size_t numVoices = static_cast<size_t>(state.voicesParameter->getIndex()) + 1;
-        for (size_t voiceNum = 0; voiceNum < numVoices; voiceNum++) {
-            if (state.stepState[nextStepIndex].voiceParameters[voiceNum]->get()) {
-                auto noteIndex = static_cast<size_t>(juce::jmin(static_cast<int>(numVoices - 1 - voiceNum),
-                                                                pressedNotes.size() -
-                                                                1)); // repeat top note if we don't have enough
-                MidiValue noteValue = pressedNotes[static_cast<int>(noteIndex)];
-                midiOut.addEvent(
-                        juce::MidiMessage::noteOn(noteValue.channel, noteValue.note, (juce::uint8) noteValue.vel),
-                        playSampleOffsetWithinFrame);
-                playingNotes.add(noteValue);
+            if (samplesUntilRelease != -1) {
+                if (samplesUntilRelease < numSamples) {
+                    releaseSampleOffsetWithinFrame = samplesUntilRelease;
+                    samplesUntilRelease = -1;
+                } else {
+                    samplesUntilRelease -= numSamples;
+                }
             }
         }
-        double length = state.stepState[nextStepIndex].lengthParameter->get();
 
-        // prepare current release and next step
-        nextStepIndex++;
-        if (nextStepIndex > lastStepIndex) {
-            nextStepIndex = 0;
+        if (releaseSampleOffsetWithinFrame != -1) {
+            // release a step within this frame
+            stopPlaying(midiOut, releaseSampleOffsetWithinFrame);
+            DBG("release step at " << releaseSampleOffsetWithinFrame << " samples into frame");
         }
-        DBG("next step: " << nextStepIndex << ", rate: " << std::pow(2, state.rateParameter->getIndex()));
 
-        double ppqPosPerStep = 4.0f / std::pow(2, state.rateParameter->getIndex());
+        // see if we're playing a step within this frame
+        int playSampleOffsetWithinFrame = -1;
         if (transportOn) {
-            releasePpqPos = nextStepPpqPos + (length * ppqPosPerStep);
-            nextStepPpqPos += ppqPosPerStep;
-            DBG("next step in " << ppqPosPerStep << " ppq at " << nextStepPpqPos << " ppq, " << pressedNotes.size()
-                                << " pressed notes, " << posInfo.bpm << " bpm");
+            if (nextStepPpqPos < nextPpqPos) {
+                double ppqOffset = juce::jmax(nextStepPpqPos - posInfo.ppqPosition, 0.0);
+                playSampleOffsetWithinFrame = static_cast<int>(std::floor(numSamples * (ppqOffset / ppqPerFrame)));
+            }
         } else {
-            double stepsPerSec = (posInfo.bpm / 60) / ppqPosPerStep;
-            int samplesPerStep = static_cast<int>(std::ceil(sampleRate / stepsPerSec));
-            samplesUntilRelease = static_cast<int>(length * samplesPerStep);
-            samplesUntilNextStep = samplesPerStep;
-            DBG("next step in " << ppqPosPerStep << " ppq or " << samplesUntilNextStep << " samples or "
-                                << (1 / stepsPerSec) << " secs, " << pressedNotes.size()
-                                << " pressed notes, " << posInfo.bpm << " bpm");
+            if (samplesUntilNextStep < numSamples) {
+                playSampleOffsetWithinFrame = samplesUntilNextStep;
+            } else {
+                samplesUntilNextStep -= numSamples;
+            }
+        }
+
+        if (playSampleOffsetWithinFrame != -1) {
+            // play a step within this frame
+            size_t lastStepIndex = static_cast<size_t>(state.stepsParameter->getIndex());
+            if (nextStepIndex > lastStepIndex) {
+                nextStepIndex = 0;
+            }
+
+            size_t numVoices = static_cast<size_t>(state.voicesParameter->getIndex()) + 1;
+            for (size_t voiceNum = 0; voiceNum < numVoices; voiceNum++) {
+                if (state.stepState[nextStepIndex].voiceParameters[voiceNum]->get()) {
+                    auto noteIndex = static_cast<size_t>(juce::jmin(static_cast<int>(numVoices - 1 - voiceNum),
+                                                                    pressedNotes.size() -
+                                                                    1)); // repeat top note if we don't have enough
+                    MidiValue noteValue = pressedNotes[static_cast<int>(noteIndex)];
+                    midiOut.addEvent(
+                            juce::MidiMessage::noteOn(noteValue.channel, noteValue.note, (juce::uint8) noteValue.vel),
+                            playSampleOffsetWithinFrame);
+                    playingNotes.add(noteValue);
+                }
+            }
+            DBG("play step at " << playSampleOffsetWithinFrame << " samples into frame");
+            double length = state.stepState[nextStepIndex].lengthParameter->get();
+
+            // prepare current release and next step
+            nextStepIndex++;
+            if (nextStepIndex > lastStepIndex) {
+                nextStepIndex = 0;
+            }
+            DBG("next step: " << nextStepIndex << ", rate: " << std::pow(2, state.rateParameter->getIndex()));
+
+            double ppqPosPerStep = 4.0f / std::pow(2, state.rateParameter->getIndex());
+            if (transportOn) {
+                releasePpqPos = nextStepPpqPos + (length * ppqPosPerStep);
+                nextStepPpqPos += ppqPosPerStep;
+                DBG("next step in " << ppqPosPerStep << " ppq at " << nextStepPpqPos << " ppq, " << pressedNotes.size()
+                                    << " pressed notes, " << posInfo.bpm << " bpm");
+            } else {
+                double stepsPerSec = (posInfo.bpm / 60) / ppqPosPerStep;
+                int samplesPerStep = static_cast<int>(std::ceil(sampleRate / stepsPerSec));
+                samplesUntilRelease = static_cast<int>(length * samplesPerStep) + playSampleOffsetWithinFrame;
+                samplesUntilNextStep = samplesPerStep + playSampleOffsetWithinFrame;
+                DBG("next step in " << ppqPosPerStep << " ppq or " << samplesUntilNextStep << " samples or "
+                                    << (1 / stepsPerSec) << " secs, " << pressedNotes.size()
+                                    << " pressed notes, " << posInfo.bpm << " bpm");
+            }
+        } else {
+            break;
         }
     }
 }
