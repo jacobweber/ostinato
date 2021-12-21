@@ -7,6 +7,9 @@
 #include "../State.h"
 #include "../Constants.h"
 #include "ActiveLight.h"
+#include "IconButtonLookAndFeel.h"
+
+constexpr int ICON_SIZE = 14;
 
 class StepStrip : public juce::Component {
 public:
@@ -17,6 +20,18 @@ public:
         DBG("created strip " << stepNum);
 
         addAndMakeVisible(activeLight);
+        clearButton.setLookAndFeel(&clearButtonLAF);
+        clearButton.onClick = [this] {
+            for (size_t i = 0; i < voices.size(); i++)
+                *(state.stepState[stepNum].voiceParameters[i]) = false;
+        };
+        addAndMakeVisible(clearButton);
+        fillButton.setLookAndFeel(&fillButtonLAF);
+        fillButton.onClick = [this] {
+            for (size_t i = 0; i < voices.size(); i++)
+                *(state.stepState[stepNum].voiceParameters[i]) = true;
+        };
+        addAndMakeVisible(fillButton);
 
         lengthSlider.setSliderStyle(juce::Slider::LinearBar);
         lengthSlider.setRange(0.0, 1.0);
@@ -47,8 +62,14 @@ public:
         auto area = getLocalBounds().reduced(4);
         area.removeFromTop(20);
 
-        auto lightArea = area.removeFromTop(30).reduced(5);
-        activeLight.setBounds(lightArea.withSizeKeepingCentre(lightArea.getHeight(), lightArea.getHeight()));
+        auto iconArea = area.removeFromTop(30);
+        juce::FlexBox stepsBox;
+        stepsBox.alignItems = juce::FlexBox::AlignItems::center;
+        stepsBox.justifyContent = juce::FlexBox::JustifyContent::center;
+        stepsBox.items.add(juce::FlexItem(activeLight).withMargin(3).withHeight(ICON_SIZE).withWidth(ICON_SIZE));
+        stepsBox.items.add(juce::FlexItem(clearButton).withMargin(3).withHeight(ICON_SIZE).withWidth(ICON_SIZE));
+        stepsBox.items.add(juce::FlexItem(fillButton).withMargin(3).withHeight(ICON_SIZE).withWidth(ICON_SIZE));
+        stepsBox.performLayout(iconArea.toFloat());
 
         for (size_t i = 0; i < voices.size(); i++)
             if (voices.size() > i) {
@@ -100,6 +121,10 @@ private:
     State &state;
 
     ActiveLight activeLight{state, stepNum};
+    IconButtonLookAndFeel clearButtonLAF{juce::String::fromUTF8(u8"\uf0c8"), ICON_SIZE}; // square
+    IconButtonLookAndFeel fillButtonLAF{juce::String::fromUTF8(u8"\uf14a"), ICON_SIZE}; // check-square
+    juce::TextButton clearButton;
+    juce::TextButton fillButton;
     juce::Slider lengthSlider;
     std::vector<std::unique_ptr<juce::TextButton>> voices;
 
