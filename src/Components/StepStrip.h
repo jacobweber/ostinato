@@ -37,6 +37,7 @@ public:
         lengthSlider.setRange(0.0, 1.0);
         lengthSlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 90, 0);
         lengthSlider.setPopupDisplayEnabled(true, false, this);
+        lengthSlider.setColour(juce::Slider::ColourIds::trackColourId, juce::Colours::grey);
         addAndMakeVisible(lengthSlider);
         lengthAttachment.reset(
                 new SliderAttachment(state.parameters, "step" + std::to_string(stepNum) + "_length", lengthSlider));
@@ -49,12 +50,7 @@ public:
     }
 
     void paint(juce::Graphics &g) override {
-        g.setColour(juce::Colours::white);
-        g.setFont(14.0f);
-        g.drawText("#" + std::to_string(stepNum + 1), getLocalBounds().withHeight(20), juce::Justification::centred,
-                   true);
-
-        g.setColour(juce::Colours::red);
+        g.setColour(juce::Colours::grey);
         g.drawRect(getLocalBounds().reduced(1), 2.0f);
     }
 
