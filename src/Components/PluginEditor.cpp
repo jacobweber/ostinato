@@ -16,7 +16,7 @@ PluginEditor::PluginEditor(PluginProcessor &p, State &s)
     }
     stepsMenu.onChange = [this] {
         refreshSize();
-        channelStrips.refresh();
+        stepStrips.refresh();
     };
     addAndMakeVisible(stepsMenu);
     stepsAttachment.reset(new ComboBoxAttachment(state.parameters, "steps", stepsMenu));
@@ -29,7 +29,7 @@ PluginEditor::PluginEditor(PluginProcessor &p, State &s)
     }
     voicesMenu.onChange = [this] {
         refreshSize();
-        channelStrips.refresh();
+        stepStrips.refresh();
     };
     addAndMakeVisible(voicesMenu);
     voicesAttachment.reset(new ComboBoxAttachment(state.parameters, "voices", voicesMenu));
@@ -47,7 +47,7 @@ PluginEditor::PluginEditor(PluginProcessor &p, State &s)
     addAndMakeVisible(rateMenu);
     rateAttachment.reset(new ComboBoxAttachment(state.parameters, "rate", rateMenu));
 
-    addAndMakeVisible(channelStrips);
+    addAndMakeVisible(stepStrips);
 
     addAndMakeVisible(messagesBox);
     messagesBox.setMultiLine(true);
@@ -85,7 +85,7 @@ void PluginEditor::resized() {
     top.items.add(juce::FlexItem(rateMenu).withHeight((float) topArea.getHeight()).withWidth(150));
     top.performLayout(topArea.toFloat());
 
-    channelStrips.setBounds(area);
+    stepStrips.setBounds(area);
 }
 
 void PluginEditor::logMessage(const juce::String &m) {
@@ -96,7 +96,7 @@ void PluginEditor::logMessage(const juce::String &m) {
 void PluginEditor::timerCallback() {
     juce::String newText = updateTimecodeDisplay(getProcessor().lastPosInfo.get());
     timecodeDisplayLabel.setText(newText, juce::dontSendNotification);
-    channelStrips.refreshActiveStep();
+    stepStrips.refreshActiveStep();
 }
 
 PluginProcessor &PluginEditor::getProcessor() const {

@@ -8,9 +8,9 @@
 #include "../State.h"
 #include "../Constants.h"
 
-class ChannelStrips : public juce::Component {
+class StepStrips : public juce::Component {
 public:
-    ChannelStrips(State &s) : state(s) {
+    StepStrips(State &s) : state(s) {
         refresh();
     }
 
@@ -19,10 +19,10 @@ public:
 
     void resized() override {
         auto area = getLocalBounds();
-        juce::FlexBox channelStrips;
+        juce::FlexBox stepsBox;
         for (size_t i = 0; i < strips.size(); i++)
-            channelStrips.items.add(juce::FlexItem(*strips[i]).withHeight((float) area.getHeight()).withWidth(100));
-        channelStrips.performLayout(area.toFloat());
+            stepsBox.items.add(juce::FlexItem(*strips[i]).withHeight((float) area.getHeight()).withWidth(100));
+        stepsBox.performLayout(area.toFloat());
     }
 
     void refreshActiveStep() {
@@ -83,5 +83,5 @@ private:
     // but unique_ptr can be moved, so the vector assumes ownership
     std::vector<std::unique_ptr<StepStrip>> strips;
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ChannelStrips)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(StepStrips)
 };

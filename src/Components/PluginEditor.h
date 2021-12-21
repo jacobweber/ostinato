@@ -4,7 +4,7 @@
 
 #include "../PluginProcessor.h"
 #include "../State.h"
-#include "ChannelStrips.h"
+#include "StepStrips.h"
 
 class PluginEditor : public juce::AudioProcessorEditor, private juce::Timer {
 public:
@@ -40,7 +40,7 @@ private:
     juce::ComboBox voicesMenu;
     juce::Label rateLabel{{}, "Step length"};
     juce::ComboBox rateMenu;
-    ChannelStrips channelStrips{state};
+    StepStrips stepStrips{state};
     juce::TextEditor messagesBox;
 
     // use unique_ptr so it can be destroyed when UI is
