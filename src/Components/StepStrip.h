@@ -129,8 +129,10 @@ private:
     State &state;
 
     ActiveLight activeLight{state, stepNum};
-    IconButtonLookAndFeel clearButtonLAF{juce::String::fromUTF8(u8"\uf0c8"), ICON_SIZE}; // square
-    IconButtonLookAndFeel fillButtonLAF{juce::String::fromUTF8(u8"\uf14a"), ICON_SIZE}; // check-square
+    IconButtonLookAndFeel clearButtonLAF{
+            juce::String::fromUTF8(reinterpret_cast<const char *>(u8"\uf0c8")), ICON_SIZE}; // square
+    IconButtonLookAndFeel fillButtonLAF{juce::String::fromUTF8(reinterpret_cast<const char *>(u8"\uf14a")),
+                                        ICON_SIZE}; // check-square
     juce::TextButton clearButton;
     juce::TextButton fillButton;
     juce::Slider lengthSlider;
