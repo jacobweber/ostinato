@@ -79,6 +79,7 @@ juce_add_plugin(Ostinato
 
 target_sources(Ostinato
         PRIVATE
+        src/Components/FontAwesome.cpp
         src/Components/PluginEditor.cpp
         src/PluginProcessor.cpp
         src/MidiProcessor.cpp)
@@ -104,7 +105,8 @@ target_compile_definitions(Ostinato
 # static library. These source files can be of any kind (wav data, images, fonts, icons etc.).
 # Conversion to binary-data will happen when your target is built.
 
-# juce_add_binary_data(AudioPluginData SOURCES ...)
+juce_add_binary_data(OstinatoData SOURCES
+        media/fontawesome.otf)
 
 # `target_link_libraries` links libraries and JUCE modules to other libraries or executables. Here,
 # we're linking our executable target to the `juce::juce_audio_utils` module. Inter-module
@@ -114,7 +116,7 @@ target_compile_definitions(Ostinato
 
 target_link_libraries(Ostinato
         PRIVATE
-        # AudioPluginData           # If we'd created a binary data target, we'd link to it here
+        OstinatoData
         juce::juce_audio_utils
         PUBLIC
         juce::juce_recommended_config_flags
