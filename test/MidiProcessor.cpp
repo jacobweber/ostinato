@@ -41,21 +41,10 @@ TEST_CASE("MidiProcessor")
     midiOut.clear();
     mp.process(BLOCK_SIZE, midiIn, midiOut, posInfo, state);
 
-    int numNoteOn = 0;
-    int numNoteOff = 0;
-    int numOther = 0;
+    juce::String out = "";
     for (const auto metadata: midiOut) {
-        const auto msg = metadata.getMessage();
-        if (msg.isNoteOn()) {
-            numNoteOn++;
-        } else if (msg.isNoteOff()) {
-            numNoteOff++;
-        } else {
-            numOther++;
-        }
+        out += metadata.getMessage().getDescription() + "\n";
     }
 
-    REQUIRE(numNoteOn == 1);
-    REQUIRE(numNoteOff == 0);
-    REQUIRE(numOther == 0);
+    REQUIRE(out == "Note on C3 Velocity 100 Channel 1\n");
 }
