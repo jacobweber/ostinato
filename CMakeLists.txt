@@ -108,6 +108,8 @@ target_compile_definitions(Ostinato
 juce_add_binary_data(OstinatoData SOURCES
         media/fontawesome.otf)
 
+set_target_properties(OstinatoData PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
+
 # `target_link_libraries` links libraries and JUCE modules to other libraries or executables. Here,
 # we're linking our executable target to the `juce::juce_audio_utils` module. Inter-module
 # dependencies are resolved automatically, so `juce_core`, `juce_events` and so on will also be
