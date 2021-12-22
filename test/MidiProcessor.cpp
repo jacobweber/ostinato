@@ -21,14 +21,14 @@ TEST_CASE("MidiProcessor play without transport")
 
     tester.processBlocks(10);
     // 250 samples/step
-    REQUIRE(tester.blocksMidiOutString == "100: Note on C3 Velocity 100 Channel 1\n"
-                                          "225: Note off C3 Velocity 0 Channel 1\n"
-                                          "350: Note on D3 Velocity 101 Channel 2\n"
-                                          "475: Note off D3 Velocity 0 Channel 2\n"
-                                          "600: Note on E3 Velocity 102 Channel 3\n"
-                                          "725: Note off E3 Velocity 0 Channel 3\n"
-                                          "850: Note on F3 Velocity 103 Channel 4\n"
-                                          "975: Note off F3 Velocity 0 Channel 4\n");
+    REQUIRE(tester.midiOutString(false) == "100: Note on C3 Velocity 100 Channel 1\n"
+                                           "225: Note off C3 Velocity 0 Channel 1\n"
+                                           "350: Note on D3 Velocity 101 Channel 2\n"
+                                           "475: Note off D3 Velocity 0 Channel 2\n"
+                                           "600: Note on E3 Velocity 102 Channel 3\n"
+                                           "725: Note off E3 Velocity 0 Channel 3\n"
+                                           "850: Note on F3 Velocity 103 Channel 4\n"
+                                           "975: Note off F3 Velocity 0 Channel 4\n");
 }
 
 TEST_CASE("MidiProcessor play with transport")
@@ -51,12 +51,12 @@ TEST_CASE("MidiProcessor play with transport")
 
     tester.processBlocks(9);
     // 250 samples/step
-    REQUIRE(tester.blocksMidiOutString == "0: Note on C3 Velocity 100 Channel 1\n" // aligned to next beat
-                                          "124: Note off C3 Velocity 0 Channel 1\n"
-                                          "249: Note on D3 Velocity 101 Channel 2\n"
-                                          "374: Note off D3 Velocity 0 Channel 2\n"
-                                          "500: Note on E3 Velocity 102 Channel 3\n"
-                                          "625: Note off E3 Velocity 0 Channel 3\n"
-                                          "750: Note on F3 Velocity 103 Channel 4\n"
-                                          "875: Note off F3 Velocity 0 Channel 4\n");
+    REQUIRE(tester.midiOutString(false) == "0: Note on C3 Velocity 100 Channel 1\n" // aligned to next beat
+                                           "124: Note off C3 Velocity 0 Channel 1\n"
+                                           "249: Note on D3 Velocity 101 Channel 2\n"
+                                           "374: Note off D3 Velocity 0 Channel 2\n"
+                                           "500: Note on E3 Velocity 102 Channel 3\n"
+                                           "625: Note off E3 Velocity 0 Channel 3\n"
+                                           "750: Note on F3 Velocity 103 Channel 4\n"
+                                           "875: Note off F3 Velocity 0 Channel 4\n");
 }

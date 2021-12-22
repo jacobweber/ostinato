@@ -40,31 +40,27 @@ public:
         lastBlockStartSample = 0;
     }
 
-    void processBlock() {
-        midiOut.clear();
-        if (lastBlockStartSample == -1) {
-            lastBlockStartSample = 0;
-        } else {
-            lastBlockStartSample += bufferSize;
-        }
-        mp.process(bufferSize, midiIn, midiOut, posInfo, state);
-        midiIn.clear();
-    }
-
     void processBlocks(int numBlocks) {
         double ppqPerBlock = bufferSize * posInfo.bpm / 60 / sampleRate;
 
-        blocksMidiOutString = "";
+        juce::MidiBuffer tempMidiIn{};
+        juce::MidiBuffer tempMidiOut{};
+        midiOut.clear();
         for (int i = 0; i < numBlocks; i++) {
-            midiOut.clear();
-            DBG("-- frame " << i << " at " << lastBlockStartSample << " samples, " << posInfo.ppqPosition << " ppq --");
-            mp.process(bufferSize, midiIn, midiOut, posInfo, state);
-            midiIn.clear();
+            tempMidiIn.clear();
+            tempMidiOut.clear();
 
-            for (const auto metadata: midiOut) {
-                blocksMidiOutString << (lastBlockStartSample + metadata.samplePosition) << ": "
-                                    << metadata.getMessage().getDescription()
-                                    << "\n";
+            for (const auto metadata: midiIn) {
+                if (metadata.samplePosition < lastBlockStartSample + bufferSize) {
+                    tempMidiIn.addEvent(metadata.getMessage(), lastBlockStartSample + metadata.samplePosition);
+                }
+            }
+
+            DBG("-- frame " << i << " at " << lastBlockStartSample << " samples, " << posInfo.ppqPosition << " ppq --");
+            mp.process(bufferSize, tempMidiIn, tempMidiOut, posInfo, state);
+
+            for (const auto metadata: tempMidiOut) {
+                midiOut.addEvent(metadata.getMessage(), lastBlockStartSample + metadata.samplePosition);
             }
 
             lastBlockStartSample += bufferSize;
@@ -74,11 +70,14 @@ public:
         }
     }
 
-    juce::String midiOutString() {
+    juce::String midiOutString(bool notesOnly) {
         juce::String out = "";
         for (const auto metadata: midiOut) {
-            out << (lastBlockStartSample + metadata.samplePosition) << ": " << metadata.getMessage().getDescription()
-                << "\n";
+            if (!notesOnly || metadata.getMessage().isNoteOn()) {
+                out << metadata.samplePosition << ": "
+                    << metadata.getMessage().getDescription()
+                    << "\n";
+            }
         }
         return out;
     }
@@ -93,5 +92,4 @@ public:
     juce::MidiBuffer midiOut{};
     MidiProcessor mp{};
     int lastBlockStartSample;
-    juce::String blocksMidiOutString = "";
 };
