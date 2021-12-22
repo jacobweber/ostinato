@@ -20,6 +20,7 @@ TEST_CASE("MidiProcessor play without transport")
     tester.midiIn.addEvent(juce::MidiMessage::noteOn(4, 65, (juce::uint8) 103), 7);
 
     tester.processBlocks(10);
+    // 250 samples/step
     REQUIRE(tester.blocksMidiOutString == "100: Note on C3 Velocity 100 Channel 1\n"
                                           "225: Note off C3 Velocity 0 Channel 1\n"
                                           "350: Note on D3 Velocity 101 Channel 2\n"
@@ -49,8 +50,7 @@ TEST_CASE("MidiProcessor play with transport")
     tester.posInfo.isPlaying = true;
 
     tester.processBlocks(9);
-    // 120 bpm, 2 bps, 1000 samples/sec, 500 samples/beat, 2 steps/beat, 250 samples/step,
-    // 100 samples/frame, 5 frames/beat, .2 beats/frame (ppqPerBlock)
+    // 250 samples/step
     REQUIRE(tester.blocksMidiOutString == "0: Note on C3 Velocity 100 Channel 1\n" // aligned to next beat
                                           "124: Note off C3 Velocity 0 Channel 1\n"
                                           "249: Note on D3 Velocity 101 Channel 2\n"
