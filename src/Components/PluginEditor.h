@@ -41,6 +41,7 @@ private:
     juce::ComboBox voicesMenu;
     juce::Label rateLabel{{}, "Step length"};
     juce::ComboBox rateMenu;
+    juce::ComboBox rateTypeMenu;
     StepStrips stepStrips{state};
     juce::TextEditor messagesBox;
 
@@ -49,6 +50,7 @@ private:
     std::unique_ptr<ComboBoxAttachment> stepsAttachment;
     std::unique_ptr<ComboBoxAttachment> voicesAttachment;
     std::unique_ptr<ComboBoxAttachment> rateAttachment;
+    std::unique_ptr<ComboBoxAttachment> rateTypeAttachment;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PluginEditor)
 };

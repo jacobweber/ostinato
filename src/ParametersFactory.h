@@ -4,6 +4,7 @@
 
 #include "Constants.h"
 
+// Also update State, MidiProcessorTester, PluginEditor
 class ParametersFactory {
 public:
     static juce::AudioProcessorValueTreeState::ParameterLayout create() {
@@ -30,6 +31,13 @@ public:
         rateChoices.add("Thirty-Second");
         rateChoices.add("Sixty-Fourth");
         layout.add(std::make_unique<juce::AudioParameterChoice>("rate", "Step Length", rateChoices, 2));
+
+        juce::StringArray rateTypeChoices;
+        rateTypeChoices.add("Straight");
+        rateTypeChoices.add("Triplet");
+        rateTypeChoices.add("Dotted");
+        layout.add(std::make_unique<juce::AudioParameterChoice>("rateType", "Step Length Type", rateTypeChoices, 0));
+
         for (size_t i = 0; i < MAX_STEPS; i++) {
             for (size_t j = 0; j < MAX_VOICES; j++)
                 layout.add(

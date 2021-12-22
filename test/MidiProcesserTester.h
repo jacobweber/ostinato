@@ -18,6 +18,7 @@ public:
         *(state.stepsParameter) = 3; // index
         *(state.voicesParameter) = 3; // index
         *(state.rateParameter) = 2; // index
+        *(state.rateTypeParameter) = 0; // index
         for (size_t i = 0; i < MAX_STEPS; i++) {
             *(state.stepState[i].lengthParameter) = .5;
             *(state.stepState[i].volParameter) = .5;

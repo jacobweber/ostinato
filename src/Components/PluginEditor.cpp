@@ -47,6 +47,12 @@ PluginEditor::PluginEditor(PluginProcessor &p, State &s)
     addAndMakeVisible(rateMenu);
     rateAttachment.reset(new ComboBoxAttachment(state.parameters, "rate", rateMenu));
 
+    rateTypeMenu.addItem("Straight", 1);
+    rateTypeMenu.addItem("Triplet", 2);
+    rateTypeMenu.addItem("Dotted", 3);
+    addAndMakeVisible(rateTypeMenu);
+    rateTypeAttachment.reset(new ComboBoxAttachment(state.parameters, "rateType", rateTypeMenu));
+
     addAndMakeVisible(stepStrips);
 
     addAndMakeVisible(messagesBox);
@@ -83,6 +89,7 @@ void PluginEditor::resized() {
     top.items.add(juce::FlexItem(stepsMenu).withHeight((float) topArea.getHeight()).withWidth(150));
     top.items.add(juce::FlexItem(voicesMenu).withHeight((float) topArea.getHeight()).withWidth(150));
     top.items.add(juce::FlexItem(rateMenu).withHeight((float) topArea.getHeight()).withWidth(150));
+    top.items.add(juce::FlexItem(rateTypeMenu).withHeight((float) topArea.getHeight()).withWidth(150));
     top.performLayout(topArea.toFloat());
 
     stepStrips.setBounds(area);

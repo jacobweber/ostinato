@@ -11,6 +11,7 @@ public:
         stepsParameter = dynamic_cast<juce::AudioParameterChoice *> (parameters.getParameter("steps"));
         voicesParameter = dynamic_cast<juce::AudioParameterChoice *> (parameters.getParameter("voices"));
         rateParameter = dynamic_cast<juce::AudioParameterChoice *> (parameters.getParameter("rate"));
+        rateTypeParameter = dynamic_cast<juce::AudioParameterChoice *> (parameters.getParameter("rateType"));
         for (size_t i = 0; i < MAX_STEPS; i++) {
             stepState[i].lengthParameter = dynamic_cast<juce::AudioParameterFloat *> (parameters.getParameter(
                     "step" + std::to_string(i) + "_length"));
@@ -30,6 +31,7 @@ public:
     juce::AudioParameterChoice *stepsParameter = nullptr;
     juce::AudioParameterChoice *voicesParameter = nullptr;
     juce::AudioParameterChoice *rateParameter = nullptr;
+    juce::AudioParameterChoice *rateTypeParameter = nullptr;
     std::array<StepState, MAX_STEPS> stepState;
 
     std::atomic<size_t> stepIndex{0};
