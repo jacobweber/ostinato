@@ -37,7 +37,7 @@ public:
         midiIn.clear();
         midiOut.clear();
 
-        lastBlockStartSample = -1;
+        lastBlockStartSample = 0;
     }
 
     void processBlock() {
@@ -52,20 +52,11 @@ public:
     }
 
     void processBlocks(int numBlocks) {
-        processBlocks(numBlocks, 0);
-    }
+        double ppqPerBlock = bufferSize * posInfo.bpm / 60 / sampleRate;
 
-    void processBlocks(int numBlocks, float ppqPerBlock) {
         blocksMidiOutString = "";
         for (int i = 0; i < numBlocks; i++) {
             midiOut.clear();
-            if (lastBlockStartSample == -1) {
-                lastBlockStartSample = 0;
-                posInfo.ppqPosition += 0;
-            } else {
-                lastBlockStartSample += bufferSize;
-                posInfo.ppqPosition += ppqPerBlock;
-            }
             DBG("-- frame " << i << " at " << lastBlockStartSample << " samples, " << posInfo.ppqPosition << " ppq --");
             mp.process(bufferSize, midiIn, midiOut, posInfo, state);
             midiIn.clear();
@@ -74,6 +65,11 @@ public:
                 blocksMidiOutString << (lastBlockStartSample + metadata.samplePosition) << ": "
                                     << metadata.getMessage().getDescription()
                                     << "\n";
+            }
+
+            lastBlockStartSample += bufferSize;
+            if (posInfo.isPlaying || posInfo.isRecording) {
+                posInfo.ppqPosition += ppqPerBlock;
             }
         }
     }
