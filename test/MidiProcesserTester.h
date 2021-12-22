@@ -12,7 +12,7 @@ public:
     MidiProcessorTester() : MidiProcessorTester(100, 1000) {
     }
 
-    MidiProcessorTester(int bs, int sr) : bufferSize(bs), sampleRate(sr) {
+    MidiProcessorTester(int bs, int sr) : blockSize(bs), sampleRate(sr) {
         mp.init(sampleRate);
 
         *(state.stepsParameter) = 3; // index
@@ -41,7 +41,7 @@ public:
     }
 
     void processBlocks(int numBlocks) {
-        double ppqPerBlock = bufferSize * posInfo.bpm / 60 / sampleRate;
+        double ppqPerBlock = blockSize * posInfo.bpm / 60 / sampleRate;
 
         juce::MidiBuffer tempMidiIn{};
         juce::MidiBuffer tempMidiOut{};
@@ -51,19 +51,19 @@ public:
             tempMidiOut.clear();
 
             for (const auto metadata: midiIn) {
-                if (metadata.samplePosition < lastBlockStartSample + bufferSize) {
+                if (metadata.samplePosition < lastBlockStartSample + blockSize) {
                     tempMidiIn.addEvent(metadata.getMessage(), lastBlockStartSample + metadata.samplePosition);
                 }
             }
 
-            DBG("-- frame " << i << " at " << lastBlockStartSample << " samples, " << posInfo.ppqPosition << " ppq --");
-            mp.process(bufferSize, tempMidiIn, tempMidiOut, posInfo, state);
+            DBG("-- block " << i << " at " << lastBlockStartSample << " samples, " << posInfo.ppqPosition << " ppq --");
+            mp.process(blockSize, tempMidiIn, tempMidiOut, posInfo, state);
 
             for (const auto metadata: tempMidiOut) {
                 midiOut.addEvent(metadata.getMessage(), lastBlockStartSample + metadata.samplePosition);
             }
 
-            lastBlockStartSample += bufferSize;
+            lastBlockStartSample += blockSize;
             if (posInfo.isPlaying || posInfo.isRecording) {
                 posInfo.ppqPosition += ppqPerBlock;
             }
@@ -83,7 +83,7 @@ public:
     }
 
 public:
-    int bufferSize = 200;
+    int blockSize = 200;
     int sampleRate = 1000;
     TestAudioProcessor ap{ParametersFactory::create()};
     State state{ap.state};
