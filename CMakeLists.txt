@@ -108,6 +108,7 @@ target_compile_definitions(Ostinato
 juce_add_binary_data(OstinatoData SOURCES
         media/fontawesome.otf)
 
+# https://forum.juce.com/t/building-my-vst3-with-linux-and-juce6-couple-of-tiny-things/39014
 set_target_properties(OstinatoData PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
 
 # `target_link_libraries` links libraries and JUCE modules to other libraries or executables. Here,
