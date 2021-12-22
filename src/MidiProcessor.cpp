@@ -13,7 +13,6 @@ void MidiProcessor::init(double sr) {
     transportOn = false;
     prevPpqPos = 0;
     nextPpqPos = 0;
-    looped = false;
     nextStepIndex = 0;
 }
 
@@ -56,27 +55,18 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midiIn, juce::MidiBuffe
     }
 
     // make sure we're tracking ppq correctly
-    double ppqPerFrame = 0;
+    double ppqPerFrame = numSamples * posInfo.bpm / 60 / sampleRate;
     if (transportOn) {
-        if (posInfo.ppqPosition <= prevPpqPos) { // jumped back, so we may be looping; can't use prevPpqPos
-            looped = true;
-            prevPpqPos = posInfo.ppqPosition;
-            return; // skip a frame so we can calculate ppq per frame
-        }
-
-        ppqPerFrame = posInfo.ppqPosition - prevPpqPos; // changes depending on tempo/meter
-        prevPpqPos = posInfo.ppqPosition;
-
-        if (looped && cycleOn) {
+        if (posInfo.ppqPosition <= prevPpqPos && cycleOn) { // jumped back, so we may be looping
             // move scheduled release/play times back relative to their expected nextPpqPos
             releasePpqPos -= nextPpqPos - posInfo.ppqPosition;
             nextStepPpqPos -= nextPpqPos - posInfo.ppqPosition;
             DBG("looping back to " << posInfo.ppqPosition << " ppq, moved next step to " << nextStepPpqPos << " ppq");
         }
 
+        prevPpqPos = posInfo.ppqPosition;
         nextPpqPos = posInfo.ppqPosition + ppqPerFrame;
     }
-    looped = false;
 
     if (!cycleOn) {
         if (pressedNotes.size() > 0) { // notes pressed, so start cycle
