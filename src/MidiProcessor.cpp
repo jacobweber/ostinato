@@ -43,8 +43,6 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midiIn, juce::MidiBuffe
             DBG("started transport");
             cycleOn = false;
             transportOn = true;
-            prevPpqPos = posInfo.ppqPosition;
-            return; // skip a frame so we can calculate ppq per frame
         }
     } else if (transportOn) { // stopped transport
         DBG("stopped transport");
