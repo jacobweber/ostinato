@@ -1,7 +1,5 @@
 /build
 /cmake-build-debug/
-/Plug-Ins
 /.vscode
 /.idea
 /work
-/*.jpg
