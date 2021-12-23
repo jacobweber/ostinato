@@ -21,9 +21,9 @@ public:
                 juce::AudioParameterBool *voiceParameter = dynamic_cast<juce::AudioParameterBool *> (parameters.getParameter(
                         "step" + std::to_string(i) + "_voice" + std::to_string(j)));
                 stepState[i].voiceParameters[j] = voiceParameter ? voiceParameter : nullptr;
-                stepState[i].powerParameter = dynamic_cast<juce::AudioParameterBool *> (parameters.getParameter(
-                        "step" + std::to_string(i) + "_power"));
             }
+            stepState[i].powerParameter = dynamic_cast<juce::AudioParameterBool *> (parameters.getParameter(
+                    "step" + std::to_string(i) + "_power"));
         }
     }
 
