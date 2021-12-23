@@ -68,8 +68,21 @@ public:
         volSlider.setPopupDisplayEnabled(true, false, this);
         volSlider.setColour(juce::Slider::ColourIds::trackColourId, juce::Colours::grey);
         addAndMakeVisible(volSlider);
+
         volAttachment.reset(
                 new SliderAttachment(state.parameters, "step" + std::to_string(stepNum) + "_volume", volSlider));
+
+        juce::Image powerOff = FontAwesome::getInstance()->getIcon(true,
+                                                                   juce::String::fromUTF8(
+                                                                           reinterpret_cast<const char *>(u8"\uf011")),
+                                                                   ICON_SIZE, juce::Colours::white,
+                                                                   1);
+        powerButton.setImages(false, false, true, powerOff, 1.0f, {}, {}, 1.0f, {}, {}, 1.0f,
+                              juce::Colours::red);
+        powerButton.setClickingTogglesState(true);
+        addAndMakeVisible(powerButton);
+        powerAttachment.reset(
+                new ButtonAttachment(state.parameters, "step" + std::to_string(stepNum) + "_power", powerButton));
 
         refresh();
     }
@@ -101,6 +114,8 @@ public:
                 voices[i]->setBounds(area.removeFromTop(20));
                 area.removeFromTop(2);
             }
+
+        powerButton.setBounds(area.removeFromBottom(20));
 
         area.removeFromTop(20);
         lengthSlider.setBounds(area.removeFromTop(20));
@@ -155,10 +170,12 @@ private:
     juce::Slider lengthSlider;
     std::vector<std::unique_ptr<juce::TextButton>> voices;
     juce::Slider volSlider;
+    juce::ImageButton powerButton{};
 
     std::unique_ptr<SliderAttachment> lengthAttachment;
     std::vector<std::unique_ptr<ButtonAttachment>> voicesAttachments;
     std::unique_ptr<SliderAttachment> volAttachment;
+    std::unique_ptr<ButtonAttachment> powerAttachment;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(StepStrip)
 };

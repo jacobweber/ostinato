@@ -25,6 +25,7 @@ public:
             for (size_t j = 0; j < MAX_VOICES; j++) {
                 *(state.stepState[i].voiceParameters[j]) = false;
             }
+            *(state.stepState[i].powerParameter) = true;
         }
 
         posInfo.ppqPosition = 0;

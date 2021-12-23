@@ -54,6 +54,10 @@ public:
                                                                    juce::NormalisableRange<float>(0.0f, 1.0f, 0.01f,
                                                                                                   0.5f),
                                                                    0.5f));
+            layout.add(
+                    std::make_unique<juce::AudioParameterBool>(
+                            "step" + std::to_string(i) + "_power",
+                            "Step " + std::to_string(i + 1) + " Power", true));
         }
         return layout;
     }
