@@ -7,6 +7,7 @@
 #include "../State.h"
 #include "../Constants.h"
 #include "ActiveLight.h"
+#include "FontAwesome.h"
 
 constexpr int ICON_SIZE = 14;
 
@@ -20,11 +21,15 @@ public:
 
         addAndMakeVisible(activeLight);
 
-        juce::Image square = FontAwesome::getInstance()->getIcon(
-                juce::String::fromUTF8(reinterpret_cast<const char *>(u8"\uf0c8")), ICON_SIZE, juce::Colours::red,
-                1);
-        juce::Image squareDown = FontAwesome::getInstance()->getIcon(
-                juce::String::fromUTF8(reinterpret_cast<const char *>(u8"\uf0c8")), ICON_SIZE, juce::Colours::white, 1);
+        juce::Image square = FontAwesome::getInstance()->getIcon(false,
+                                                                 juce::String::fromUTF8(
+                                                                         reinterpret_cast<const char *>(u8"\uf0c8")),
+                                                                 ICON_SIZE, juce::Colours::red,
+                                                                 1);
+        juce::Image squareDown = FontAwesome::getInstance()->getIcon(false,
+                                                                     juce::String::fromUTF8(
+                                                                             reinterpret_cast<const char *>(u8"\uf0c8")),
+                                                                     ICON_SIZE, juce::Colours::white, 1);
         clearButton.setImages(true, false, true, square, 1.0f, {}, {}, 1.0f, {}, squareDown, 1.0f, {});
         clearButton.onClick = [this] {
             for (size_t i = 0; i < voices.size(); i++)
@@ -32,11 +37,15 @@ public:
         };
         addAndMakeVisible(clearButton);
 
-        juce::Image checkSquare = FontAwesome::getInstance()->getIcon(
-                juce::String::fromUTF8(reinterpret_cast<const char *>(u8"\uf14a")), ICON_SIZE, juce::Colours::red,
-                1);
-        juce::Image checkSquareDown = FontAwesome::getInstance()->getIcon(
-                juce::String::fromUTF8(reinterpret_cast<const char *>(u8"\uf14a")), ICON_SIZE, juce::Colours::white, 1);
+        juce::Image checkSquare = FontAwesome::getInstance()->getIcon(false,
+                                                                      juce::String::fromUTF8(
+                                                                              reinterpret_cast<const char *>(u8"\uf14a")),
+                                                                      ICON_SIZE, juce::Colours::red,
+                                                                      1);
+        juce::Image checkSquareDown = FontAwesome::getInstance()->getIcon(false,
+                                                                          juce::String::fromUTF8(
+                                                                                  reinterpret_cast<const char *>(u8"\uf14a")),
+                                                                          ICON_SIZE, juce::Colours::white, 1);
         fillButton.setImages(true, false, true, checkSquare, 1.0f, {}, {}, 1.0f, {}, checkSquareDown, 1.0f, {});
         fillButton.onClick = [this] {
             for (size_t i = 0; i < voices.size(); i++)

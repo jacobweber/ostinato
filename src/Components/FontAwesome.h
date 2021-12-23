@@ -13,15 +13,18 @@ public:
 
     JUCE_DECLARE_SINGLETON (FontAwesome, false)
 
-    juce::Image getIcon(juce::String charCode, float size, juce::Colour colour, float scaleFactor);
+    juce::Image getIcon(bool solid, juce::String charCode, float size, juce::Colour colour, float scaleFactor);
 
-    juce::Font getFont();
+    juce::Font getSolidFont();
 
-    juce::Font getFont(float size);
+    juce::Font getRegularFont();
 
 private:
-    juce::Typeface::Ptr FontAwesome_ptr = juce::Typeface::createSystemTypefaceFor(BinaryData::fontawesome_otf,
-                                                                                  BinaryData::fontawesome_otfSize);
+    juce::Typeface::Ptr FontAwesomeRegular_ptr = juce::Typeface::createSystemTypefaceFor(
+            BinaryData::fontAwestomeRegular_otf,
+            BinaryData::fontAwestomeRegular_otfSize);
+    juce::Typeface::Ptr FontAwesomeSolid_ptr = juce::Typeface::createSystemTypefaceFor(BinaryData::fontAwesomeSolid_otf,
+                                                                                       BinaryData::fontAwesomeSolid_otfSize);
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(FontAwesome)
 };

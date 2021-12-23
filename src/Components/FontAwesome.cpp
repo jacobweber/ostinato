@@ -11,7 +11,8 @@ FontAwesome::~FontAwesome() {
 
 JUCE_IMPLEMENT_SINGLETON (FontAwesome)
 
-juce::Image FontAwesome::getIcon(juce::String charCode, float size, juce::Colour colour, float scaleFactor) {
+juce::Image
+FontAwesome::getIcon(bool solid, juce::String charCode, float size, juce::Colour colour, float scaleFactor) {
     int scaledSize = int(size * scaleFactor);
 
     juce::String identifier = juce::String(charCode + "@" + juce::String(scaledSize) + "@" + colour.toString());
@@ -20,7 +21,8 @@ juce::Image FontAwesome::getIcon(juce::String charCode, float size, juce::Colour
     if (canvas.isValid())
         return canvas;
 
-    juce::Font fontAwesome = getFont((float) scaledSize);
+    juce::Font fontAwesome = solid ? getSolidFont() : getRegularFont();
+    fontAwesome.setHeight((float) scaledSize);
     scaledSize = std::max(fontAwesome.getStringWidth(charCode), scaledSize);
 
     canvas = juce::Image(juce::Image::PixelFormat::ARGB, scaledSize, scaledSize, true);
@@ -32,13 +34,12 @@ juce::Image FontAwesome::getIcon(juce::String charCode, float size, juce::Colour
     return canvas;
 }
 
-juce::Font FontAwesome::getFont() {
-    static juce::Font fontAwesomeFont(FontAwesome_ptr);
+juce::Font FontAwesome::getSolidFont() {
+    static juce::Font fontAwesomeFont(FontAwesomeSolid_ptr);
     return fontAwesomeFont;
 }
 
-juce::Font FontAwesome::getFont(float size) {
-    juce::Font font = getFont();
-    font.setHeight(size);
-    return font;
+juce::Font FontAwesome::getRegularFont() {
+    static juce::Font fontAwesomeFont(FontAwesomeRegular_ptr);
+    return fontAwesomeFont;
 }
