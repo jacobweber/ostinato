@@ -44,7 +44,7 @@ public:
                         std::make_unique<juce::AudioParameterBool>(
                                 "step" + std::to_string(i) + "_voice" + std::to_string(j),
                                 "Step " + std::to_string(i + 1) + " Voice " +
-                                std::to_string(j + 1) + " On", false));
+                                std::to_string(j + 1) + " On", i == 3 - j));
             layout.add(std::make_unique<juce::AudioParameterFloat>("step" + std::to_string(i) + "_length",
                                                                    "Step " + std::to_string(i + 1) + " Note Length",
                                                                    0.0f,
