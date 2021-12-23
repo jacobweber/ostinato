@@ -7,7 +7,6 @@
 #include "../State.h"
 #include "../Constants.h"
 #include "ActiveLight.h"
-#include "IconButtonLookAndFeel.h"
 
 constexpr int ICON_SIZE = 14;
 
@@ -20,13 +19,25 @@ public:
         DBG("created strip " << stepNum);
 
         addAndMakeVisible(activeLight);
-        clearButton.setLookAndFeel(&clearButtonLAF);
+
+        juce::Image square = FontAwesome::getInstance()->getIcon(
+                juce::String::fromUTF8(reinterpret_cast<const char *>(u8"\uf0c8")), ICON_SIZE, juce::Colours::red,
+                1);
+        juce::Image squareDown = FontAwesome::getInstance()->getIcon(
+                juce::String::fromUTF8(reinterpret_cast<const char *>(u8"\uf0c8")), ICON_SIZE, juce::Colours::white, 1);
+        clearButton.setImages(true, false, true, square, 1.0f, {}, {}, 1.0f, {}, squareDown, 1.0f, {});
         clearButton.onClick = [this] {
             for (size_t i = 0; i < voices.size(); i++)
                 *(state.stepState[stepNum].voiceParameters[i]) = false;
         };
         addAndMakeVisible(clearButton);
-        fillButton.setLookAndFeel(&fillButtonLAF);
+
+        juce::Image checkSquare = FontAwesome::getInstance()->getIcon(
+                juce::String::fromUTF8(reinterpret_cast<const char *>(u8"\uf14a")), ICON_SIZE, juce::Colours::red,
+                1);
+        juce::Image checkSquareDown = FontAwesome::getInstance()->getIcon(
+                juce::String::fromUTF8(reinterpret_cast<const char *>(u8"\uf14a")), ICON_SIZE, juce::Colours::white, 1);
+        fillButton.setImages(true, false, true, checkSquare, 1.0f, {}, {}, 1.0f, {}, checkSquareDown, 1.0f, {});
         fillButton.onClick = [this] {
             for (size_t i = 0; i < voices.size(); i++)
                 *(state.stepState[stepNum].voiceParameters[i]) = true;
@@ -68,9 +79,10 @@ public:
 
         auto iconArea = area.removeFromTop(30);
         juce::FlexBox stepsBox;
-        stepsBox.alignItems = juce::FlexBox::AlignItems::center;
+        stepsBox.alignContent = juce::FlexBox::AlignContent::center;
         stepsBox.justifyContent = juce::FlexBox::JustifyContent::center;
-        stepsBox.items.add(juce::FlexItem(activeLight).withMargin(3).withHeight(ICON_SIZE).withWidth(ICON_SIZE));
+        stepsBox.items.add(
+                juce::FlexItem(activeLight).withMargin(3).withHeight(ICON_SIZE).withWidth(ICON_SIZE));
         stepsBox.items.add(juce::FlexItem(clearButton).withMargin(3).withHeight(ICON_SIZE).withWidth(ICON_SIZE));
         stepsBox.items.add(juce::FlexItem(fillButton).withMargin(3).withHeight(ICON_SIZE).withWidth(ICON_SIZE));
         stepsBox.performLayout(iconArea.toFloat());
@@ -129,12 +141,8 @@ private:
     State &state;
 
     ActiveLight activeLight{state, stepNum};
-    IconButtonLookAndFeel clearButtonLAF{
-            juce::String::fromUTF8(reinterpret_cast<const char *>(u8"\uf0c8")), ICON_SIZE}; // square
-    IconButtonLookAndFeel fillButtonLAF{juce::String::fromUTF8(reinterpret_cast<const char *>(u8"\uf14a")),
-                                        ICON_SIZE}; // check-square
-    juce::TextButton clearButton;
-    juce::TextButton fillButton;
+    juce::ImageButton clearButton{};
+    juce::ImageButton fillButton{};
     juce::Slider lengthSlider;
     std::vector<std::unique_ptr<juce::TextButton>> voices;
     juce::Slider volSlider;
