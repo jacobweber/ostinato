@@ -19,6 +19,13 @@ public:
             State &state);
 
 private:
+    static double getPpqPosPerStep(State &state);
+
+    static double roundStartPpqPos(double scheduledPpqPos, double ppqPosPerStep);
+
+    static double roundNextPpqPos(double scheduledPpqPos, double ppqPosPerStep);
+
+private:
     double sampleRate;
 
     juce::SortedSet<MidiValue> pressedNotes;
