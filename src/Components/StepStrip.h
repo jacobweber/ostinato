@@ -62,6 +62,13 @@ public:
         lengthAttachment.reset(
                 new SliderAttachment(state.parameters, "step" + std::to_string(stepNum) + "_length", lengthSlider));
 
+        tieButton.setClickingTogglesState(true);
+        tieButton.setButtonText("Tie");
+        tieButton.setColour(juce::TextButton::ColourIds::buttonOnColourId, juce::Colours::red);
+        addAndMakeVisible(tieButton);
+        tieAttachment.reset(
+                new ButtonAttachment(state.parameters, "step" + std::to_string(stepNum) + "_tie", tieButton));
+
         volSlider.setSliderStyle(juce::Slider::LinearBarVertical);
         volSlider.setRange(0.0, 1.0);
         volSlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 90, 0);
@@ -121,6 +128,9 @@ public:
         lengthSlider.setBounds(area.removeFromTop(20));
 
         area.removeFromTop(20);
+        tieButton.setBounds(area.removeFromTop(20));
+
+        area.removeFromTop(20);
         volSlider.setBounds(area);
     }
 
@@ -168,12 +178,14 @@ private:
     juce::ImageButton clearButton{};
     juce::ImageButton fillButton{};
     juce::Slider lengthSlider;
+    juce::TextButton tieButton{};
     std::vector<std::unique_ptr<juce::TextButton>> voices;
     juce::Slider volSlider;
     juce::ImageButton powerButton{};
 
-    std::unique_ptr<SliderAttachment> lengthAttachment;
     std::vector<std::unique_ptr<ButtonAttachment>> voicesAttachments;
+    std::unique_ptr<SliderAttachment> lengthAttachment;
+    std::unique_ptr<ButtonAttachment> tieAttachment;
     std::unique_ptr<SliderAttachment> volAttachment;
     std::unique_ptr<ButtonAttachment> powerAttachment;
 

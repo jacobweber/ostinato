@@ -156,7 +156,7 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midiIn, juce::MidiBuffe
                 nextStepIndex = 0;
             }
             state.stepIndex = nextStepIndex;
-
+            
             bool power = state.stepState[nextStepIndex].powerParameter->get();
             if (power) {
                 size_t numVoices = static_cast<size_t>(state.voicesParameter->getIndex()) + 1;

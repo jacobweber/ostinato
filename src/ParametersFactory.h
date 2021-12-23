@@ -49,6 +49,10 @@ public:
                                                                    "Step " + std::to_string(i + 1) + " Note Length",
                                                                    0.0f,
                                                                    1.0f, 0.5f));
+            layout.add(
+                    std::make_unique<juce::AudioParameterBool>(
+                            "step" + std::to_string(i) + "_tie",
+                            "Step " + std::to_string(i + 1) + " Tie", false));
             layout.add(std::make_unique<juce::AudioParameterFloat>("step" + std::to_string(i) + "_volume",
                                                                    "Step " + std::to_string(i + 1) + " Volume",
                                                                    juce::NormalisableRange<float>(0.0f, 1.0f, 0.01f,
