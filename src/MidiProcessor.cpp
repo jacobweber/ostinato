@@ -157,22 +157,28 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midiIn, juce::MidiBuffe
             }
             state.stepIndex = nextStepIndex;
 
-            size_t numVoices = static_cast<size_t>(state.voicesParameter->getIndex()) + 1;
-            double volume = state.stepState[nextStepIndex].volParameter->get();
-            for (size_t voiceNum = 0; voiceNum < numVoices; voiceNum++) {
-                if (state.stepState[nextStepIndex].voiceParameters[voiceNum]->get()) {
-                    int voiceIndex = static_cast<int>(numVoices - 1 - voiceNum); // they're flipped
-                    if (voiceIndex < pressedNotes.size()) {
-                        MidiValue noteValue = pressedNotes[static_cast<int>(voiceIndex)];
-                        double vel = juce::jmin(volume * 2 * noteValue.vel, 127.0);
-                        midiOut.addEvent(
-                                juce::MidiMessage::noteOn(noteValue.channel, noteValue.note, (juce::uint8) vel),
-                                playSampleOffsetWithinBlock);
-                        playingNotes.add(noteValue);
+            bool power = state.stepState[nextStepIndex].powerParameter->get();
+            if (power) {
+                size_t numVoices = static_cast<size_t>(state.voicesParameter->getIndex()) + 1;
+                double volume = state.stepState[nextStepIndex].volParameter->get();
+                for (size_t voiceNum = 0; voiceNum < numVoices; voiceNum++) {
+                    if (state.stepState[nextStepIndex].voiceParameters[voiceNum]->get()) {
+                        int voiceIndex = static_cast<int>(numVoices - 1 - voiceNum); // they're flipped
+                        if (voiceIndex < pressedNotes.size()) {
+                            MidiValue noteValue = pressedNotes[static_cast<int>(voiceIndex)];
+                            double vel = juce::jmin(volume * 2 * noteValue.vel, 127.0);
+                            midiOut.addEvent(
+                                    juce::MidiMessage::noteOn(noteValue.channel, noteValue.note, (juce::uint8) vel),
+                                    playSampleOffsetWithinBlock);
+                            playingNotes.add(noteValue);
+                        }
                     }
                 }
+                DBG("play step at " << playSampleOffsetWithinBlock << " samples into block, vol " << volume);
+            } else {
+                DBG("skip step at " << playSampleOffsetWithinBlock << " samples into block");
             }
-            DBG("play step at " << playSampleOffsetWithinBlock << " samples into block, vol " << volume);
+
             double length = state.stepState[nextStepIndex].lengthParameter->get();
 
             // prepare current release and next step
@@ -186,7 +192,7 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midiIn, juce::MidiBuffe
             }
 
             if (transportOn) {
-                releasePpqPos = nextStepPpqPos + (length * ppqPosPerStep);
+                if (power) releasePpqPos = nextStepPpqPos + (length * ppqPosPerStep);
                 nextStepPpqPos = roundNextPpqPos(nextStepPpqPos + ppqPosPerStep, ppqPosPerStep);
                 DBG("next step in " << ppqPosPerStep << " ppq at " << nextStepPpqPos << " ppq, length " << length
                                     << " %, index " << nextStepIndex
@@ -195,7 +201,8 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midiIn, juce::MidiBuffe
             } else {
                 double stepsPerSec = (posInfo.bpm / 60) / ppqPosPerStep;
                 int samplesPerStep = static_cast<int>(std::ceil(sampleRate / stepsPerSec));
-                samplesUntilRelease = static_cast<int>(length * samplesPerStep) + playSampleOffsetWithinBlock;
+                if (power)
+                    samplesUntilRelease = static_cast<int>(length * samplesPerStep) + playSampleOffsetWithinBlock;
                 samplesUntilNextStep = samplesPerStep + playSampleOffsetWithinBlock;
                 DBG("next step in " << ppqPosPerStep << " ppq or " << samplesUntilNextStep << " samples or "
                                     << (1 / stepsPerSec) << " secs, length " << length << " %, index " << nextStepIndex
