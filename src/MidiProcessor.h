@@ -36,6 +36,7 @@ private:
     size_t nextStepIndex;
     double prevPpqPos;
     double nextPpqPos; // predicted, in case we jump back in time
+    bool tieNextStep;
 
     double releasePpqPos; // if transport running, ppq from start
     double nextStepPpqPos; // if transport running, ppq from start

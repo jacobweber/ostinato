@@ -19,6 +19,7 @@ void MidiProcessor::init(double sr) {
     prevPpqPos = 0;
     nextPpqPos = 0;
     nextStepIndex = 0;
+    tieNextStep = false;
 }
 
 void MidiProcessor::stopPlaying(juce::MidiBuffer &midiOut, int offset) {
@@ -128,7 +129,7 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midiIn, juce::MidiBuffe
             }
         }
 
-        if (releaseSampleOffsetWithinBlock != -1) {
+        if (releaseSampleOffsetWithinBlock != -1 && !tieNextStep) {
             // release a step within this block
             stopPlaying(midiOut, releaseSampleOffsetWithinBlock);
             DBG("release step at " << releaseSampleOffsetWithinBlock << " samples into block");
@@ -156,9 +157,9 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midiIn, juce::MidiBuffe
                 nextStepIndex = 0;
             }
             state.stepIndex = nextStepIndex;
-            
+
             bool power = state.stepState[nextStepIndex].powerParameter->get();
-            if (power) {
+            if (power && !tieNextStep) {
                 size_t numVoices = static_cast<size_t>(state.voicesParameter->getIndex()) + 1;
                 double volume = state.stepState[nextStepIndex].volParameter->get();
                 for (size_t voiceNum = 0; voiceNum < numVoices; voiceNum++) {
@@ -179,6 +180,7 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midiIn, juce::MidiBuffe
                 DBG("skip step at " << playSampleOffsetWithinBlock << " samples into block");
             }
 
+            tieNextStep = state.stepState[nextStepIndex].tieParameter->get();
             double length = state.stepState[nextStepIndex].lengthParameter->get();
 
             // prepare current release and next step
