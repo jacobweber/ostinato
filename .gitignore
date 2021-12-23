@@ -3,8 +3,5 @@
 /Plug-Ins
 /.vscode
 /.idea
-
-/*.filtergraph
+/work
 /*.jpg
-/*.RPP*
-/TestWaveform
