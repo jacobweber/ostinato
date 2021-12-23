@@ -184,12 +184,13 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midiIn, juce::MidiBuffe
             if (ppqPosPerStep == -1) {
                 ppqPosPerStep = getPpqPosPerStep(state);
             }
-            DBG("next step index: " << nextStepIndex << ", rate: " << ppqPosPerStep << " ppq, length: " << length);
 
             if (transportOn) {
                 releasePpqPos = nextStepPpqPos + (length * ppqPosPerStep);
                 nextStepPpqPos = roundNextPpqPos(nextStepPpqPos + ppqPosPerStep, ppqPosPerStep);
-                DBG("next step in " << ppqPosPerStep << " ppq at " << nextStepPpqPos << " ppq, " << pressedNotes.size()
+                DBG("next step in " << ppqPosPerStep << " ppq at " << nextStepPpqPos << " ppq, length " << length
+                                    << " %, index " << nextStepIndex
+                                    << ", " << pressedNotes.size()
                                     << " pressed notes, " << posInfo.bpm << " bpm");
             } else {
                 double stepsPerSec = (posInfo.bpm / 60) / ppqPosPerStep;
@@ -197,7 +198,9 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midiIn, juce::MidiBuffe
                 samplesUntilRelease = static_cast<int>(length * samplesPerStep) + playSampleOffsetWithinBlock;
                 samplesUntilNextStep = samplesPerStep + playSampleOffsetWithinBlock;
                 DBG("next step in " << ppqPosPerStep << " ppq or " << samplesUntilNextStep << " samples or "
-                                    << (1 / stepsPerSec) << " secs, " << pressedNotes.size()
+                                    << (1 / stepsPerSec) << " secs, length " << length << " %, index " << nextStepIndex
+                                    << ", "
+                                    << pressedNotes.size()
                                     << " pressed notes, " << posInfo.bpm << " bpm");
             }
         } else {
@@ -231,6 +234,5 @@ double MidiProcessor::roundNextPpqPos(double scheduledPpqPos, double ppqPosPerSt
     double prevStepPpqPos = scheduledPpqPos - offsetWithinStep;
     double nextStepPpqPos = prevStepPpqPos + ppqPosPerStep;
     double nextStepDiff = nextStepPpqPos - scheduledPpqPos;
-    DBG("offset: " << offsetWithinStep);
     return offsetWithinStep < nextStepDiff ? prevStepPpqPos : nextStepPpqPos;
 }
