@@ -1,10 +1,10 @@
 #pragma once
 
-#include "Constants.h"
+#include "Props.h"
 
 class StepState {
 public:
-    juce::AudioParameterBool *voiceParameters[MAX_VOICES];
+    juce::AudioParameterBool *voiceParameters[props::MAX_VOICES];
     juce::AudioParameterChoice *octaveParameter = nullptr;
     juce::AudioParameterFloat *lengthParameter = nullptr;
     juce::AudioParameterBool *tieParameter = nullptr;

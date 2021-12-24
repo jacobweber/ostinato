@@ -2,7 +2,7 @@
 
 #include <juce_audio_utils/juce_audio_utils.h>
 
-#include "Constants.h"
+#include "Props.h"
 #include "ParametersFactory.h"
 #include "MidiProcessor.h"
 #include "TestAudioProcessor.h"
@@ -19,11 +19,11 @@ public:
         *(state.voicesParameter) = 3; // index
         *(state.rateParameter) = 2; // index
         *(state.rateTypeParameter) = 0; // index
-        for (size_t i = 0; i < MAX_STEPS; i++) {
-            for (size_t j = 0; j < MAX_VOICES; j++) {
+        for (size_t i = 0; i < props::MAX_STEPS; i++) {
+            for (size_t j = 0; j < props::MAX_VOICES; j++) {
                 *(state.stepState[i].voiceParameters[j]) = false;
             }
-            *(state.stepState[i].octaveParameter) = MAX_OCTAVES; // index; 0
+            *(state.stepState[i].octaveParameter) = props::MAX_OCTAVES; // index; 0
             *(state.stepState[i].lengthParameter) = .5;
             *(state.stepState[i].tieParameter) = false;
             *(state.stepState[i].volParameter) = .5;

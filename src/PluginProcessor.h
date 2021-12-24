@@ -6,7 +6,7 @@
 #include "SpinLockedPosInfo.h"
 #include "State.h"
 #include "Components/StepStrip.h"
-#include "Constants.h"
+#include "Props.h"
 
 class PluginProcessor : public juce::AudioProcessor {
 public:

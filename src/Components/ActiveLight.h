@@ -3,7 +3,7 @@
 #include "juce_gui_basics/juce_gui_basics.h"
 
 #include "../State.h"
-#include "../Constants.h"
+#include "../Props.h"
 
 class ActiveLight : public juce::Component {
 public:
@@ -12,7 +12,7 @@ public:
 
     void paint(juce::Graphics &g) override {
         bool highlighted = state.playing && state.stepIndex == stepNum;
-        g.setColour(highlighted ? COLOR_HIGHLIGHT : COLOR_STANDARD);
+        g.setColour(highlighted ? props::COLOR_HIGHLIGHT : props::COLOR_STANDARD);
         juce::Rectangle<float> outer = getLocalBounds().toFloat();
         g.drawEllipse(outer.reduced(1), 1.5f);
         if (highlighted)

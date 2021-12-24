@@ -1,7 +1,7 @@
 #include <math.h>
 
 #include "MidiProcessor.h"
-#include "Constants.h"
+#include "Props.h"
 
 constexpr double EIGHT_THIRDS = 8.0 / 3.0;
 
@@ -89,7 +89,7 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midiIn, juce::MidiBuffe
                 // don't calculate in samples, since tempo may change
                 DBG("first step at " << nextStepPpqPos << " ppq, " << pressedNotes.size() << " pressed notes");
             } else {
-                samplesUntilNextStep = static_cast<int>(PLAY_DELAY_SEC * sampleRate);
+                samplesUntilNextStep = static_cast<int>(props::PLAY_DELAY_SEC * sampleRate);
                 samplesUntilRelease = -1;
                 DBG("first step in " << samplesUntilNextStep << " samples, " << pressedNotes.size()
                                      << " pressed notes");
@@ -163,7 +163,8 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midiIn, juce::MidiBuffe
                 size_t numVoices = static_cast<size_t>(state.voicesParameter->getIndex()) + 1;
                 double volume = state.stepState[nextStepIndex].volParameter->get();
                 int transpose =
-                        (state.stepState[nextStepIndex].octaveParameter->getIndex() - static_cast<int>(MAX_OCTAVES)) *
+                        (state.stepState[nextStepIndex].octaveParameter->getIndex() -
+                         static_cast<int>(props::MAX_OCTAVES)) *
                         12;
                 for (size_t voiceNum = 0; voiceNum < numVoices; voiceNum++) {
                     if (state.stepState[nextStepIndex].voiceParameters[voiceNum]->get()) {

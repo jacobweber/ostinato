@@ -3,7 +3,7 @@
 #include "../PluginProcessor.h"
 #include "PluginEditor.h"
 #include "../Timecode.h"
-#include "../Constants.h"
+#include "../Props.h"
 
 PluginEditor::PluginEditor(PluginProcessor &p, State &s)
         : AudioProcessorEditor(&p), state(s) {
@@ -13,17 +13,17 @@ PluginEditor::PluginEditor(PluginProcessor &p, State &s)
     juce::Image dice = FontAwesome::getInstance()->getIcon(true,
                                                            juce::String::fromUTF8(
                                                                    reinterpret_cast<const char *>(u8"\uf522")),
-                                                           ICON_SIZE, COLOR_STANDARD,
+                                                           ICON_SIZE, props::COLOR_STANDARD,
                                                            1);
-    randomButton.setImages(true, false, true, dice, 1.0f, {}, {}, 1.0f, {}, {}, 1.0f, COLOR_HIGHLIGHT);
-    randomButton.setTooltip(TOOLTIP_RANDOM);
+    randomButton.setImages(true, false, true, dice, 1.0f, {}, {}, 1.0f, {}, {}, 1.0f, props::COLOR_HIGHLIGHT);
+    randomButton.setTooltip(props::TOOLTIP_RANDOM);
     randomButton.onClick = [this] { randomizeParams(true); };
     addAndMakeVisible(randomButton);
 
     addAndMakeVisible(stepsLabel);
     stepsLabel.setFont(textFont);
     stepsLabel.attachToComponent(&stepsMenu, false);
-    for (size_t i = 1; i <= MAX_STEPS; i++) {
+    for (size_t i = 1; i <= props::MAX_STEPS; i++) {
         stepsMenu.addItem(std::to_string(i), static_cast<int>(i));
     }
     stepsMenu.onChange = [this] {
@@ -36,7 +36,7 @@ PluginEditor::PluginEditor(PluginProcessor &p, State &s)
     addAndMakeVisible(voicesLabel);
     voicesLabel.setFont(textFont);
     voicesLabel.attachToComponent(&voicesMenu, false);
-    for (size_t i = 1; i <= MAX_VOICES; i++) {
+    for (size_t i = 1; i <= props::MAX_VOICES; i++) {
         voicesMenu.addItem(std::to_string(i), static_cast<int>(i));
     }
     voicesMenu.onChange = [this] {
@@ -119,13 +119,13 @@ void PluginEditor::randomizeParams(bool stepsAndVoices) {
     std::random_device rd;
     std::mt19937 mt(rd());
 
-    std::uniform_int_distribution<size_t> randNumSteps(1, MAX_STEPS);
-    std::uniform_int_distribution<size_t> randNumVoices(1, MAX_VOICES);
+    std::uniform_int_distribution<size_t> randNumSteps(1, props::MAX_STEPS);
+    std::uniform_int_distribution<size_t> randNumVoices(1, props::MAX_VOICES);
     std::uniform_int_distribution<int> randRate(1, state.rateParameter->getAllValueStrings().size());
     std::uniform_int_distribution<int> randRateType(1, state.rateTypeParameter->getAllValueStrings().size());
 
     std::uniform_int_distribution<int> randVoice(0, 3);
-    std::uniform_int_distribution<int> randOctave(1, static_cast<int>(MAX_VOICES) * 2 + 1);
+    std::uniform_int_distribution<int> randOctave(1, static_cast<int>(props::MAX_VOICES) * 2 + 1);
     std::uniform_real_distribution<float> randLength(0.0, 1.0);
     std::uniform_int_distribution<int> randTie(0, 10);
     std::uniform_real_distribution<float> randVolume(0.0, 1.0);
