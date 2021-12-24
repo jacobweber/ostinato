@@ -6,6 +6,7 @@
 #include "../PluginProcessor.h"
 #include "../State.h"
 #include "StepStrips.h"
+#include "../Constants.h";
 
 class PluginEditor : public juce::AudioProcessorEditor, private juce::Timer {
 public:
@@ -38,11 +39,11 @@ private:
 
     juce::ImageButton randomButton{};
     juce::Label timecodeDisplayLabel;
-    juce::Label stepsLabel{{}, "Steps"};
+    juce::Label stepsLabel{{}, LABEL_STEPS};
     juce::ComboBox stepsMenu;
-    juce::Label voicesLabel{{}, "Voices"};
+    juce::Label voicesLabel{{}, LABEL_VOICES};
     juce::ComboBox voicesMenu;
-    juce::Label rateLabel{{}, "Step length"};
+    juce::Label rateLabel{{}, LABEL_RATE};
     juce::ComboBox rateMenu;
     juce::ComboBox rateTypeMenu;
     StepStrips stepStrips{state};

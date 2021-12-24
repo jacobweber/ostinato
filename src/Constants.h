@@ -11,7 +11,10 @@ const juce::Colour COLOR_STANDARD = juce::Colours::white;
 const juce::Colour COLOR_OUTLINE = juce::Colours::grey;
 const juce::Colour COLOR_HIGHLIGHT = juce::Colours::red;
 
-const juce::String TEXT_TIE = "Tie";
+const juce::String LABEL_TIE = "Tie";
+const juce::String LABEL_STEPS = "Steps";
+const juce::String LABEL_VOICES = "Steps";
+const juce::String LABEL_RATE = "Step Length";
 
 const juce::String TOOLTIP_RANDOM = "Randomize settings";
 const juce::String TOOLTIP_VOICES_CLEAR = "Turn off all voices for this step";
