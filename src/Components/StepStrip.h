@@ -26,11 +26,7 @@ public:
                                                                          reinterpret_cast<const char *>(u8"\uf0c8")),
                                                                  ICON_SIZE, juce::Colours::red,
                                                                  1);
-        juce::Image squareDown = FontAwesome::getInstance()->getIcon(false,
-                                                                     juce::String::fromUTF8(
-                                                                             reinterpret_cast<const char *>(u8"\uf0c8")),
-                                                                     ICON_SIZE, juce::Colours::white, 1);
-        clearButton.setImages(true, false, true, square, 1.0f, {}, {}, 1.0f, {}, squareDown, 1.0f, {});
+        clearButton.setImages(true, false, true, square, 1.0f, {}, {}, 1.0f, {}, {}, 1.0f, juce::Colours::white);
         clearButton.onClick = [this] {
             for (size_t i = 0; i < voices.size(); i++)
                 *(state.stepState[stepNum].voiceParameters[i]) = false;
@@ -42,11 +38,7 @@ public:
                                                                               reinterpret_cast<const char *>(u8"\uf14a")),
                                                                       ICON_SIZE, juce::Colours::red,
                                                                       1);
-        juce::Image checkSquareDown = FontAwesome::getInstance()->getIcon(false,
-                                                                          juce::String::fromUTF8(
-                                                                                  reinterpret_cast<const char *>(u8"\uf14a")),
-                                                                          ICON_SIZE, juce::Colours::white, 1);
-        fillButton.setImages(true, false, true, checkSquare, 1.0f, {}, {}, 1.0f, {}, checkSquareDown, 1.0f, {});
+        fillButton.setImages(true, false, true, checkSquare, 1.0f, {}, {}, 1.0f, {}, {}, 1.0f, juce::Colours::white);
         fillButton.onClick = [this] {
             for (size_t i = 0; i < voices.size(); i++)
                 *(state.stepState[stepNum].voiceParameters[i]) = true;
