@@ -66,17 +66,6 @@ PluginEditor::PluginEditor(PluginProcessor &p, State &s)
 
     addAndMakeVisible(stepStrips);
 
-    addAndMakeVisible(messagesBox);
-    messagesBox.setMultiLine(true);
-    messagesBox.setReturnKeyStartsNewLine(true);
-    messagesBox.setReadOnly(true);
-    messagesBox.setScrollbarsShown(true);
-    messagesBox.setCaretVisible(false);
-    messagesBox.setPopupMenuEnabled(true);
-    messagesBox.setColour(juce::TextEditor::backgroundColourId, juce::Colour(0x32ffffff));
-    messagesBox.setColour(juce::TextEditor::outlineColourId, juce::Colour(0x1c000000));
-    messagesBox.setColour(juce::TextEditor::shadowColourId, juce::Colour(0x16000000));
-
     refreshSize(); // resize after initialization
     startTimerHz(60);
 }
@@ -97,9 +86,6 @@ void PluginEditor::resized() {
     headerBox.items.add(juce::FlexItem(randomButton).withWidth(randomButton.getWidth()).withMargin(5));
     headerBox.performLayout(area.removeFromTop(26));
 
-    area.removeFromTop(10);
-    messagesBox.setBounds(area.removeFromBottom(100).reduced(8));
-
     juce::FlexBox top;
     juce::Rectangle<int> topArea = area.removeFromTop(40).reduced(8);
     top.items.add(juce::FlexItem(stepsMenu).withHeight((float) topArea.getHeight()).withWidth(150));
@@ -109,11 +95,6 @@ void PluginEditor::resized() {
     top.performLayout(topArea.toFloat());
 
     stepStrips.setBounds(area);
-}
-
-void PluginEditor::logMessage(const juce::String &m) {
-    messagesBox.moveCaretToEnd();
-    messagesBox.insertTextAtCaret(m + juce::newLine);
 }
 
 void PluginEditor::timerCallback() {

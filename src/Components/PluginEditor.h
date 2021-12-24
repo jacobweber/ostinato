@@ -20,8 +20,6 @@ public:
 
     void resized() override;
 
-    void logMessage(const juce::String &);
-
     void timerCallback() override;
 
     PluginProcessor &getProcessor() const;
@@ -46,7 +44,6 @@ private:
     juce::ComboBox rateMenu;
     juce::ComboBox rateTypeMenu;
     StepStrips stepStrips{state};
-    juce::TextEditor messagesBox;
 
     // use unique_ptr so it can be destroyed when UI is
     // declare after components so it's destroyed before them
