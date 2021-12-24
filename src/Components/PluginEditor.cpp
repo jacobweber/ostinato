@@ -86,6 +86,7 @@ void PluginEditor::resized() {
     headerBox.items.add(juce::FlexItem(randomButton).withWidth(randomButton.getWidth()).withMargin(5));
     headerBox.performLayout(area.removeFromTop(26));
 
+    area.removeFromTop(10);
     juce::FlexBox top;
     juce::Rectangle<int> topArea = area.removeFromTop(40).reduced(8);
     top.items.add(juce::FlexItem(stepsMenu).withHeight((float) topArea.getHeight()).withWidth(150));
