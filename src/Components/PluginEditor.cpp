@@ -13,9 +13,9 @@ PluginEditor::PluginEditor(PluginProcessor &p, State &s)
     juce::Image dice = FontAwesome::getInstance()->getIcon(true,
                                                            juce::String::fromUTF8(
                                                                    reinterpret_cast<const char *>(u8"\uf522")),
-                                                           ICON_SIZE, juce::Colours::red,
+                                                           ICON_SIZE, COLOR_STANDARD,
                                                            1);
-    randomButton.setImages(true, false, true, dice, 1.0f, {}, {}, 1.0f, {}, {}, 1.0f, juce::Colours::white);
+    randomButton.setImages(true, false, true, dice, 1.0f, {}, {}, 1.0f, {}, {}, 1.0f, COLOR_HIGHLIGHT);
     randomButton.onClick = [this] { randomizeParams(true); };
     addAndMakeVisible(randomButton);
 
