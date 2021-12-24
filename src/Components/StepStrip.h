@@ -33,6 +33,7 @@ public:
             for (size_t i = 0; i < voices.size(); i++)
                 *(state.stepState[stepNum].voiceParameters[i]) = false;
         };
+        clearButton.setTooltip(TOOLTIP_VOICES_CLEAR);
         addAndMakeVisible(clearButton);
 
         juce::Image checkSquare = FontAwesome::getInstance()->getIcon(false,
@@ -45,6 +46,7 @@ public:
             for (size_t i = 0; i < voices.size(); i++)
                 *(state.stepState[stepNum].voiceParameters[i]) = true;
         };
+        fillButton.setTooltip(TOOLTIP_VOICES_FILL);
         addAndMakeVisible(fillButton);
 
         addAndMakeVisible(octaveLabel);
@@ -67,8 +69,9 @@ public:
                 new SliderAttachment(state.parameters, "step" + std::to_string(stepNum) + "_length", lengthSlider));
 
         tieButton.setClickingTogglesState(true);
-        tieButton.setButtonText("Tie");
+        tieButton.setButtonText(TEXT_TIE);
         tieButton.setColour(juce::TextButton::ColourIds::buttonOnColourId, COLOR_HIGHLIGHT);
+        tieButton.setTooltip(TOOLTIP_TIE);
         addAndMakeVisible(tieButton);
         tieAttachment.reset(
                 new ButtonAttachment(state.parameters, "step" + std::to_string(stepNum) + "_tie", tieButton));
@@ -91,9 +94,13 @@ public:
         powerButton.setImages(false, false, true, powerOff, 1.0f, {}, {}, 1.0f, {}, {}, 1.0f,
                               COLOR_HIGHLIGHT);
         powerButton.setClickingTogglesState(true);
+        powerButton.onClick = [this] {
+            powerButton.setTooltip(powerButton.getToggleState() ? TOOLTIP_POWER_OFF : TOOLTIP_POWER_ON);
+        };
         addAndMakeVisible(powerButton);
         powerAttachment.reset(
                 new ButtonAttachment(state.parameters, "step" + std::to_string(stepNum) + "_power", powerButton));
+        powerButton.setTooltip(powerButton.getToggleState() ? TOOLTIP_POWER_OFF : TOOLTIP_POWER_ON);
 
         refresh();
     }

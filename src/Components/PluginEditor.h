@@ -32,6 +32,8 @@ private:
 private:
     State &state;
 
+    juce::TooltipWindow tooltipWindow{nullptr, 500};
+
     juce::Font textFont{12.0f};
 
     juce::ImageButton randomButton{};

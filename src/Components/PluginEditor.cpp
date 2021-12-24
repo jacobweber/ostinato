@@ -16,6 +16,7 @@ PluginEditor::PluginEditor(PluginProcessor &p, State &s)
                                                            ICON_SIZE, COLOR_STANDARD,
                                                            1);
     randomButton.setImages(true, false, true, dice, 1.0f, {}, {}, 1.0f, {}, {}, 1.0f, COLOR_HIGHLIGHT);
+    randomButton.setTooltip(TOOLTIP_RANDOM);
     randomButton.onClick = [this] { randomizeParams(true); };
     addAndMakeVisible(randomButton);
 
