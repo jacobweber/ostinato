@@ -11,13 +11,12 @@ public:
     }
 
     void paint(juce::Graphics &g) override {
-        g.setColour(COLOR_STANDARD);
+        bool highlighted = state.playing && state.stepIndex == stepNum;
+        g.setColour(highlighted ? COLOR_HIGHLIGHT : COLOR_STANDARD);
         juce::Rectangle<float> outer = getLocalBounds().toFloat();
         g.drawEllipse(outer.reduced(1), 1.5f);
-        if (state.playing && state.stepIndex == stepNum) {
-            g.setColour(COLOR_HIGHLIGHT);
+        if (highlighted)
             g.fillEllipse(outer.reduced(3));
-        }
     }
 
 private:
