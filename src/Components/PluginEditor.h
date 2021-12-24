@@ -29,12 +29,15 @@ public:
     void refreshSize();
 
 private:
-    State &state;
+    void randomizeParams(bool stepsAndVoices);
 
-    juce::Label timecodeDisplayLabel;
+private:
+    State &state;
 
     juce::Font textFont{12.0f};
 
+    juce::ImageButton randomButton{};
+    juce::Label timecodeDisplayLabel;
     juce::Label stepsLabel{{}, "Steps"};
     juce::ComboBox stepsMenu;
     juce::Label voicesLabel{{}, "Voices"};
