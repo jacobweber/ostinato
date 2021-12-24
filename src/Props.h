@@ -4,9 +4,9 @@
 #include <cstddef>
 
 namespace props {
-    const size_t MAX_STEPS = 16;
-    const size_t MAX_VOICES = 8;
-    const size_t MAX_OCTAVES = 4;
+    constexpr size_t MAX_STEPS = 16;
+    constexpr size_t MAX_VOICES = 8;
+    constexpr size_t MAX_OCTAVES = 4;
 
     const juce::Colour COLOR_STANDARD = juce::Colours::white;
     const juce::Colour COLOR_OUTLINE = juce::Colours::grey;
@@ -24,5 +24,6 @@ namespace props {
     const juce::String TOOLTIP_POWER_OFF = "Disable this step";
     const juce::String TOOLTIP_POWER_ON = "Enable this step";
 
-    const double PLAY_DELAY_SEC = 0.1; // so cycle starts at first note when you press multiple notes at once
+    constexpr double PLAY_DELAY_SEC = 0.1; // so cycle starts at first note when you press multiple notes at once
+    constexpr double START_DELAY_ALLOWANCE = 0.05; // if we start playing before this many ppqs after the beat, round down to the beat. Reaper seems to start a little late.
 }

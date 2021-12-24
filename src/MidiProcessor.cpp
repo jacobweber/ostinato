@@ -3,11 +3,6 @@
 #include "MidiProcessor.h"
 #include "Props.h"
 
-constexpr double EIGHT_THIRDS = 8.0 / 3.0;
-
-// If we start playing before this many ppqs after the beat, round down to the beat. Reaper seems to start a little late.
-constexpr double START_DELAY_ALLOWANCE = 0.05;
-
 void MidiProcessor::init(double sr) {
     sampleRate = sr;
 
@@ -229,6 +224,8 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midiIn, juce::MidiBuffe
 }
 
 double MidiProcessor::getPpqPosPerStep(State &state) {
+    static constexpr double EIGHT_THIRDS = 8.0 / 3.0;
+
     // step length in quarters = 4 / rate
     double denominator = std::pow(2, state.rateParameter->getIndex());
     switch (state.rateTypeParameter->getIndex()) {
@@ -245,7 +242,7 @@ double MidiProcessor::roundStartPpqPos(double scheduledPpqPos, double ppqPosPerS
     double offsetWithinStep = std::fmod(scheduledPpqPos, ppqPosPerStep);
     double prevStepPpqPos = scheduledPpqPos - offsetWithinStep;
     double nextStepPpqPos = prevStepPpqPos + ppqPosPerStep;
-    return offsetWithinStep < START_DELAY_ALLOWANCE ? prevStepPpqPos : nextStepPpqPos;
+    return offsetWithinStep < props::START_DELAY_ALLOWANCE ? prevStepPpqPos : nextStepPpqPos;
 }
 
 double MidiProcessor::roundNextPpqPos(double scheduledPpqPos, double ppqPosPerStep) {
