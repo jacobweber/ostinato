@@ -15,6 +15,7 @@ class StepStrip : public juce::Component {
 public:
     typedef juce::AudioProcessorValueTreeState::ButtonAttachment ButtonAttachment;
     typedef juce::AudioProcessorValueTreeState::SliderAttachment SliderAttachment;
+    typedef juce::AudioProcessorValueTreeState::ComboBoxAttachment ComboBoxAttachment;
 
     StepStrip(State &s, size_t n) : stepNum(n), state(s) {
         DBG("created strip " << stepNum);
@@ -44,6 +45,16 @@ public:
                 *(state.stepState[stepNum].voiceParameters[i]) = true;
         };
         addAndMakeVisible(fillButton);
+
+        addAndMakeVisible(octaveLabel);
+        octaveLabel.setFont(textFont);
+        octaveLabel.attachToComponent(&octaveMenu, false);
+        int itemId = 1;
+        for (int i = -static_cast<int>(MAX_OCTAVES); i <= static_cast<int>(MAX_OCTAVES); i++)
+            octaveMenu.addItem(std::to_string(i), itemId++);
+        addAndMakeVisible(octaveMenu);
+        octaveAttachment.reset(
+                new ComboBoxAttachment(state.parameters, "step" + std::to_string(stepNum) + "_octave", octaveMenu));
 
         lengthSlider.setSliderStyle(juce::Slider::LinearBar);
         lengthSlider.setRange(0.0, 1.0);
@@ -116,13 +127,16 @@ public:
 
         powerButton.setBounds(area.removeFromBottom(20));
 
-        area.removeFromTop(20);
+        area.removeFromTop(30);
+        octaveMenu.setBounds(area.removeFromTop(24));
+
+        area.removeFromTop(30);
         lengthSlider.setBounds(area.removeFromTop(20));
 
-        area.removeFromTop(20);
+        area.removeFromTop(30);
         tieButton.setBounds(area.removeFromTop(20));
 
-        area.removeFromTop(20);
+        area.removeFromTop(30);
         volSlider.setBounds(area);
     }
 
@@ -166,9 +180,13 @@ private:
     size_t stepNum{0};
     State &state;
 
+    juce::Font textFont{12.0f};
+
     ActiveLight activeLight{state, stepNum};
     juce::ImageButton clearButton{};
     juce::ImageButton fillButton{};
+    juce::Label octaveLabel{{}, "Octave"};
+    juce::ComboBox octaveMenu;
     juce::Slider lengthSlider;
     juce::TextButton tieButton{};
     std::vector<std::unique_ptr<juce::TextButton>> voices;
@@ -176,6 +194,7 @@ private:
     juce::ImageButton powerButton{};
 
     std::vector<std::unique_ptr<ButtonAttachment>> voicesAttachments;
+    std::unique_ptr<ComboBoxAttachment> octaveAttachment;
     std::unique_ptr<SliderAttachment> lengthAttachment;
     std::unique_ptr<ButtonAttachment> tieAttachment;
     std::unique_ptr<SliderAttachment> volAttachment;

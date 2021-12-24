@@ -23,6 +23,7 @@ public:
             for (size_t j = 0; j < MAX_VOICES; j++) {
                 *(state.stepState[i].voiceParameters[j]) = false;
             }
+            *(state.stepState[i].octaveParameter) = MAX_OCTAVES; // index; 0
             *(state.stepState[i].lengthParameter) = .5;
             *(state.stepState[i].tieParameter) = false;
             *(state.stepState[i].volParameter) = .5;

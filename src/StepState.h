@@ -5,6 +5,7 @@
 class StepState {
 public:
     juce::AudioParameterBool *voiceParameters[MAX_VOICES];
+    juce::AudioParameterChoice *octaveParameter = nullptr;
     juce::AudioParameterFloat *lengthParameter = nullptr;
     juce::AudioParameterBool *tieParameter = nullptr;
     juce::AudioParameterFloat *volParameter = nullptr;

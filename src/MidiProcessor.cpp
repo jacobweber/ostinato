@@ -162,16 +162,22 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midiIn, juce::MidiBuffe
             if (power && !tieActive) {
                 size_t numVoices = static_cast<size_t>(state.voicesParameter->getIndex()) + 1;
                 double volume = state.stepState[nextStepIndex].volParameter->get();
+                int transpose =
+                        (state.stepState[nextStepIndex].octaveParameter->getIndex() - static_cast<int>(MAX_OCTAVES)) *
+                        12;
                 for (size_t voiceNum = 0; voiceNum < numVoices; voiceNum++) {
                     if (state.stepState[nextStepIndex].voiceParameters[voiceNum]->get()) {
                         int voiceIndex = static_cast<int>(numVoices - 1 - voiceNum); // they're flipped
                         if (voiceIndex < pressedNotes.size()) {
                             MidiValue noteValue = pressedNotes[static_cast<int>(voiceIndex)];
-                            double vel = juce::jmin(volume * 2 * noteValue.vel, 127.0);
-                            midiOut.addEvent(
-                                    juce::MidiMessage::noteOn(noteValue.channel, noteValue.note, (juce::uint8) vel),
-                                    playSampleOffsetWithinBlock);
-                            playingNotes.add(noteValue);
+                            noteValue.note += transpose;
+                            if (noteValue.note >= 0 && noteValue.note <= 127) {
+                                double vel = juce::jmin(volume * 2 * noteValue.vel, 127.0);
+                                midiOut.addEvent(
+                                        juce::MidiMessage::noteOn(noteValue.channel, noteValue.note, (juce::uint8) vel),
+                                        playSampleOffsetWithinBlock);
+                                playingNotes.add(noteValue);
+                            }
                         }
                     }
                 }

@@ -18,6 +18,8 @@ public:
                         "step" + std::to_string(i) + "_voice" + std::to_string(j)));
                 stepState[i].voiceParameters[j] = voiceParameter ? voiceParameter : nullptr;
             }
+            stepState[i].octaveParameter = dynamic_cast<juce::AudioParameterChoice *> (parameters.getParameter(
+                    "step" + std::to_string(i) + "_octave"));
             stepState[i].lengthParameter = dynamic_cast<juce::AudioParameterFloat *> (parameters.getParameter(
                     "step" + std::to_string(i) + "_length"));
             stepState[i].volParameter = dynamic_cast<juce::AudioParameterFloat *> (parameters.getParameter(
