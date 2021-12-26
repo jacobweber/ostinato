@@ -138,7 +138,8 @@ set(TestFiles
         test/CatchMain.cpp
         test/PluginInfo.cpp
         test/MidiValue.cpp
-        test/MidiProcessor.cpp)
+        test/MidiProcessor.cpp
+        test/Stretcher.cpp)
 
 # Download the tagged version of Catch2
 Include(FetchContent)

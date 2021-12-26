@@ -31,4 +31,15 @@ public:
         }
         return grid;
     }
+
+    static juce::String getGrid(Stretcher::StretchedResult &state) {
+        juce::String grid = juce::String();
+        for (size_t j = 0; j < state.numVoices; j++) {
+            for (size_t i = 0; i < state.numSteps; i++) {
+                grid += state.steps[i].voices[j] ? '*' : '-';
+            }
+            grid += '\n';
+        }
+        return grid;
+    }
 };
