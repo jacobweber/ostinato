@@ -60,19 +60,25 @@ public:
         std::vector<double> nextOrigStepActiveVoicesY{};
         nextOrigStepActiveVoicesY.reserve(props::MAX_VOICES);
 
-        for (size_t prevOrigVoiceNum = 0; prevOrigVoiceNum < origNumVoices; prevOrigVoiceNum++) {
-            if (state.stepState[prevOrigStepNum].voiceParameters[prevOrigVoiceNum]->get()) {
-                prevOrigStepActiveVoicesY.push_back(origVoiceSizeY * (origNumVoices - 1 - prevOrigVoiceNum));
+        if (state.stepState[prevOrigStepNum].powerParameter->get()) {
+            for (size_t prevOrigVoiceNum = 0; prevOrigVoiceNum < origNumVoices; prevOrigVoiceNum++) {
+                if (state.stepState[prevOrigStepNum].voiceParameters[prevOrigVoiceNum]->get()) {
+                    prevOrigStepActiveVoicesY.push_back(origVoiceSizeY * (origNumVoices - 1 - prevOrigVoiceNum));
+                }
             }
         }
 
         if (nextOrigStepNum == origNumSteps) {
             // when on last original step, act as if there's one more step with the same voices
             nextOrigStepActiveVoicesY = prevOrigStepActiveVoicesY;
+        } else if (state.stepState[prevOrigStepNum].tieParameter->get()) {
+            nextOrigStepActiveVoicesY = prevOrigStepActiveVoicesY;
         } else {
-            for (size_t nextOrigVoiceNum = 0; nextOrigVoiceNum < origNumVoices; nextOrigVoiceNum++) {
-                if (state.stepState[nextOrigStepNum].voiceParameters[nextOrigVoiceNum]->get()) {
-                    nextOrigStepActiveVoicesY.push_back(origVoiceSizeY * (origNumVoices - 1 - nextOrigVoiceNum));
+            if (state.stepState[nextOrigStepNum].powerParameter->get()) {
+                for (size_t nextOrigVoiceNum = 0; nextOrigVoiceNum < origNumVoices; nextOrigVoiceNum++) {
+                    if (state.stepState[nextOrigStepNum].voiceParameters[nextOrigVoiceNum]->get()) {
+                        nextOrigStepActiveVoicesY.push_back(origVoiceSizeY * (origNumVoices - 1 - nextOrigVoiceNum));
+                    }
                 }
             }
         }
@@ -92,12 +98,16 @@ public:
                 prevOrigStepActiveVoicesY = nextOrigStepActiveVoicesY;
                 if (nextOrigStepNum == origNumSteps) {
                     // when on last original step, act as if there's one more step with the same voices
+                } else if (state.stepState[prevOrigStepNum].tieParameter->get()) {
+                    nextOrigStepActiveVoicesY = prevOrigStepActiveVoicesY;
                 } else {
                     nextOrigStepActiveVoicesY.clear();
-                    for (size_t nextOrigVoiceNum = 0; nextOrigVoiceNum < origNumVoices; nextOrigVoiceNum++) {
-                        if (state.stepState[nextOrigStepNum].voiceParameters[nextOrigVoiceNum]->get()) {
-                            nextOrigStepActiveVoicesY.push_back(
-                                    origVoiceSizeY * (origNumVoices - 1 - nextOrigVoiceNum));
+                    if (state.stepState[nextOrigStepNum].powerParameter->get()) {
+                        for (size_t nextOrigVoiceNum = 0; nextOrigVoiceNum < origNumVoices; nextOrigVoiceNum++) {
+                            if (state.stepState[nextOrigStepNum].voiceParameters[nextOrigVoiceNum]->get()) {
+                                nextOrigStepActiveVoicesY.push_back(
+                                        origVoiceSizeY * (origNumVoices - 1 - nextOrigVoiceNum));
+                            }
                         }
                     }
                 }
