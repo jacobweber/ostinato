@@ -103,15 +103,10 @@ public:
             size_t nextStepNum = static_cast<size_t>((stepNum + 1 + roundingOffset) / origStepSizeX);
 
             if (nextStepNum > next.stepNum) { // passed the next original step, so recalc things
-                prev.stepNum = next.stepNum;
+                prev = next;
                 next.stepNum = nextStepNum;
-                prev.x = next.x;
                 next.x = next.stepNum * origStepSizeX;
 
-                prev.length = next.length;
-                prev.volume = next.volume;
-
-                prev.activeVoicesY = next.activeVoicesY;
                 if (next.stepNum == origNumSteps) {
                     // when on last original step, act as if there's one more step with the same voices etc.
                 } else if (state.stepState[prev.stepNum].tieParameter->get()) {
