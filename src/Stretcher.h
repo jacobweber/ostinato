@@ -9,6 +9,7 @@ public:
         std::vector<bool> voices;
         double length;
         double volume;
+        int octave;
     };
     struct StretchedResult {
         std::vector<StretchedStep> steps;
@@ -21,6 +22,7 @@ public:
         std::vector<double> activeVoicesY{};
         double length;
         double volume;
+        int octave;
     };
 
     StretchedResult stretch(State &state, size_t numNotes) {
@@ -96,6 +98,9 @@ public:
         prev.volume = state.stepState[prev.stepNum].volParameter->get();
         next.volume = state.stepState[next.stepNum].volParameter->get();
 
+        prev.octave = state.stepState[prev.stepNum].octaveParameter->getIndex();
+        next.octave = state.stepState[next.stepNum].octaveParameter->getIndex();
+
         for (size_t stepNum = 0; stepNum < result.numSteps; stepNum++) {
             double curStepX = static_cast<double>(stepNum);
 
@@ -124,6 +129,7 @@ public:
 
                     next.length = state.stepState[next.stepNum].lengthParameter->get();
                     next.volume = state.stepState[next.stepNum].volParameter->get();
+                    next.octave = state.stepState[next.stepNum].octaveParameter->getIndex();
                 }
             }
             DBG("--- step " << curStepX << " (orig: " << prev.stepNum << " - " << next.stepNum << ", X: "
@@ -164,6 +170,8 @@ public:
 
             double volSlope = (next.volume - prev.volume) / (next.x - prev.x);
             step.volume = prev.volume + volSlope * (curStepX - prev.x);
+
+            step.octave = prev.octave;
 
             result.steps.push_back(step);
         }
