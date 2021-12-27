@@ -147,22 +147,20 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midiIn, juce::MidiBuffe
 
         if (playSampleOffsetWithinBlock != -1) {
             // play a step within this block
-            size_t lastStepIndex = static_cast<size_t>(state.stepsParameter->getIndex());
+            size_t lastStepIndex = static_cast<size_t>(state.stepsParameter->getIndex()); // stretch
             if (nextStepIndex > lastStepIndex) {
                 nextStepIndex = 0;
             }
             state.stepIndex = nextStepIndex;
 
-            bool power = state.stepState[nextStepIndex].powerParameter->get();
+            bool power = state.stepState[nextStepIndex].powerParameter->get(); // stretch
             if (power && !tieActive) {
-                size_t numVoices = static_cast<size_t>(state.voicesParameter->getIndex()) + 1;
-                double volume = state.stepState[nextStepIndex].volParameter->get();
-                int transpose =
-                        (state.stepState[nextStepIndex].octaveParameter->getIndex() -
-                         static_cast<int>(props::MAX_OCTAVES)) *
-                        12;
+                size_t numVoices = static_cast<size_t>(state.voicesParameter->getIndex()) + 1; // stretch
+                double volume = state.stepState[nextStepIndex].volParameter->get(); // stretch
+                int octaveIndex = state.stepState[nextStepIndex].octaveParameter->getIndex(); // stretch
+                int transpose = (octaveIndex - static_cast<int>(props::MAX_OCTAVES)) * 12;
                 for (size_t voiceNum = 0; voiceNum < numVoices; voiceNum++) {
-                    if (state.stepState[nextStepIndex].voiceParameters[voiceNum]->get()) {
+                    if (state.stepState[nextStepIndex].voiceParameters[voiceNum]->get()) { // stretch
                         int voiceIndex = static_cast<int>(numVoices - 1 - voiceNum); // they're flipped
                         if (voiceIndex < pressedNotes.size()) {
                             MidiValue noteValue = pressedNotes[static_cast<int>(voiceIndex)];
@@ -183,8 +181,8 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midiIn, juce::MidiBuffe
             }
 
             bool tieWasActive = tieActive;
-            tieActive = state.stepState[nextStepIndex].tieParameter->get();
-            double length = state.stepState[nextStepIndex].lengthParameter->get();
+            tieActive = state.stepState[nextStepIndex].tieParameter->get(); // stretch
+            double length = state.stepState[nextStepIndex].lengthParameter->get(); // stretch
 
             // prepare current release and next step
             nextStepIndex++;
