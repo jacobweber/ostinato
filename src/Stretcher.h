@@ -16,6 +16,7 @@ public:
         size_t numSteps;
         size_t numVoices;
     };
+
     struct OrigStep {
         size_t stepNum;
         double x;
@@ -23,6 +24,20 @@ public:
         double length;
         double volume;
         int octave;
+
+        void fromState(State &state, size_t origNumVoices, double origVoiceSizeY) {
+            activeVoicesY.clear();
+            if (state.stepState[stepNum].powerParameter->get()) {
+                for (size_t origVoiceNum = 0; origVoiceNum < origNumVoices; origVoiceNum++) {
+                    if (state.stepState[stepNum].voiceParameters[origVoiceNum]->get()) {
+                        activeVoicesY.push_back(origVoiceSizeY * (origNumVoices - 1 - origVoiceNum));
+                    }
+                }
+            }
+            length = state.stepState[stepNum].lengthParameter->get();
+            volume = state.stepState[stepNum].volParameter->get();
+            octave = state.stepState[stepNum].octaveParameter->getIndex();
+        }
     };
 
     StretchedResult stretch(State &state, size_t numNotes) {
@@ -60,76 +75,46 @@ public:
 
         OrigStep prev;
         OrigStep next;
-        prev.stepNum = 0;
-        // find closest original step to next new step (1)
-        next.stepNum = static_cast<size_t>((1 + roundingOffset) / origStepSizeX);
-
-        prev.x = 0;
-        next.x = next.stepNum * origStepSizeX;
         prev.activeVoicesY.reserve(props::MAX_VOICES);
         next.activeVoicesY.reserve(props::MAX_VOICES);
 
-        if (state.stepState[prev.stepNum].powerParameter->get()) {
-            for (size_t origVoiceNum = 0; origVoiceNum < origNumVoices; origVoiceNum++) {
-                if (state.stepState[prev.stepNum].voiceParameters[origVoiceNum]->get()) {
-                    prev.activeVoicesY.push_back(origVoiceSizeY * (origNumVoices - 1 - origVoiceNum));
-                }
-            }
-        }
+        prev.stepNum = 0;
+        prev.x = 0;
+        prev.fromState(state, origNumVoices, origVoiceSizeY);
+
+        // find closest original step to next new step (1)
+        size_t nextOrigStepNum = static_cast<size_t>((1 + roundingOffset) / origStepSizeX);
 
         if (next.stepNum == origNumSteps) {
-            // when on last original step, act as if there's one more step with the same voices
-            next.activeVoicesY = prev.activeVoicesY;
+            // when on last original step, act as if there's one more step with the same settings
+            next = prev;
+            next.stepNum = nextOrigStepNum;
         } else if (state.stepState[prev.stepNum].tieParameter->get()) {
-            next.activeVoicesY = prev.activeVoicesY;
+            next = prev;
+            next.stepNum = nextOrigStepNum;
         } else {
-            if (state.stepState[next.stepNum].powerParameter->get()) {
-                for (size_t origVoiceNum = 0; origVoiceNum < origNumVoices; origVoiceNum++) {
-                    if (state.stepState[next.stepNum].voiceParameters[origVoiceNum]->get()) {
-                        next.activeVoicesY.push_back(origVoiceSizeY * (origNumVoices - 1 - origVoiceNum));
-                    }
-                }
-            }
+            next.stepNum = nextOrigStepNum;
+            next.fromState(state, origNumVoices, origVoiceSizeY);
         }
-
-        prev.length = state.stepState[prev.stepNum].lengthParameter->get();
-        next.length = state.stepState[next.stepNum].lengthParameter->get();
-
-        prev.volume = state.stepState[prev.stepNum].volParameter->get();
-        next.volume = state.stepState[next.stepNum].volParameter->get();
-
-        prev.octave = state.stepState[prev.stepNum].octaveParameter->getIndex();
-        next.octave = state.stepState[next.stepNum].octaveParameter->getIndex();
+        next.x = next.stepNum * origStepSizeX;
 
         for (size_t stepNum = 0; stepNum < result.numSteps; stepNum++) {
             double curStepX = static_cast<double>(stepNum);
 
             // find closest original step to next new step
-            size_t nextStepNum = static_cast<size_t>((stepNum + 1 + roundingOffset) / origStepSizeX);
+            size_t nextOrigStepNum = static_cast<size_t>((stepNum + 1 + roundingOffset) / origStepSizeX);
 
-            if (nextStepNum > next.stepNum) { // passed the next original step, so recalc things
+            if (nextOrigStepNum > next.stepNum) { // passed the next original step, so recalc things
                 prev = next;
-                next.stepNum = nextStepNum;
+                next.stepNum = nextOrigStepNum;
                 next.x = next.stepNum * origStepSizeX;
 
                 if (next.stepNum == origNumSteps) {
-                    // when on last original step, act as if there's one more step with the same voices etc.
+                    // when on last original step, act as if there's one more step with the same settings
                 } else if (state.stepState[prev.stepNum].tieParameter->get()) {
                     // keep next the same as prev
                 } else {
-                    next.activeVoicesY.clear();
-                    if (state.stepState[next.stepNum].powerParameter->get()) {
-                        for (size_t origVoiceNum = 0; origVoiceNum < origNumVoices; origVoiceNum++) {
-                            if (state.stepState[next.stepNum].voiceParameters[origVoiceNum]->get()) {
-                                next.activeVoicesY.push_back(
-                                        origVoiceSizeY * (origNumVoices - 1 - origVoiceNum));
-                            }
-                        }
-                    }
-
-                    next.length = state.stepState[next.stepNum].lengthParameter->get();
-                    next.volume = state.stepState[next.stepNum].volParameter->get();
-                    next.octave = state.stepState[next.stepNum].octaveParameter->getIndex();
+                    next.fromState(state, origNumVoices, origVoiceSizeY);
                 }
             }
             DBG("--- step " << curStepX << " (orig: " << prev.stepNum << " - " << next.stepNum << ", X: "
