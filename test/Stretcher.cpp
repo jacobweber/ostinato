@@ -15,7 +15,7 @@ TEST_CASE("balls into buckets", "[.]")
     }
 }
 
-TEST_CASE("Stretcher")
+TEST_CASE("Stretcher 3x2 to 9x5")
 {
     TestAudioProcessor ap{ParametersFactory::create()};
     State state{ap.state};
@@ -33,6 +33,28 @@ TEST_CASE("Stretcher")
                                 "--*---*--\n"
                                 "-*-----*-\n"
                                 "*-------*\n";
+
+    REQUIRE(actualGrid == expectedGrid);
+}
+
+TEST_CASE("Stretcher 9x5 to 3x2")
+{
+    TestAudioProcessor ap{ParametersFactory::create()};
+    State state{ap.state};
+    juce::String grid = "----*----\n"
+                        "---*-*---\n"
+                        "--*---*--\n"
+                        "-*-----*-\n"
+                        "*-------*\n";
+    StateHelper::setGrid(state, grid);
+
+    Stretcher str{};
+    Stretcher::StretchedResult result = str.stretch(state, 2);
+    REQUIRE(result.numSteps == 3);
+    juce::String actualGrid = StateHelper::getGrid(result);
+
+    juce::String expectedGrid = "-*-\n"
+                                "*-*\n";
 
     REQUIRE(actualGrid == expectedGrid);
 }
