@@ -17,27 +17,27 @@ public:
     };
 
     StretchedResult stretch(State &state, size_t numNotes) {
-        // with oldNumSteps = 3 and numSteps = 5:
-        // oldStepSizeX = 2
+        // with origNumSteps = 3 and numSteps = 5:
+        // origStepSizeX = 2
         // stepNum and stepX = 0 1 2 3 4
-        // oldStepX          = 0   2   4
-        // oldStepNum        = 0   1   2
+        // origStepX          = 0   2   4
+        // origStepNum        = 0   1   2
 
-        // with oldNumSteps = 6 and numSteps = 3:
-        // oldStepSizeX = .4
+        // with origNumSteps = 6 and numSteps = 3:
+        // origStepSizeX = .4
         // stepNum and stepX = 0          1           2
-        // oldStepX          = 0  0.4  0.8  1.2  1.6  2
-        // oldStepNum        = 0   1    2    3    4   5
+        // origStepX          = 0  0.4  0.8  1.2  1.6  2
+        // origStepNum        = 0   1    2    3    4   5
 
         // mult = .3,  at 1,   1.15 intdiv .3 = 3, 3 * .3 = .9
         // mult = .3,  at .8,   .95 intdiv .3 = 3, 3 * .3 = .9
         // mult = .3,  at 1.1, 1.25 intdiv .3 = 4, 4 * .3 = 1.2
 
-        size_t oldNumSteps = static_cast<size_t>(state.stepsParameter->getIndex() + 1);
-        size_t oldNumVoices = static_cast<size_t>(state.voicesParameter->getIndex() + 1);
+        size_t origNumSteps = static_cast<size_t>(state.stepsParameter->getIndex() + 1);
+        size_t origNumVoices = static_cast<size_t>(state.voicesParameter->getIndex() + 1);
         // we'll round up; extra steps will make it more accurate
         size_t numSteps = static_cast<size_t>(1 + std::ceil(
-                static_cast<double>((oldNumSteps - 1) * (numNotes - 1)) / (oldNumVoices - 1)));
+                static_cast<double>((origNumSteps - 1) * (numNotes - 1)) / (origNumVoices - 1)));
         size_t numVoices = numNotes;
 
         StretchedResult result;
@@ -45,34 +45,34 @@ public:
         result.numVoices = numVoices;
         result.steps.reserve(numSteps);
 
-        double oldStepSizeX = static_cast<double>(numSteps - 1) / static_cast<double>(oldNumSteps - 1);
-        double oldVoiceSizeY = static_cast<double>(numVoices - 1) / static_cast<double>(oldNumVoices - 1);
-        double roundingOffset = numSteps > oldNumSteps ? oldStepSizeX - 1 : oldStepSizeX / 2;
+        double origStepSizeX = static_cast<double>(numSteps - 1) / static_cast<double>(origNumSteps - 1);
+        double origVoiceSizeY = static_cast<double>(numVoices - 1) / static_cast<double>(origNumVoices - 1);
+        double roundingOffset = numSteps > origNumSteps ? origStepSizeX - 1 : origStepSizeX / 2;
 
-        size_t prevOldStepNum = 0;
-        // find closest old step to next new step (1)
-        size_t nextOldStepNum = static_cast<size_t>((1 + roundingOffset) / oldStepSizeX);
+        size_t prevOrigStepNum = 0;
+        // find closest original step to next new step (1)
+        size_t nextOrigStepNum = static_cast<size_t>((1 + roundingOffset) / origStepSizeX);
 
-        double prevOldStepX = 0;
-        double nextOldStepX = nextOldStepNum * oldStepSizeX;
-        std::vector<double> prevOldStepActiveVoicesY{};
-        prevOldStepActiveVoicesY.reserve(props::MAX_VOICES);
-        std::vector<double> nextOldStepActiveVoicesY{};
-        nextOldStepActiveVoicesY.reserve(props::MAX_VOICES);
+        double prevOrigStepX = 0;
+        double nextOrigStepX = nextOrigStepNum * origStepSizeX;
+        std::vector<double> prevOrigStepActiveVoicesY{};
+        prevOrigStepActiveVoicesY.reserve(props::MAX_VOICES);
+        std::vector<double> nextOrigStepActiveVoicesY{};
+        nextOrigStepActiveVoicesY.reserve(props::MAX_VOICES);
 
-        for (size_t prevOldVoiceNum = 0; prevOldVoiceNum < oldNumVoices; prevOldVoiceNum++) {
-            if (state.stepState[prevOldStepNum].voiceParameters[prevOldVoiceNum]->get()) {
-                prevOldStepActiveVoicesY.push_back(oldVoiceSizeY * (oldNumVoices - 1 - prevOldVoiceNum));
+        for (size_t prevOrigVoiceNum = 0; prevOrigVoiceNum < origNumVoices; prevOrigVoiceNum++) {
+            if (state.stepState[prevOrigStepNum].voiceParameters[prevOrigVoiceNum]->get()) {
+                prevOrigStepActiveVoicesY.push_back(origVoiceSizeY * (origNumVoices - 1 - prevOrigVoiceNum));
             }
         }
 
-        if (nextOldStepNum == oldNumSteps) {
-            // when on last old step, act as if there's one more step with the same voices
-            nextOldStepActiveVoicesY = prevOldStepActiveVoicesY;
+        if (nextOrigStepNum == origNumSteps) {
+            // when on last original step, act as if there's one more step with the same voices
+            nextOrigStepActiveVoicesY = prevOrigStepActiveVoicesY;
         } else {
-            for (size_t nextOldVoiceNum = 0; nextOldVoiceNum < oldNumVoices; nextOldVoiceNum++) {
-                if (state.stepState[nextOldStepNum].voiceParameters[nextOldVoiceNum]->get()) {
-                    nextOldStepActiveVoicesY.push_back(oldVoiceSizeY * (oldNumVoices - 1 - nextOldVoiceNum));
+            for (size_t nextOrigVoiceNum = 0; nextOrigVoiceNum < origNumVoices; nextOrigVoiceNum++) {
+                if (state.stepState[nextOrigStepNum].voiceParameters[nextOrigVoiceNum]->get()) {
+                    nextOrigStepActiveVoicesY.push_back(origVoiceSizeY * (origNumVoices - 1 - nextOrigVoiceNum));
                 }
             }
         }
@@ -80,37 +80,38 @@ public:
         for (size_t stepNum = 0; stepNum < result.numSteps; stepNum++) {
             double curStepX = static_cast<double>(stepNum);
 
-            // find closest old step to next new step
-            size_t updatedNextOldStepNum = static_cast<size_t>((stepNum + 1 + roundingOffset) / oldStepSizeX);
+            // find closest original step to next new step
+            size_t updatedNextOrigStepNum = static_cast<size_t>((stepNum + 1 + roundingOffset) / origStepSizeX);
 
-            if (updatedNextOldStepNum > nextOldStepNum) { // passed the next old step, so recalc things
-                prevOldStepNum = nextOldStepNum;
-                nextOldStepNum = updatedNextOldStepNum;
-                prevOldStepX = nextOldStepX;
-                nextOldStepX = nextOldStepNum * oldStepSizeX;
+            if (updatedNextOrigStepNum > nextOrigStepNum) { // passed the next original step, so recalc things
+                prevOrigStepNum = nextOrigStepNum;
+                nextOrigStepNum = updatedNextOrigStepNum;
+                prevOrigStepX = nextOrigStepX;
+                nextOrigStepX = nextOrigStepNum * origStepSizeX;
 
-                prevOldStepActiveVoicesY = nextOldStepActiveVoicesY;
-                if (nextOldStepNum == oldNumSteps) {
-                    // when on last old step, act as if there's one more step with the same voices
+                prevOrigStepActiveVoicesY = nextOrigStepActiveVoicesY;
+                if (nextOrigStepNum == origNumSteps) {
+                    // when on last original step, act as if there's one more step with the same voices
                 } else {
-                    nextOldStepActiveVoicesY.clear();
-                    for (size_t nextOldVoiceNum = 0; nextOldVoiceNum < oldNumVoices; nextOldVoiceNum++) {
-                        if (state.stepState[nextOldStepNum].voiceParameters[nextOldVoiceNum]->get()) {
-                            nextOldStepActiveVoicesY.push_back(oldVoiceSizeY * (oldNumVoices - 1 - nextOldVoiceNum));
+                    nextOrigStepActiveVoicesY.clear();
+                    for (size_t nextOrigVoiceNum = 0; nextOrigVoiceNum < origNumVoices; nextOrigVoiceNum++) {
+                        if (state.stepState[nextOrigStepNum].voiceParameters[nextOrigVoiceNum]->get()) {
+                            nextOrigStepActiveVoicesY.push_back(
+                                    origVoiceSizeY * (origNumVoices - 1 - nextOrigVoiceNum));
                         }
                     }
                 }
             }
-            DBG("--- step " << curStepX << " (old: " << prevOldStepNum << " - " << nextOldStepNum << ", X: "
-                            << prevOldStepX << " - " << nextOldStepX << ")");
+            DBG("--- step " << curStepX << " (orig: " << prevOrigStepNum << " - " << nextOrigStepNum << ", X: "
+                            << prevOrigStepX << " - " << nextOrigStepX << ")");
 
             StretchedStep step;
             step.voices.insert(step.voices.end(), numVoices, false);
-            step.length = state.stepState[prevOldStepNum].lengthParameter->get(); // should scale
-            step.volume = state.stepState[prevOldStepNum].volParameter->get(); // should scale
+            step.length = state.stepState[prevOrigStepNum].lengthParameter->get(); // should scale
+            step.volume = state.stepState[prevOrigStepNum].volParameter->get(); // should scale
 
-            // with oldNumVoices = 3 and numVoices = 5:
-            // oldVoiceSize = 2
+            // with origNumVoices = 3 and numVoices = 5:
+            // origVoiceSize = 2
             // prev: new:  next:     prev: new:  next:  prevY: curY:
             // -     .     *         -     .     *      4      4
             //       .  /                  . ---               3
@@ -124,13 +125,13 @@ public:
             // if we have a prev voice but not a next one, draw horizontal line
             // if we have a next voice but not a prev one, ignore it
             // find this step's Y position on that line, and round it to a voice num for this step
-            for (size_t lineNum = 0; lineNum < prevOldStepActiveVoicesY.size(); lineNum++) {
-                double prevVoiceY = prevOldStepActiveVoicesY[lineNum];
+            for (size_t lineNum = 0; lineNum < prevOrigStepActiveVoicesY.size(); lineNum++) {
+                double prevVoiceY = prevOrigStepActiveVoicesY[lineNum];
                 double nextVoiceY =
-                        lineNum < nextOldStepActiveVoicesY.size() ? nextOldStepActiveVoicesY[lineNum] : prevVoiceY;
-                double slope = (nextVoiceY - prevVoiceY) / (nextOldStepX - prevOldStepX);
-                double curVoiceY = prevVoiceY + slope * (curStepX - prevOldStepX);
-                DBG("   voice " << curVoiceY << " (old: " << prevVoiceY << " - " << nextVoiceY);
+                        lineNum < nextOrigStepActiveVoicesY.size() ? nextOrigStepActiveVoicesY[lineNum] : prevVoiceY;
+                double slope = (nextVoiceY - prevVoiceY) / (nextOrigStepX - prevOrigStepX);
+                double curVoiceY = prevVoiceY + slope * (curStepX - prevOrigStepX);
+                DBG("   voice " << curVoiceY << " (orig: " << prevVoiceY << " - " << nextVoiceY << ")");
                 size_t voiceNum =
                         numVoices - 1 - std::min(static_cast<size_t>(std::round(curVoiceY)), numVoices - 1);
                 step.voices[voiceNum] = true;

@@ -21,7 +21,7 @@ TEST_CASE("Stretcher")
     TestAudioProcessor ap{ParametersFactory::create()};
     State state{ap.state};
     Stretcher str{};
-    // numSteps = 1 + (oldNumSteps - 1) * (numNotes - 1) / (oldNumVoices - 1)
+    // numSteps = 1 + (origNumSteps - 1) * (numNotes - 1) / (origNumVoices - 1)
 
     SECTION("2x2 to 4x4") {
         juce::String grid = "-*\n"
