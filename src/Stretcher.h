@@ -105,13 +105,13 @@ public:
     StretchedResult stretch(State &state, size_t numNotes) {
         // with origNumSteps = 3 and numSteps = 5:
         // origStepSizeX = 2
-        // stepNum and stepX = 0 1 2 3 4
+        // stepNum and stepX  = 0 1 2 3 4
         // origStepX          = 0   2   4
         // origStepNum        = 0   1   2
 
         // with origNumSteps = 6 and numSteps = 3:
         // origStepSizeX = .4
-        // stepNum and stepX = 0          1           2
+        // stepNum and stepX  = 0          1           2
         // origStepX          = 0  0.4  0.8  1.2  1.6  2
         // origStepNum        = 0   1    2    3    4   5
 
