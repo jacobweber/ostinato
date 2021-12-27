@@ -10,6 +10,8 @@ public:
     static juce::AudioProcessorValueTreeState::ParameterLayout create() {
         juce::AudioProcessorValueTreeState::ParameterLayout layout;
 
+        layout.add(std::make_unique<juce::AudioParameterBool>("stretch", "Stretch", false));
+
         juce::StringArray stepsChoices;
         for (size_t i = 1; i <= props::MAX_STEPS; i++) {
             stepsChoices.add(std::to_string(i));

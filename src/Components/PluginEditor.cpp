@@ -10,6 +10,18 @@ PluginEditor::PluginEditor(PluginProcessor &p, State &s)
     addAndMakeVisible(timecodeDisplayLabel);
     timecodeDisplayLabel.setFont(juce::Font(juce::Font::getDefaultMonospacedFontName(), 15.0f, juce::Font::plain));
 
+    juce::Image arrowsLeftRight = FontAwesome::getInstance()->getIcon(true,
+                                                                      juce::String::fromUTF8(
+                                                                              reinterpret_cast<const char *>(u8"\uf07e")),
+                                                                      ICON_SIZE, props::COLOR_STANDARD,
+                                                                      1);
+    stretchButton.setImages(true, false, true, arrowsLeftRight, 1.0f, {}, {}, 1.0f, {}, {}, 1.0f,
+                            props::COLOR_HIGHLIGHT);
+    stretchButton.setClickingTogglesState(true);
+    stretchButton.setTooltip(props::TOOLTIP_STRETCH);
+    addAndMakeVisible(stretchButton);
+    stretchAttachment.reset(new ButtonAttachment(state.parameters, "stretch", stretchButton));
+
     juce::Image dice = FontAwesome::getInstance()->getIcon(true,
                                                            juce::String::fromUTF8(
                                                                    reinterpret_cast<const char *>(u8"\uf522")),
@@ -84,6 +96,7 @@ void PluginEditor::resized() {
     juce::FlexBox headerBox;
     headerBox.justifyContent = juce::FlexBox::JustifyContent::center;
     headerBox.items.add(juce::FlexItem(timecodeDisplayLabel).withFlex(1));
+    headerBox.items.add(juce::FlexItem(stretchButton).withWidth(stretchButton.getWidth()).withMargin(5));
     headerBox.items.add(juce::FlexItem(randomButton).withWidth(randomButton.getWidth()).withMargin(5));
     headerBox.performLayout(area.removeFromTop(26));
 
@@ -131,6 +144,7 @@ void PluginEditor::randomizeParams(bool stepsAndVoices) {
     std::uniform_real_distribution<float> randVolume(0.0, 1.0);
     std::uniform_int_distribution<int> randPower(0, 10);
 
+    *(state.stretchParameter) = false;
     size_t numSteps;
     size_t numVoices;
     if (stepsAndVoices) {

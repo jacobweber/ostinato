@@ -15,6 +15,7 @@ public:
     MidiProcessorTester(int bs, int sr) : blockSize(bs), sampleRate(sr) {
         mp.init(sampleRate);
 
+        *(state.stretchParameter) = false;
         *(state.stepsParameter) = 3; // index
         *(state.voicesParameter) = 3; // index
         *(state.rateParameter) = 2; // index

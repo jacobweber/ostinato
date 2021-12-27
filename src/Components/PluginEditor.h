@@ -12,6 +12,7 @@ class PluginEditor : public juce::AudioProcessorEditor, private juce::Timer {
 public:
     typedef juce::AudioProcessorValueTreeState::SliderAttachment SliderAttachment;
     typedef juce::AudioProcessorValueTreeState::ComboBoxAttachment ComboBoxAttachment;
+    typedef juce::AudioProcessorValueTreeState::ButtonAttachment ButtonAttachment;
 
     PluginEditor(PluginProcessor &, State &);
 
@@ -37,6 +38,7 @@ private:
 
     juce::Font textFont{12.0f};
 
+    juce::ImageButton stretchButton{};
     juce::ImageButton randomButton{};
     juce::Label timecodeDisplayLabel;
     juce::Label stepsLabel{{}, props::LABEL_STEPS};
@@ -50,6 +52,7 @@ private:
 
     // use unique_ptr so it can be destroyed when UI is
     // declare after components so it's destroyed before them
+    std::unique_ptr<ButtonAttachment> stretchAttachment;
     std::unique_ptr<ComboBoxAttachment> stepsAttachment;
     std::unique_ptr<ComboBoxAttachment> voicesAttachment;
     std::unique_ptr<ComboBoxAttachment> rateAttachment;

@@ -17,6 +17,7 @@ namespace props {
     const juce::String LABEL_VOICES = "Steps";
     const juce::String LABEL_RATE = "Step Length";
 
+    const juce::String TOOLTIP_STRETCH = "Stretch pattern to fit played notes";
     const juce::String TOOLTIP_RANDOM = "Randomize settings";
     const juce::String TOOLTIP_VOICES_CLEAR = "Turn off all voices for this step";
     const juce::String TOOLTIP_VOICES_FILL = "Turn on all voices for this step";
