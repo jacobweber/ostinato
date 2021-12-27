@@ -17,14 +17,49 @@ TEST_CASE("balls into buckets", "[.]")
 
 TEST_CASE("Stretcher")
 {
+    DBG("\n---------");
     TestAudioProcessor ap{ParametersFactory::create()};
     State state{ap.state};
     Stretcher str{};
     // numSteps = 1 + (oldNumSteps - 1) * (numNotes - 1) / (oldNumVoices - 1)
 
+    SECTION("2x2 to 4x4") {
+        juce::String grid = "-*\n"
+                            "*-\n";
+        StateHelper::setGrid(state, grid);
+
+        Stretcher::StretchedResult result = str.stretch(state, 4);
+        REQUIRE(result.numSteps == 4);
+
+        juce::String actualGrid = StateHelper::getGrid(result);
+        juce::String expectedGrid = "---*\n"
+                                    "--*-\n"
+                                    "-*--\n"
+                                    "*---\n";
+        REQUIRE(actualGrid == expectedGrid);
+    }
+
     SECTION("3x2 to 9x5") {
         juce::String grid = "-*-\n"
                             "*-*\n";
+        StateHelper::setGrid(state, grid);
+
+        Stretcher::StretchedResult result = str.stretch(state, 5);
+        REQUIRE(result.numSteps == 9);
+
+        juce::String actualGrid = StateHelper::getGrid(result);
+        juce::String expectedGrid = "----*----\n"
+                                    "---*-*---\n"
+                                    "--*---*--\n"
+                                    "-*-----*-\n"
+                                    "*-------*\n";
+        REQUIRE(actualGrid == expectedGrid);
+    }
+
+    SECTION("5x3 to 9x5") {
+        juce::String grid = "--*--\n"
+                            "-*-*-\n"
+                            "*---*\n";
         StateHelper::setGrid(state, grid);
 
         Stretcher::StretchedResult result = str.stretch(state, 5);
@@ -74,5 +109,107 @@ TEST_CASE("Stretcher")
                                     "-*-------*-*----\n"
                                     "*---------*-----\n";
         REQUIRE(actualGrid == expectedGrid);
+    }
+
+    SECTION("4x3 to 10x7") {
+        juce::String grid = "--*-\n"
+                            "-*--\n"
+                            "*--*\n";
+        StateHelper::setGrid(state, grid);
+
+        Stretcher::StretchedResult result = str.stretch(state, 7);
+        REQUIRE(result.numSteps == 10);
+
+        juce::String actualGrid = StateHelper::getGrid(result);
+        juce::String expectedGrid = "------*---\n"
+                                    "-----*----\n"
+                                    "----*--*--\n"
+                                    "---*------\n"
+                                    "--*-----*-\n"
+                                    "-*--------\n"
+                                    "*--------*\n";
+        REQUIRE(actualGrid == expectedGrid);
+    }
+
+    SECTION("rounded number of steps") {
+        SECTION("4x3 to 6x4") {
+            juce::String grid = "--*-\n"
+                                "-*-*\n"
+                                "*---\n";
+            StateHelper::setGrid(state, grid);
+
+            Stretcher::StretchedResult result = str.stretch(state, 4);
+            REQUIRE(result.numSteps == 6);
+
+            juce::String actualGrid = StateHelper::getGrid(result);
+            juce::String expectedGrid = "---*--\n"
+                                        "--*-**\n" // good?
+                                        "-*----\n"
+                                        "*-----\n";
+            REQUIRE(actualGrid == expectedGrid);
+        }
+
+        SECTION("6x4 to 10x6") {
+            juce::String grid = "---***\n"
+                                "--*---\n"
+                                "-*----\n"
+                                "*-----\n";
+            StateHelper::setGrid(state, grid);
+
+            Stretcher::StretchedResult result = str.stretch(state, 6);
+            REQUIRE(result.numSteps == 10);
+
+            juce::String actualGrid = StateHelper::getGrid(result);
+            juce::String expectedGrid = "-----*****\n"
+                                        "----*-----\n"
+                                        "---*------\n"
+                                        "--*-------\n"
+                                        "-*--------\n"
+                                        "*---------\n";
+            REQUIRE(actualGrid == expectedGrid);
+        }
+    }
+
+    SECTION("rounded steps") {
+        SECTION("4x4 to 5x5") {
+            juce::String grid = "-*-*\n"
+                                "----\n"
+                                "----\n"
+                                "*-*-\n";
+            StateHelper::setGrid(state, grid);
+
+            Stretcher::StretchedResult result = str.stretch(state, 5);
+            REQUIRE(result.numSteps == 5);
+
+            juce::String actualGrid = StateHelper::getGrid(result);
+            juce::String expectedGrid = "----*\n" // strange but valid
+                                        "-*---\n"
+                                        "--*--\n"
+                                        "---*-\n"
+                                        "*----\n";
+            REQUIRE(actualGrid == expectedGrid);
+        }
+    }
+
+    SECTION("multiple voices") {
+        SECTION("3x3 to 7x7") {
+            juce::String grid = "-*-\n"
+                                "***\n"
+                                "*-*\n";
+            StateHelper::setGrid(state, grid);
+
+            Stretcher::StretchedResult result = str.stretch(state, 7);
+            REQUIRE(result.numSteps == 7);
+
+            juce::String actualGrid = StateHelper::getGrid(result);
+            juce::String expectedGrid = "---*---\n"
+                                        "--*-*--\n"
+                                        "-*---*-\n"
+                                        "*--*--*\n"
+                                        "--*-*--\n"
+                                        "-*---*-\n"
+                                        "*-----*\n";
+            REQUIRE(actualGrid == expectedGrid);
+        }
     }
 }

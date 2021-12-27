@@ -35,7 +35,9 @@ public:
 
         size_t oldNumSteps = static_cast<size_t>(state.stepsParameter->getIndex() + 1);
         size_t oldNumVoices = static_cast<size_t>(state.voicesParameter->getIndex() + 1);
-        size_t numSteps = 1 + (oldNumSteps - 1) * (numNotes - 1) / (oldNumVoices - 1);
+        // we'll round up; extra steps will make it more accurate
+        size_t numSteps = static_cast<size_t>(1 + std::ceil(
+                static_cast<double>((oldNumSteps - 1) * (numNotes - 1)) / (oldNumVoices - 1)));
         size_t numVoices = numNotes;
 
         StretchedResult result;
