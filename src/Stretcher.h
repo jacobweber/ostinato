@@ -20,17 +20,18 @@ public:
     struct OrigStep {
         size_t stepNum;
         double x;
-        std::vector<double> activeVoicesY{};
+        std::array<double, props::MAX_VOICES> activeVoicesY;
+        size_t numActiveVoices;
         double length;
         double volume;
         int octave;
 
         void fromState(State &state, size_t origNumVoices, double origVoiceSizeY) {
-            activeVoicesY.clear();
+            numActiveVoices = 0;
             if (state.stepState[stepNum].powerParameter->get()) {
                 for (size_t origVoiceNum = 0; origVoiceNum < origNumVoices; origVoiceNum++) {
                     if (state.stepState[stepNum].voiceParameters[origVoiceNum]->get()) {
-                        activeVoicesY.push_back(origVoiceSizeY * (origNumVoices - 1 - origVoiceNum));
+                        activeVoicesY[numActiveVoices++] = origVoiceSizeY * (origNumVoices - 1 - origVoiceNum);
                     }
                 }
             }
@@ -75,8 +76,6 @@ public:
 
         OrigStep prev;
         OrigStep next;
-        prev.activeVoicesY.reserve(props::MAX_VOICES);
-        next.activeVoicesY.reserve(props::MAX_VOICES);
 
         // will immediately become prev on the first step
         next.stepNum = 0;
@@ -123,10 +122,10 @@ public:
             // if we have a prev voice but not a next one, draw horizontal line
             // if we have a next voice but not a prev one, ignore it
             // find this step's Y position on that line, and round it to a voice num for this step
-            for (size_t lineNum = 0; lineNum < prev.activeVoicesY.size(); lineNum++) {
+            for (size_t lineNum = 0; lineNum < prev.numActiveVoices; lineNum++) {
                 double prevVoiceY = prev.activeVoicesY[lineNum];
                 double nextVoiceY =
-                        lineNum < next.activeVoicesY.size() ? next.activeVoicesY[lineNum] : prevVoiceY;
+                        lineNum < next.numActiveVoices ? next.activeVoicesY[lineNum] : prevVoiceY;
                 double slope = (nextVoiceY - prevVoiceY) / (next.x - prev.x);
                 double curVoiceY = prevVoiceY + slope * (curStepX - prev.x);
                 DBG("   voice " << curVoiceY << " (orig: " << prevVoiceY << " - " << nextVoiceY << ")");
