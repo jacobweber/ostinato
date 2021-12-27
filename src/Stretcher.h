@@ -78,25 +78,10 @@ public:
         prev.activeVoicesY.reserve(props::MAX_VOICES);
         next.activeVoicesY.reserve(props::MAX_VOICES);
 
-        prev.stepNum = 0;
-        prev.x = 0;
-        prev.fromState(state, origNumVoices, origVoiceSizeY);
-
-        // find closest original step to next new step (1)
-        size_t nextOrigStepNum = static_cast<size_t>((1 + roundingOffset) / origStepSizeX);
-
-        if (next.stepNum == origNumSteps) {
-            // when on last original step, act as if there's one more step with the same settings
-            next = prev;
-            next.stepNum = nextOrigStepNum;
-        } else if (state.stepState[prev.stepNum].tieParameter->get()) {
-            next = prev;
-            next.stepNum = nextOrigStepNum;
-        } else {
-            next.stepNum = nextOrigStepNum;
-            next.fromState(state, origNumVoices, origVoiceSizeY);
-        }
-        next.x = next.stepNum * origStepSizeX;
+        // will immediately become prev on the first step
+        next.stepNum = 0;
+        next.x = 0;
+        next.fromState(state, origNumVoices, origVoiceSizeY);
 
         for (size_t stepNum = 0; stepNum < result.numSteps; stepNum++) {
             double curStepX = static_cast<double>(stepNum);
