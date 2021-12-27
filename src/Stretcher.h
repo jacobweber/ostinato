@@ -83,6 +83,12 @@ public:
             }
         }
 
+        double prevLength = state.stepState[prevOrigStepNum].lengthParameter->get();
+        double nextLength = state.stepState[nextOrigStepNum].lengthParameter->get();
+
+        double prevVolume = state.stepState[prevOrigStepNum].volParameter->get();
+        double nextVolume = state.stepState[nextOrigStepNum].volParameter->get();
+
         for (size_t stepNum = 0; stepNum < result.numSteps; stepNum++) {
             double curStepX = static_cast<double>(stepNum);
 
@@ -95,11 +101,14 @@ public:
                 prevOrigStepX = nextOrigStepX;
                 nextOrigStepX = nextOrigStepNum * origStepSizeX;
 
+                prevLength = nextLength;
+                prevVolume = nextVolume;
+
                 prevOrigStepActiveVoicesY = nextOrigStepActiveVoicesY;
                 if (nextOrigStepNum == origNumSteps) {
-                    // when on last original step, act as if there's one more step with the same voices
+                    // when on last original step, act as if there's one more step with the same voices etc.
                 } else if (state.stepState[prevOrigStepNum].tieParameter->get()) {
-                    nextOrigStepActiveVoicesY = prevOrigStepActiveVoicesY;
+                    // keep next the same as prev
                 } else {
                     nextOrigStepActiveVoicesY.clear();
                     if (state.stepState[nextOrigStepNum].powerParameter->get()) {
@@ -110,6 +119,9 @@ public:
                             }
                         }
                     }
+
+                    nextLength = state.stepState[nextOrigStepNum].lengthParameter->get();
+                    nextVolume = state.stepState[nextOrigStepNum].volParameter->get();
                 }
             }
             DBG("--- step " << curStepX << " (orig: " << prevOrigStepNum << " - " << nextOrigStepNum << ", X: "
@@ -117,8 +129,6 @@ public:
 
             StretchedStep step;
             step.voices.insert(step.voices.end(), numVoices, false);
-            step.length = state.stepState[prevOrigStepNum].lengthParameter->get(); // should scale
-            step.volume = state.stepState[prevOrigStepNum].volParameter->get(); // should scale
 
             // with origNumVoices = 3 and numVoices = 5:
             // origVoiceSize = 2
@@ -146,6 +156,13 @@ public:
                         numVoices - 1 - std::min(static_cast<size_t>(std::round(curVoiceY)), numVoices - 1);
                 step.voices[voiceNum] = true;
             }
+
+            double lengthSlope = (nextLength - prevLength) / (nextOrigStepX - prevOrigStepX);
+            step.length = prevLength + lengthSlope * (curStepX - prevOrigStepX);
+
+            double volSlope = (nextVolume - prevVolume) / (nextOrigStepX - prevOrigStepX);
+            step.volume = prevVolume + volSlope * (curStepX - prevOrigStepX);
+
             result.steps.push_back(step);
         }
 

@@ -278,4 +278,50 @@ TEST_CASE("Stretcher")
             REQUIRE(actualGrid == expectedGrid);
         }
     }
+
+    SECTION("volume") {
+        SECTION("3x2 to 9x5") {
+            juce::String grid = "-*-\n"
+                                "*-*\n";
+            StateHelper::setGrid(state, grid);
+            *(state.stepState[0].volParameter) = 0.0;
+            *(state.stepState[1].volParameter) = 1.0;
+            *(state.stepState[2].volParameter) = 0.0;
+
+            Stretcher::StretchedResult result = str.stretch(state, 5);
+
+            REQUIRE(result.steps[0].volume == 0.00);
+            REQUIRE(result.steps[1].volume == 0.25);
+            REQUIRE(result.steps[2].volume == 0.50);
+            REQUIRE(result.steps[3].volume == 0.75);
+            REQUIRE(result.steps[4].volume == 1.00);
+            REQUIRE(result.steps[5].volume == 0.75);
+            REQUIRE(result.steps[6].volume == 0.50);
+            REQUIRE(result.steps[7].volume == 0.25);
+            REQUIRE(result.steps[8].volume == 0.00);
+        }
+    }
+
+    SECTION("length") {
+        SECTION("3x2 to 9x5") {
+            juce::String grid = "-*-\n"
+                                "*-*\n";
+            StateHelper::setGrid(state, grid);
+            *(state.stepState[0].lengthParameter) = 0.0;
+            *(state.stepState[1].lengthParameter) = 1.0;
+            *(state.stepState[2].lengthParameter) = 0.0;
+
+            Stretcher::StretchedResult result = str.stretch(state, 5);
+
+            REQUIRE(result.steps[0].length == 0.00);
+            REQUIRE(result.steps[1].length == 0.25);
+            REQUIRE(result.steps[2].length == 0.50);
+            REQUIRE(result.steps[3].length == 0.75);
+            REQUIRE(result.steps[4].length == 1.00);
+            REQUIRE(result.steps[5].length == 0.75);
+            REQUIRE(result.steps[6].length == 0.50);
+            REQUIRE(result.steps[7].length == 0.25);
+            REQUIRE(result.steps[8].length == 0.00);
+        }
+    }
 }
