@@ -41,6 +41,7 @@ public:
         size_t origNumVoices = static_cast<size_t>(state.voicesParameter->getIndex() + 1);
 
         info = {numNotes, origNumSteps, origNumVoices}; // should cache
+        if (firstLastOrigStepsSame(state, origNumSteps, origNumVoices)) info.numSteps--;
 
         if (nextStepIndex >= info.numSteps) {
             nextStepIndex = 0;
@@ -114,6 +115,15 @@ public:
     }
 
 private:
+    bool firstLastOrigStepsSame(State &state, size_t origNumSteps, size_t origNumVoices) {
+        for (size_t voiceNum = 0; voiceNum < origNumVoices; voiceNum++) {
+            if (state.stepState[0].voiceParameters[voiceNum]->get() !=
+                state.stepState[origNumSteps - 1].voiceParameters[voiceNum]->get())
+                return false;
+        }
+        return true;
+    }
+
     void getStretchedStep(size_t stepNum, size_t numVoices, Step &step) {
         for (size_t voiceNum = 0; voiceNum < numVoices; voiceNum++) {
             step.voices[voiceNum] = false;
