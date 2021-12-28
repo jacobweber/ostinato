@@ -4,6 +4,7 @@
 #include <cstddef>
 
 namespace props {
+    constexpr size_t MAX_NOTES = 24;
     constexpr size_t MAX_STEPS = 16;
     constexpr size_t MAX_VOICES = 8;
     constexpr size_t MAX_OCTAVES = 4;
