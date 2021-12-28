@@ -51,6 +51,7 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midiIn, juce::MidiBuffe
         DBG("stopped transport");
         stopPlaying(midiOut, 0);
         cycleOn = false;
+        stretchActive = false;
         state.playing = false;
         transportOn = false;
     }
@@ -97,6 +98,7 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midiIn, juce::MidiBuffe
             DBG("stop cycle");
             stopPlaying(midiOut, 0);
             cycleOn = false;
+            stretchActive = false;
             state.playing = false;
         }
     }
