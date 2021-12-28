@@ -113,37 +113,6 @@ public:
         return result;
     }
 
-    juce::String distribute(int numBalls, int numBuckets) {
-        char buckets[100];
-        for (int i = 0; i < numBuckets; i++) {
-            buckets[i] = '.';
-        }
-        buckets[numBuckets] = '\0';
-
-        // place first
-        if (numBalls > 0) {
-            buckets[0] = 48 + 1;
-            if (numBalls > 1 && numBuckets > 1) {
-                // place last
-                buckets[numBuckets - 1] = static_cast<char>(48 + numBalls);
-
-                int numFreeBalls = numBalls - 2;
-                int numFreeBuckets = numBuckets - 2;
-                if (numFreeBalls > 0 && numFreeBuckets > 0) {
-                    for (int ballNum = 1; ballNum <= numBalls - 2; ballNum++) {
-                        int bucketNum = static_cast<int>(1 +
-                                                         std::floor(
-                                                                 (ballNum - 1 + 0.5) * numFreeBuckets / numFreeBalls));
-                        if (bucketNum < numBuckets) {
-                            buckets[bucketNum] = static_cast<char>(48 + ballNum + 1);
-                        }
-                    }
-                }
-            }
-        }
-        return juce::String(buckets);
-    }
-
 private:
     void getStretchedStep(size_t stepNum, size_t numVoices, Step &step) {
         for (size_t voiceNum = 0; voiceNum < numVoices; voiceNum++) {
