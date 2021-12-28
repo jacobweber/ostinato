@@ -226,7 +226,7 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midiIn, juce::MidiBuffe
 
             if (transportOn) {
                 if (currentStep.power) releasePpqPos = nextStepPpqPos + (currentStep.length * ppqPosPerStep);
-                else if (tieWasActive) releasePpqPos = posInfo.ppqPosition; // and !tieActive?
+                else if (tieWasActive) releasePpqPos = posInfo.ppqPosition;
                 nextStepPpqPos = roundNextPpqPos(nextStepPpqPos + ppqPosPerStep, ppqPosPerStep);
                 DBG("next step in " << ppqPosPerStep << " ppq at " << nextStepPpqPos << " ppq, length "
                                     << currentStep.length
@@ -239,7 +239,7 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midiIn, juce::MidiBuffe
                 if (currentStep.power)
                     samplesUntilRelease =
                             static_cast<int>(currentStep.length * samplesPerStep) + playSampleOffsetWithinBlock;
-                else if (tieWasActive) samplesUntilRelease = playSampleOffsetWithinBlock; // and !tieActive?
+                else if (tieWasActive) samplesUntilRelease = playSampleOffsetWithinBlock;
                 samplesUntilNextStep = samplesPerStep + playSampleOffsetWithinBlock;
                 DBG("next step in " << ppqPosPerStep << " ppq or " << samplesUntilNextStep << " samples or "
                                     << (1 / stepsPerSec) << " secs, length " << currentStep.length << " %, index "
