@@ -10,7 +10,7 @@ TEST_CASE("Stretcher")
     DBG("\n---------");
     TestAudioProcessor ap{ParametersFactory::create()};
     State state{ap.state};
-    Stretcher str{};
+    Stretcher str{false};
     // numSteps = 1 + (origNumSteps - 1) * (numNotes - 1) / (origNumVoices - 1)
 
     SECTION("2x2 to 4x4") {

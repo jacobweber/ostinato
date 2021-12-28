@@ -6,7 +6,7 @@
 
 class Stretcher {
 public:
-    Stretcher() : nextStepIndex(0), started(false) {
+    Stretcher(bool skipLast) : nextStepIndex(0), started(false), skipLastStepIfMatchesFirst(skipLast) {
     }
 
     struct StretchedResult {
@@ -41,7 +41,7 @@ public:
         size_t origNumVoices = static_cast<size_t>(state.voicesParameter->getIndex() + 1);
 
         info = {numNotes, origNumSteps, origNumVoices}; // should cache
-        if (firstLastOrigStepsSame(state, origNumSteps, origNumVoices)) info.numSteps--;
+        if (skipLastStepIfMatchesFirst && firstLastOrigStepsSame(state, origNumSteps, origNumVoices)) info.numSteps--;
 
         if (nextStepIndex >= info.numSteps) {
             nextStepIndex = 0;
@@ -223,4 +223,5 @@ public:
 
 private:
     bool started;
+    bool skipLastStepIfMatchesFirst;
 };
