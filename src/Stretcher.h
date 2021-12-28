@@ -179,12 +179,15 @@ public:
         StretchInfo() {}
 
         StretchInfo(size_t numNotes, size_t origNumSteps, size_t origNumVoices) {
+            numVoices = std::min(numNotes, MAX_ACTUAL_VOICES);
             // we'll round up; extra steps will make it more accurate
             numSteps = static_cast<size_t>(1 + std::ceil(
                     static_cast<double>((origNumSteps - 1) * (numNotes - 1)) / (origNumVoices - 1)));
-            numVoices = std::min(numNotes, MAX_ACTUAL_VOICES);
-            origStepSizeX = static_cast<double>(numSteps - 1) / static_cast<double>(origNumSteps - 1);
-            origVoiceSizeY = static_cast<double>(numVoices - 1) / static_cast<double>(origNumVoices - 1);
+            // avoid dividing by 0 here and later
+            origStepSizeX =
+                    numNotes == 1 ? 1 : static_cast<double>(numSteps - 1) / static_cast<double>(origNumSteps - 1);
+            origVoiceSizeY =
+                    numNotes == 1 ? 1 : static_cast<double>(numVoices - 1) / static_cast<double>(origNumVoices - 1);
             roundingOffset = numSteps > origNumSteps ? origStepSizeX - 1 : origStepSizeX / 2;
         }
     };
