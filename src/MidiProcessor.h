@@ -6,6 +6,7 @@
 #include "SpinLockedPosInfo.h"
 #include "MidiValue.h"
 #include "State.h"
+#include "Stretcher.h"
 #include "Step.h"
 
 class MidiProcessor {
@@ -46,4 +47,7 @@ private:
     int samplesUntilNextStep; // if transport not running, samples left in current step
 
     Step currentStep;
+
+    bool stretchActive;
+    Stretcher stretcher;
 };
