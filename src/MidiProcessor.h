@@ -6,6 +6,7 @@
 #include "SpinLockedPosInfo.h"
 #include "MidiValue.h"
 #include "State.h"
+#include "Step.h"
 
 class MidiProcessor {
 public:
@@ -43,4 +44,6 @@ private:
 
     int samplesUntilRelease; // if transport not running, samples left in current note
     int samplesUntilNextStep; // if transport not running, samples left in current step
+
+    Step currentStep;
 };

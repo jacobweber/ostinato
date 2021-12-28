@@ -2,6 +2,7 @@
 
 #include "MidiProcessor.h"
 #include "Props.h"
+#include "Step.h"
 
 void MidiProcessor::init(double sr) {
     sampleRate = sr;
@@ -147,70 +148,82 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midiIn, juce::MidiBuffe
 
         if (playSampleOffsetWithinBlock != -1) {
             // play a step within this block
-            size_t lastStepIndex = static_cast<size_t>(state.stepsParameter->getIndex()); // stretch
-            if (nextStepIndex > lastStepIndex) {
+            size_t numVoices = static_cast<size_t>(state.voicesParameter->getIndex()) + 1;
+            size_t numSteps = static_cast<size_t>(state.stepsParameter->getIndex()) + 1;
+
+            if (nextStepIndex >= numSteps) {
                 nextStepIndex = 0;
             }
             state.stepIndex = nextStepIndex;
 
-            bool power = state.stepState[nextStepIndex].powerParameter->get(); // stretch
-            if (power && !tieActive) {
-                size_t numVoices = static_cast<size_t>(state.voicesParameter->getIndex()) + 1; // stretch
-                double volume = state.stepState[nextStepIndex].volParameter->get(); // stretch
-                int octaveIndex = state.stepState[nextStepIndex].octaveParameter->getIndex(); // stretch
-                int transpose = (octaveIndex - static_cast<int>(props::MAX_OCTAVES)) * 12;
+            currentStep.power = state.stepState[nextStepIndex].powerParameter->get();
+            currentStep.volume = state.stepState[nextStepIndex].volParameter->get();
+            currentStep.octave = state.stepState[nextStepIndex].octaveParameter->getIndex();
+            currentStep.length = state.stepState[nextStepIndex].lengthParameter->get();
+            currentStep.tie = state.stepState[nextStepIndex].tieParameter->get();
+            for (size_t voiceNum = 0; voiceNum < numVoices; voiceNum++) {
+                currentStep.voices[voiceNum] = state.stepState[nextStepIndex].voiceParameters[voiceNum]->get();
+            }
+
+            nextStepIndex++;
+            if (nextStepIndex >= numSteps) {
+                nextStepIndex = 0;
+            }
+
+            if (currentStep.power && !tieActive) {
+                int transpose = (currentStep.octave - static_cast<int>(props::MAX_OCTAVES)) * 12;
                 for (size_t voiceNum = 0; voiceNum < numVoices; voiceNum++) {
-                    if (state.stepState[nextStepIndex].voiceParameters[voiceNum]->get()) { // stretch
+                    if (currentStep.voices[voiceNum]) {
                         int voiceIndex = static_cast<int>(numVoices - 1 - voiceNum); // they're flipped
                         if (voiceIndex < pressedNotes.size()) {
                             MidiValue noteValue = pressedNotes[static_cast<int>(voiceIndex)];
                             noteValue.note += transpose;
                             if (noteValue.note >= 0 && noteValue.note <= 127) {
-                                double vel = juce::jmin(volume * 2 * noteValue.vel, 127.0);
+                                double vel = juce::jmin(currentStep.volume * 2 * noteValue.vel, 127.0);
                                 midiOut.addEvent(
-                                        juce::MidiMessage::noteOn(noteValue.channel, noteValue.note, (juce::uint8) vel),
+                                        juce::MidiMessage::noteOn(noteValue.channel, noteValue.note,
+                                                                  (juce::uint8) vel),
                                         playSampleOffsetWithinBlock);
                                 playingNotes.add(noteValue);
                             }
                         }
                     }
                 }
-                DBG("play step at " << playSampleOffsetWithinBlock << " samples into block, vol " << volume);
+                DBG("play step at " << playSampleOffsetWithinBlock << " samples into block, vol "
+                                    << currentStep.volume);
             } else {
                 DBG("skip step at " << playSampleOffsetWithinBlock << " samples into block");
             }
 
+            // if we start in the middle of a tie, we'll still play the first note the first time around
             bool tieWasActive = tieActive;
-            tieActive = state.stepState[nextStepIndex].tieParameter->get(); // stretch
-            double length = state.stepState[nextStepIndex].lengthParameter->get(); // stretch
+            tieActive = currentStep.tie;
 
             // prepare current release and next step
-            nextStepIndex++;
-            if (nextStepIndex > lastStepIndex) {
-                nextStepIndex = 0;
-            }
-
             if (ppqPosPerStep == -1) {
                 ppqPosPerStep = getPpqPosPerStep(state);
             }
 
             if (transportOn) {
-                if (power) releasePpqPos = nextStepPpqPos + (length * ppqPosPerStep);
-                else if (tieWasActive) releasePpqPos = posInfo.ppqPosition;
+                if (currentStep.power) releasePpqPos = nextStepPpqPos + (currentStep.length * ppqPosPerStep);
+                else if (tieWasActive) releasePpqPos = posInfo.ppqPosition; // and !tieActive?
                 nextStepPpqPos = roundNextPpqPos(nextStepPpqPos + ppqPosPerStep, ppqPosPerStep);
-                DBG("next step in " << ppqPosPerStep << " ppq at " << nextStepPpqPos << " ppq, length " << length
+                DBG("next step in " << ppqPosPerStep << " ppq at " << nextStepPpqPos << " ppq, length "
+                                    << currentStep.length
                                     << " %, index " << nextStepIndex
                                     << ", " << pressedNotes.size()
                                     << " pressed notes, " << posInfo.bpm << " bpm");
             } else {
                 double stepsPerSec = (posInfo.bpm / 60) / ppqPosPerStep;
                 int samplesPerStep = static_cast<int>(std::ceil(sampleRate / stepsPerSec));
-                if (power)
-                    samplesUntilRelease = static_cast<int>(length * samplesPerStep) + playSampleOffsetWithinBlock;
-                else if (tieWasActive) samplesUntilRelease = playSampleOffsetWithinBlock;
+                if (currentStep.power)
+                    samplesUntilRelease =
+                            static_cast<int>(currentStep.length * samplesPerStep) + playSampleOffsetWithinBlock;
+                else if (tieWasActive) samplesUntilRelease = playSampleOffsetWithinBlock; // and !tieActive?
                 samplesUntilNextStep = samplesPerStep + playSampleOffsetWithinBlock;
                 DBG("next step in " << ppqPosPerStep << " ppq or " << samplesUntilNextStep << " samples or "
-                                    << (1 / stepsPerSec) << " secs, length " << length << " %, index " << nextStepIndex
+                                    << (1 / stepsPerSec) << " secs, length " << currentStep.length << " %, index "
+                                    << nextStepIndex
                                     << ", "
                                     << pressedNotes.size()
                                     << " pressed notes, " << posInfo.bpm << " bpm");
