@@ -6,7 +6,7 @@
 
 class Stretcher {
 public:
-    Stretcher(State &_state, bool skipLast) : state(_state), skipLastStepIfMatchesFirst(skipLast) {
+    explicit Stretcher(State &_state) : state(_state) {
     }
 
     struct StretchedResult {
@@ -226,12 +226,12 @@ public:
     size_t numNotes = 0;
     OrigStep prev{};
     OrigStep next{};
+    bool skipLastStepIfMatchesFirst = true;
 
 private:
     State &state;
     bool reuseNextStep = false;
     bool tieActive = false;
-    bool skipLastStepIfMatchesFirst = false;
     size_t origNumSteps = 0;
     size_t origNumVoices = 0;
     double origStepSizeX = 0.0;

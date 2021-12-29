@@ -10,7 +10,8 @@ TEST_CASE("Stretcher")
     DBG("\n---------");
     TestAudioProcessor ap{ParametersFactory::create()};
     State state{ap.state};
-    Stretcher str{state, false};
+    Stretcher str{state};
+    str.skipLastStepIfMatchesFirst = false;
     // numSteps = 1 + (origNumSteps - 1) * (numNotes - 1) / (origNumVoices - 1)
 
     SECTION("2x2 to 4x4") {
@@ -29,6 +30,39 @@ TEST_CASE("Stretcher")
         REQUIRE(actualGrid == expectedGrid);
     }
 
+    SECTION("2x2 to 4x4 repeat") {
+        juce::String grid = "-*\n"
+                            "*-\n";
+        StateHelper::setGrid(state, grid);
+
+        Stretcher::StretchedResult result = str.stretch(4, 8);
+        REQUIRE(result.numSteps == 4);
+
+        juce::String actualGrid = StateHelper::getGrid(result);
+        juce::String expectedGrid = "---*---*\n"
+                                    "--*---*-\n"
+                                    "-*---*--\n"
+                                    "*---*---\n";
+        REQUIRE(actualGrid == expectedGrid);
+    }
+
+    SECTION("2x2 to 4x4 skip last") {
+        str.skipLastStepIfMatchesFirst = true;
+        juce::String grid = "-*\n"
+                            "*-\n";
+        StateHelper::setGrid(state, grid);
+
+        Stretcher::StretchedResult result = str.stretch(4, 8);
+        REQUIRE(result.numSteps == 4);
+
+        juce::String actualGrid = StateHelper::getGrid(result);
+        juce::String expectedGrid = "---*---*\n"
+                                    "--*---*-\n"
+                                    "-*---*--\n"
+                                    "*---*---\n";
+        REQUIRE(actualGrid == expectedGrid);
+    }
+
     SECTION("3x2 to 9x5") {
         juce::String grid = "-*-\n"
                             "*-*\n";
@@ -43,6 +77,24 @@ TEST_CASE("Stretcher")
                                     "--*---*--\n"
                                     "-*-----*-\n"
                                     "*-------*\n";
+        REQUIRE(actualGrid == expectedGrid);
+    }
+
+    SECTION("3x2 to 9x5 skip last") {
+        str.skipLastStepIfMatchesFirst = true;
+        juce::String grid = "-*-\n"
+                            "*-*\n";
+        StateHelper::setGrid(state, grid);
+
+        Stretcher::StretchedResult result = str.stretch(5, 13);
+        REQUIRE(result.numSteps == 8);
+
+        juce::String actualGrid = StateHelper::getGrid(result);
+        juce::String expectedGrid = "----*-------*\n"
+                                    "---*-*-----*-\n"
+                                    "--*---*---*--\n"
+                                    "-*-----*-*---\n"
+                                    "*-------*----\n";
         REQUIRE(actualGrid == expectedGrid);
     }
 

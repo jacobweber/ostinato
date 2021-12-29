@@ -52,5 +52,5 @@ private:
     Step currentStep{};
 
     bool stretchActive = false;
-    Stretcher stretcher{state, true};
+    Stretcher stretcher{state};
 };
