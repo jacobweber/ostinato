@@ -10,7 +10,7 @@ TEST_CASE("Stretcher")
     DBG("\n---------");
     TestAudioProcessor ap{ParametersFactory::create()};
     State state{ap.state};
-    Stretcher str{false};
+    Stretcher str{state, false};
     // numSteps = 1 + (origNumSteps - 1) * (numNotes - 1) / (origNumVoices - 1)
 
     SECTION("2x2 to 4x4") {
@@ -18,7 +18,7 @@ TEST_CASE("Stretcher")
                             "*-\n";
         StateHelper::setGrid(state, grid);
 
-        Stretcher::StretchedResult result = str.stretch(state, 4);
+        Stretcher::StretchedResult result = str.stretch(4);
         REQUIRE(result.numSteps == 4);
 
         juce::String actualGrid = StateHelper::getGrid(result);
@@ -34,7 +34,7 @@ TEST_CASE("Stretcher")
                             "*-*\n";
         StateHelper::setGrid(state, grid);
 
-        Stretcher::StretchedResult result = str.stretch(state, 5);
+        Stretcher::StretchedResult result = str.stretch(5);
         REQUIRE(result.numSteps == 9);
 
         juce::String actualGrid = StateHelper::getGrid(result);
@@ -52,7 +52,7 @@ TEST_CASE("Stretcher")
                             "*---*\n";
         StateHelper::setGrid(state, grid);
 
-        Stretcher::StretchedResult result = str.stretch(state, 5);
+        Stretcher::StretchedResult result = str.stretch(5);
         REQUIRE(result.numSteps == 9);
 
         juce::String actualGrid = StateHelper::getGrid(result);
@@ -73,7 +73,7 @@ TEST_CASE("Stretcher")
                             "*-------*\n";
         StateHelper::setGrid(state, grid);
 
-        Stretcher::StretchedResult result = str.stretch(state, 2);
+        Stretcher::StretchedResult result = str.stretch(2);
         REQUIRE(result.numSteps == 3);
 
         juce::String actualGrid = StateHelper::getGrid(result);
@@ -88,7 +88,7 @@ TEST_CASE("Stretcher")
                             "*-*-\n";
         StateHelper::setGrid(state, grid);
 
-        Stretcher::StretchedResult result = str.stretch(state, 6);
+        Stretcher::StretchedResult result = str.stretch(6);
         REQUIRE(result.numSteps == 16);
 
         juce::String actualGrid = StateHelper::getGrid(result);
@@ -107,7 +107,7 @@ TEST_CASE("Stretcher")
                             "*--*\n";
         StateHelper::setGrid(state, grid);
 
-        Stretcher::StretchedResult result = str.stretch(state, 7);
+        Stretcher::StretchedResult result = str.stretch(7);
         REQUIRE(result.numSteps == 10);
 
         juce::String actualGrid = StateHelper::getGrid(result);
@@ -128,7 +128,7 @@ TEST_CASE("Stretcher")
                                 "*---\n";
             StateHelper::setGrid(state, grid);
 
-            Stretcher::StretchedResult result = str.stretch(state, 4);
+            Stretcher::StretchedResult result = str.stretch(4);
             REQUIRE(result.numSteps == 6);
 
             juce::String actualGrid = StateHelper::getGrid(result);
@@ -146,7 +146,7 @@ TEST_CASE("Stretcher")
                                 "*-----\n";
             StateHelper::setGrid(state, grid);
 
-            Stretcher::StretchedResult result = str.stretch(state, 6);
+            Stretcher::StretchedResult result = str.stretch(6);
             REQUIRE(result.numSteps == 10);
 
             juce::String actualGrid = StateHelper::getGrid(result);
@@ -168,7 +168,7 @@ TEST_CASE("Stretcher")
                                 "*-*-\n";
             StateHelper::setGrid(state, grid);
 
-            Stretcher::StretchedResult result = str.stretch(state, 5);
+            Stretcher::StretchedResult result = str.stretch(5);
             REQUIRE(result.numSteps == 5);
 
             juce::String actualGrid = StateHelper::getGrid(result);
@@ -188,7 +188,7 @@ TEST_CASE("Stretcher")
                                 "*-*\n";
             StateHelper::setGrid(state, grid);
 
-            Stretcher::StretchedResult result = str.stretch(state, 7);
+            Stretcher::StretchedResult result = str.stretch(7);
             REQUIRE(result.numSteps == 7);
 
             juce::String actualGrid = StateHelper::getGrid(result);
@@ -211,7 +211,7 @@ TEST_CASE("Stretcher")
             StateHelper::setGrid(state, grid);
             *(state.stepState[1].tieParameter) = true;
 
-            Stretcher::StretchedResult result = str.stretch(state, 7);
+            Stretcher::StretchedResult result = str.stretch(7);
             REQUIRE(result.numSteps == 10);
 
             juce::String actualGrid = StateHelper::getGrid(result);
@@ -233,7 +233,7 @@ TEST_CASE("Stretcher")
                                 "*--*\n";
             StateHelper::setGrid(state, grid);
 
-            Stretcher::StretchedResult result = str.stretch(state, 7);
+            Stretcher::StretchedResult result = str.stretch(7);
             REQUIRE(result.numSteps == 10);
 
             juce::String actualGrid = StateHelper::getGrid(result);
@@ -254,7 +254,7 @@ TEST_CASE("Stretcher")
             StateHelper::setGrid(state, grid);
             *(state.stepState[2].powerParameter) = false;
 
-            Stretcher::StretchedResult result = str.stretch(state, 7);
+            Stretcher::StretchedResult result = str.stretch(7);
             REQUIRE(result.numSteps == 10);
 
             juce::String actualGrid = StateHelper::getGrid(result);
@@ -278,7 +278,7 @@ TEST_CASE("Stretcher")
             *(state.stepState[1].volParameter) = 1.0;
             *(state.stepState[2].volParameter) = 0.0;
 
-            Stretcher::StretchedResult result = str.stretch(state, 5);
+            Stretcher::StretchedResult result = str.stretch(5);
 
             REQUIRE(result.steps[0].volume == 0.00);
             REQUIRE(result.steps[1].volume == 0.25);
@@ -301,7 +301,7 @@ TEST_CASE("Stretcher")
             *(state.stepState[1].lengthParameter) = 1.0;
             *(state.stepState[2].lengthParameter) = 0.0;
 
-            Stretcher::StretchedResult result = str.stretch(state, 5);
+            Stretcher::StretchedResult result = str.stretch(5);
 
             REQUIRE(result.steps[0].length == 0.00);
             REQUIRE(result.steps[1].length == 0.25);
@@ -324,7 +324,7 @@ TEST_CASE("Stretcher")
             *(state.stepState[1].octaveParameter) = props::MAX_OCTAVES - 1;
             *(state.stepState[2].octaveParameter) = props::MAX_OCTAVES + 1;
 
-            Stretcher::StretchedResult result = str.stretch(state, 5);
+            Stretcher::StretchedResult result = str.stretch(5);
 
             // makes sense, since 4 new steps span 1 old step
             REQUIRE(result.steps[0].octave == props::MAX_OCTAVES);

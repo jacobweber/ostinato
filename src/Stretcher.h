@@ -6,7 +6,8 @@
 
 class Stretcher {
 public:
-    Stretcher(bool skipLast) : nextStepIndex(0), started(false), skipLastStepIfMatchesFirst(skipLast) {
+    Stretcher(State &_state, bool skipLast) : nextStepIndex(0), state(_state), started(false),
+                                              skipLastStepIfMatchesFirst(skipLast) {
     }
 
     struct StretchedResult {
@@ -15,12 +16,22 @@ public:
         size_t numVoices;
     };
 
+    struct OrigStep {
+        size_t stepNum;
+        double x;
+        std::array<double, props::MAX_VOICES> activeVoicesY;
+        size_t numActiveVoices;
+        double length;
+        double volume;
+        int octave;
+    };
+
     void reset(size_t origStepIndex) {
         nextStepIndex = origStepIndex;
         started = false;
     }
 
-    void getNextStretchedStep(State &state, size_t numHeldNotes, Step &outStep) {
+    void getNextStretchedStep(size_t numHeldNotes, Step &outStep) {
         // with origNumSteps = 3 and numSteps = 5:
         // origStepSizeX = 2
         // stepNum and stepX  = 0 1 2 3 4
@@ -39,7 +50,7 @@ public:
 
         recalcStretchInfo(numHeldNotes, static_cast<size_t>(state.stepsParameter->getIndex() + 1),
                           static_cast<size_t>(state.voicesParameter->getIndex() + 1));
-        if (skipLastStepIfMatchesFirst && firstLastOrigStepsSame(state)) numSteps--;
+        if (skipLastStepIfMatchesFirst && firstLastOrigStepsSame()) numSteps--;
 
         if (nextStepIndex >= numSteps) {
             nextStepIndex = 0;
@@ -60,7 +71,7 @@ public:
             // will immediately become prev
             next.stepNum = prevOrigStepNum;
             next.x = next.stepNum * origStepSizeX;
-            next.fromState(state, origNumVoices, origVoiceSizeY);
+            updateStepFromState(next, state, next.stepNum);
         }
 
         size_t nextOrigStepNum = static_cast<size_t>((nextStepIndex + 1 + roundingOffset) /
@@ -76,7 +87,7 @@ public:
             } else if (state.stepState[prev.stepNum].tieParameter->get()) {
                 // keep next the same as prev
             } else {
-                next.fromState(state, origNumVoices, origVoiceSizeY);
+                updateStepFromState(next, state, next.stepNum);
             }
         }
 
@@ -91,7 +102,7 @@ public:
         }
     }
 
-    StretchedResult stretch(State &state, size_t numHeldNotes) {
+    StretchedResult stretch(size_t numHeldNotes) {
         recalcStretchInfo(numHeldNotes, static_cast<size_t>(state.stepsParameter->getIndex() + 1),
                           static_cast<size_t>(state.voicesParameter->getIndex() + 1));
 
@@ -103,7 +114,7 @@ public:
         reset(0);
         for (size_t stepNum = 0; stepNum < numSteps; stepNum++) {
             Step currentStep;
-            getNextStretchedStep(state, numNotes, currentStep);
+            getNextStretchedStep(numNotes, currentStep);
             result.steps.push_back(currentStep);
         }
 
@@ -111,7 +122,7 @@ public:
     }
 
 private:
-    bool firstLastOrigStepsSame(State &state) {
+    bool firstLastOrigStepsSame() {
         for (size_t voiceNum = 0; voiceNum < origNumVoices; voiceNum++) {
             if (state.stepState[0].voiceParameters[voiceNum]->get() !=
                 state.stepState[origNumSteps - 1].voiceParameters[voiceNum]->get())
@@ -183,31 +194,22 @@ private:
         DBG("stretching " << origNumSteps << "x" << origNumVoices << " to " << numSteps << "x" << numVoices);
     }
 
-public:
-    struct OrigStep {
-        size_t stepNum;
-        double x;
-        std::array<double, props::MAX_VOICES> activeVoicesY;
-        size_t numActiveVoices;
-        double length;
-        double volume;
-        int octave;
-
-        void fromState(State &state, size_t _origNumVoices, double _origVoiceSizeY) {
-            numActiveVoices = 0;
-            if (state.stepState[stepNum].powerParameter->get()) {
-                for (size_t origVoiceNum = 0; origVoiceNum < _origNumVoices; origVoiceNum++) {
-                    if (state.stepState[stepNum].voiceParameters[origVoiceNum]->get()) {
-                        activeVoicesY[numActiveVoices++] = _origVoiceSizeY * (_origNumVoices - 1 - origVoiceNum);
-                    }
+    void updateStepFromState(OrigStep &outStep, State &_state, size_t stepNum) {
+        outStep.numActiveVoices = 0;
+        if (_state.stepState[stepNum].powerParameter->get()) {
+            for (size_t origVoiceNum = 0; origVoiceNum < origNumVoices; origVoiceNum++) {
+                if (_state.stepState[stepNum].voiceParameters[origVoiceNum]->get()) {
+                    outStep.activeVoicesY[outStep.numActiveVoices++] =
+                            origVoiceSizeY * (origNumVoices - 1 - origVoiceNum);
                 }
             }
-            length = state.stepState[stepNum].lengthParameter->get();
-            volume = state.stepState[stepNum].volParameter->get();
-            octave = state.stepState[stepNum].octaveParameter->getIndex();
         }
-    };
+        outStep.length = _state.stepState[stepNum].lengthParameter->get();
+        outStep.volume = _state.stepState[stepNum].volParameter->get();
+        outStep.octave = _state.stepState[stepNum].octaveParameter->getIndex();
+    }
 
+public:
     size_t nextStepIndex;
     size_t numVoices;
     size_t numSteps;
@@ -216,6 +218,7 @@ public:
     OrigStep next;
 
 private:
+    State &state;
     bool started;
     bool skipLastStepIfMatchesFirst;
     size_t origNumSteps;
