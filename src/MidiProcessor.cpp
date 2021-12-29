@@ -4,8 +4,8 @@
 #include "Props.h"
 #include "Step.h"
 
-void MidiProcessor::init(double sr) {
-    sampleRate = sr;
+void MidiProcessor::prepareToPlay(double _sampleRate, int) {
+    sampleRate = _sampleRate;
 
     pressedNotes.clear();
     playingNotes.clear();
@@ -28,7 +28,7 @@ void MidiProcessor::stopPlaying(juce::MidiBuffer &midiOut, int offset) {
 
 void
 MidiProcessor::process(int numSamples, juce::MidiBuffer &midiIn, juce::MidiBuffer &midiOut,
-                       const juce::AudioPlayHead::CurrentPositionInfo &posInfo, State &state) {
+                       const juce::AudioPlayHead::CurrentPositionInfo &posInfo) {
     for (const auto metadata: midiIn) {
         const auto msg = metadata.getMessage();
         MidiValue noteValue{msg.getNoteNumber(), msg.getChannel(), msg.getVelocity()};

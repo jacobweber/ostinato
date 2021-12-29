@@ -11,14 +11,16 @@
 
 class MidiProcessor {
 public:
-    void init(double sampleRate);
+    MidiProcessor(State &s) : state(s) {
+    }
+
+    void prepareToPlay(double sampleRate, int);
 
     void stopPlaying(juce::MidiBuffer &midiOut, int offset);
 
     void
     process(int numSamples, juce::MidiBuffer &midiIn, juce::MidiBuffer &midiOut,
-            const juce::AudioPlayHead::CurrentPositionInfo &posInfo,
-            State &state);
+            const juce::AudioPlayHead::CurrentPositionInfo &posInfo);
 
 private:
     static double getPpqPosPerStep(State &state);
@@ -28,6 +30,7 @@ private:
     static double roundNextPpqPos(double scheduledPpqPos, double ppqPosPerStep);
 
 private:
+    State &state;
     double sampleRate;
 
     juce::SortedSet<MidiValue> pressedNotes;

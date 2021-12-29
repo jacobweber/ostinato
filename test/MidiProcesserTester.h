@@ -13,7 +13,7 @@ public:
     }
 
     MidiProcessorTester(int bs, int sr) : blockSize(bs), sampleRate(sr) {
-        mp.init(sampleRate);
+        mp.prepareToPlay(sampleRate, blockSize);
 
         *(state.stretchParameter) = false;
         *(state.stepsParameter) = 3; // index
@@ -62,7 +62,7 @@ public:
             }
 
             DBG("-- block " << i << " at " << lastBlockStartSample << " samples, " << posInfo.ppqPosition << " ppq --");
-            mp.process(blockSize, tempMidiIn, tempMidiOut, posInfo, state);
+            mp.process(blockSize, tempMidiIn, tempMidiOut, posInfo);
 
             for (const auto metadata: tempMidiOut) {
                 midiOut.addEvent(metadata.getMessage(), lastBlockStartSample + metadata.samplePosition);
@@ -95,6 +95,6 @@ public:
     juce::AudioPlayHead::CurrentPositionInfo posInfo{};
     juce::MidiBuffer midiIn{};
     juce::MidiBuffer midiOut{};
-    MidiProcessor mp{};
+    MidiProcessor mp{state};
     int lastBlockStartSample;
 };

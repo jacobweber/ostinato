@@ -58,7 +58,7 @@ public:
 private:
     juce::AudioProcessorValueTreeState parameters;
     State state{parameters};
-    MidiProcessor midiProcessor;
+    MidiProcessor midiProcessor{state};
     juce::MidiBuffer midiOut;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PluginProcessor)

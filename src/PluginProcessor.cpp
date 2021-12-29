@@ -53,8 +53,8 @@ const juce::String PluginProcessor::getProgramName(int) {
 void PluginProcessor::changeProgramName(int, const juce::String &) {
 }
 
-void PluginProcessor::prepareToPlay(double sampleRate, int) {
-    midiProcessor.init(sampleRate);
+void PluginProcessor::prepareToPlay(double sampleRate, int maximumExpectedSamplesPerBlock) {
+    midiProcessor.prepareToPlay(sampleRate, maximumExpectedSamplesPerBlock);
 }
 
 void PluginProcessor::releaseResources() {
@@ -73,7 +73,7 @@ void PluginProcessor::processBlock(juce::AudioBuffer<float> &buffer, juce::MidiB
 
     auto numSamples = buffer.getNumSamples();
     midiOut.clear();
-    midiProcessor.process(numSamples, midiMessages, midiOut, posInfo, state);
+    midiProcessor.process(numSamples, midiMessages, midiOut, posInfo);
     midiMessages.swapWith(midiOut);
 }
 
