@@ -1,12 +1,13 @@
+#include <memory>
 #include <random>
 
 #include "../PluginProcessor.h"
 #include "PluginEditor.h"
 #include "../Timecode.h"
-#include "../Props.h"
 
 PluginEditor::PluginEditor(PluginProcessor &p, State &s)
-        : AudioProcessorEditor(&p), state(s) {
+        : AudioProcessorEditor(&p), state(s), pluginProcessor(p) {
+
     addAndMakeVisible(timecodeDisplayLabel);
     timecodeDisplayLabel.setFont(juce::Font(juce::Font::getDefaultMonospacedFontName(), 15.0f, juce::Font::plain));
 
@@ -20,7 +21,7 @@ PluginEditor::PluginEditor(PluginProcessor &p, State &s)
     stretchButton.setClickingTogglesState(true);
     stretchButton.setTooltip(props::TOOLTIP_STRETCH);
     addAndMakeVisible(stretchButton);
-    stretchAttachment.reset(new ButtonAttachment(state.parameters, "stretch", stretchButton));
+    stretchAttachment = std::make_unique<ButtonAttachment>(state.parameters, "stretch", stretchButton);
 
     juce::Image dice = FontAwesome::getInstance()->getIcon(true,
                                                            juce::String::fromUTF8(
@@ -43,7 +44,7 @@ PluginEditor::PluginEditor(PluginProcessor &p, State &s)
         stepStrips.refresh();
     };
     addAndMakeVisible(stepsMenu);
-    stepsAttachment.reset(new ComboBoxAttachment(state.parameters, "steps", stepsMenu));
+    stepsAttachment = std::make_unique<ComboBoxAttachment>(state.parameters, "steps", stepsMenu);
 
     addAndMakeVisible(voicesLabel);
     voicesLabel.setFont(textFont);
@@ -56,7 +57,7 @@ PluginEditor::PluginEditor(PluginProcessor &p, State &s)
         stepStrips.refresh();
     };
     addAndMakeVisible(voicesMenu);
-    voicesAttachment.reset(new ComboBoxAttachment(state.parameters, "voices", voicesMenu));
+    voicesAttachment = std::make_unique<ComboBoxAttachment>(state.parameters, "voices", voicesMenu);
 
     addAndMakeVisible(rateLabel);
     rateLabel.setFont(textFont);
@@ -69,21 +70,18 @@ PluginEditor::PluginEditor(PluginProcessor &p, State &s)
     rateMenu.addItem("Thirty-Second", 6);
     rateMenu.addItem("Sixty-Fourth", 7);
     addAndMakeVisible(rateMenu);
-    rateAttachment.reset(new ComboBoxAttachment(state.parameters, "rate", rateMenu));
+    rateAttachment = std::make_unique<ComboBoxAttachment>(state.parameters, "rate", rateMenu);
 
     rateTypeMenu.addItem("Straight", 1);
     rateTypeMenu.addItem("Triplet", 2);
     rateTypeMenu.addItem("Dotted", 3);
     addAndMakeVisible(rateTypeMenu);
-    rateTypeAttachment.reset(new ComboBoxAttachment(state.parameters, "rateType", rateTypeMenu));
+    rateTypeAttachment = std::make_unique<ComboBoxAttachment>(state.parameters, "rateType", rateTypeMenu);
 
     addAndMakeVisible(stepStrips);
 
     refreshSize(); // resize after initialization
     startTimerHz(60);
-}
-
-PluginEditor::~PluginEditor() {
 }
 
 void PluginEditor::paint(juce::Graphics &g) {
@@ -96,8 +94,10 @@ void PluginEditor::resized() {
     juce::FlexBox headerBox;
     headerBox.justifyContent = juce::FlexBox::JustifyContent::center;
     headerBox.items.add(juce::FlexItem(timecodeDisplayLabel).withFlex(1));
-    headerBox.items.add(juce::FlexItem(stretchButton).withWidth(stretchButton.getWidth()).withMargin(5));
-    headerBox.items.add(juce::FlexItem(randomButton).withWidth(randomButton.getWidth()).withMargin(5));
+    headerBox.items.add(juce::FlexItem(stretchButton).withWidth(
+            static_cast<float>(stretchButton.getWidth())).withMargin(5));
+    headerBox.items.add(
+            juce::FlexItem(randomButton).withWidth(static_cast<float>(randomButton.getWidth())).withMargin(5));
     headerBox.performLayout(area.removeFromTop(26));
 
     area.removeFromTop(10);
@@ -113,13 +113,9 @@ void PluginEditor::resized() {
 }
 
 void PluginEditor::timerCallback() {
-    juce::String newText = updateTimecodeDisplay(getProcessor().lastPosInfo.get());
+    juce::String newText = updateTimecodeDisplay(pluginProcessor.lastPosInfo.get());
     timecodeDisplayLabel.setText(newText, juce::dontSendNotification);
     stepStrips.refreshActiveStep();
-}
-
-PluginProcessor &PluginEditor::getProcessor() const {
-    return static_cast<PluginProcessor &>(processor);
 }
 
 void PluginEditor::refreshSize() {
@@ -153,8 +149,8 @@ void PluginEditor::randomizeParams(bool stepsAndVoices) {
         *(state.stepsParameter) = static_cast<int>(numSteps - 1); // index
         *(state.voicesParameter) = static_cast<int>(numVoices - 1); // index
     } else {
-        numSteps = static_cast<size_t>(state.stepsParameter->getIndex() + 1);
-        numVoices = static_cast<size_t>(state.voicesParameter->getIndex() + 1);
+        numSteps = static_cast<size_t>(state.stepsParameter->getIndex()) + 1;
+        numVoices = static_cast<size_t>(state.voicesParameter->getIndex()) + 1;
     }
     *(state.rateParameter) = randRate(mt); // index
     *(state.rateTypeParameter) = randRateType(mt); // index

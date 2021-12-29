@@ -7,7 +7,7 @@
 
 class State {
 public:
-    State(juce::AudioProcessorValueTreeState &p) : parameters(p) {
+    explicit State(juce::AudioProcessorValueTreeState &p) : parameters(p) {
         stretchParameter = dynamic_cast<juce::AudioParameterBool *> (parameters.getParameter("stretch"));
         stepsParameter = dynamic_cast<juce::AudioParameterChoice *> (parameters.getParameter("steps"));
         voicesParameter = dynamic_cast<juce::AudioParameterChoice *> (parameters.getParameter("voices"));

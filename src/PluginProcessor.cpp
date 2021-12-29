@@ -2,7 +2,6 @@
 
 #include "PluginProcessor.h"
 #include "Components/PluginEditor.h"
-#include "Components/StepStrip.h"
 #include "ParametersFactory.h"
 
 PluginProcessor::PluginProcessor()
@@ -10,9 +9,6 @@ PluginProcessor::PluginProcessor()
                                  .withInput("Input", juce::AudioChannelSet::stereo(), true)
                                  .withOutput("Output", juce::AudioChannelSet::stereo(), true)),
           parameters(*this, nullptr, juce::Identifier("Ostinato"), ParametersFactory::create()) {
-}
-
-PluginProcessor::~PluginProcessor() {
 }
 
 const juce::String PluginProcessor::getName() const {
@@ -94,21 +90,21 @@ void PluginProcessor::getStateInformation(juce::MemoryBlock &destData) {
 void PluginProcessor::setStateInformation(const void *data, int sizeInBytes) {
     std::unique_ptr<juce::XmlElement> xmlState(getXmlFromBinary(data, sizeInBytes));
 
-    if (xmlState.get() != nullptr)
+    if (xmlState != nullptr)
         if (xmlState->hasTagName(parameters.state.getType()))
             parameters.replaceState(juce::ValueTree::fromXml(*xmlState));
 }
 
 juce::AudioPlayHead::CurrentPositionInfo PluginProcessor::updateCurrentTimeInfoFromHost() {
     if (auto *ph = getPlayHead()) {
-        juce::AudioPlayHead::CurrentPositionInfo result;
+        juce::AudioPlayHead::CurrentPositionInfo result{};
 
         if (ph->getCurrentPosition(result))
             return result;
     }
 
     // If the host fails to provide the current time, we'll just use default values
-    juce::AudioPlayHead::CurrentPositionInfo result;
+    juce::AudioPlayHead::CurrentPositionInfo result{};
     result.resetToDefault();
     return result;
 }

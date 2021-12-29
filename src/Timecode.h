@@ -16,11 +16,11 @@ juce::String quarterNotePositionToBarsBeatsString(double quarterNotes, int numer
         return "1|1|000";
 
     auto quarterNotesPerBar = (numerator * 4 / denominator);
-    auto beats = (fmod(quarterNotes, quarterNotesPerBar) / quarterNotesPerBar) * numerator;
+    auto beats = (std::fmod(quarterNotes, quarterNotesPerBar) / quarterNotesPerBar) * numerator;
 
     auto bar = ((int) quarterNotes) / quarterNotesPerBar + 1;
     auto beat = ((int) beats) + 1;
-    auto ticks = ((int) (fmod(beats, 1.0) * 960.0 + 0.5));
+    auto ticks = ((int) std::round(std::fmod(beats, 1.0) * 960.0 + 0.5));
 
     return juce::String::formatted("%d|%d|%03d", bar, beat, ticks);
 }

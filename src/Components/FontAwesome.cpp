@@ -2,9 +2,6 @@
 
 #include "FontAwesome.h"
 
-FontAwesome::FontAwesome() {
-}
-
 FontAwesome::~FontAwesome() {
     clearSingletonInstance();
 }
@@ -12,7 +9,7 @@ FontAwesome::~FontAwesome() {
 JUCE_IMPLEMENT_SINGLETON (FontAwesome)
 
 juce::Image
-FontAwesome::getIcon(bool solid, juce::String charCode, float size, juce::Colour colour, float scaleFactor) {
+FontAwesome::getIcon(bool solid, const juce::String &charCode, float size, juce::Colour colour, float scaleFactor) {
     int scaledSize = int(size * scaleFactor);
 
     juce::String identifier = juce::String(charCode + "@" + juce::String(scaledSize) + "@" + colour.toString());

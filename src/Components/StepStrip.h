@@ -2,6 +2,7 @@
 
 #include "juce_audio_utils/juce_audio_utils.h"
 #include "juce_gui_basics/juce_gui_basics.h"
+#include <memory>
 #include <vector>
 
 #include "../State.h"
@@ -56,8 +57,8 @@ public:
         for (int i = -static_cast<int>(props::MAX_OCTAVES); i <= static_cast<int>(props::MAX_OCTAVES); i++)
             octaveMenu.addItem(std::to_string(i), itemId++);
         addAndMakeVisible(octaveMenu);
-        octaveAttachment.reset(
-                new ComboBoxAttachment(state.parameters, "step" + std::to_string(stepNum) + "_octave", octaveMenu));
+        octaveAttachment = std::make_unique<ComboBoxAttachment>(
+                state.parameters, "step" + std::to_string(stepNum) + "_octave", octaveMenu);
 
         lengthSlider.setSliderStyle(juce::Slider::LinearBar);
         lengthSlider.setRange(0.0, 1.0);
@@ -65,16 +66,16 @@ public:
         lengthSlider.setPopupDisplayEnabled(true, false, this);
         lengthSlider.setColour(juce::Slider::ColourIds::trackColourId, props::COLOR_OUTLINE);
         addAndMakeVisible(lengthSlider);
-        lengthAttachment.reset(
-                new SliderAttachment(state.parameters, "step" + std::to_string(stepNum) + "_length", lengthSlider));
+        lengthAttachment = std::make_unique<SliderAttachment>(
+                state.parameters, "step" + std::to_string(stepNum) + "_length", lengthSlider);
 
         tieButton.setClickingTogglesState(true);
         tieButton.setButtonText(props::LABEL_TIE);
         tieButton.setColour(juce::TextButton::ColourIds::buttonOnColourId, props::COLOR_HIGHLIGHT);
         tieButton.setTooltip(props::TOOLTIP_TIE);
         addAndMakeVisible(tieButton);
-        tieAttachment.reset(
-                new ButtonAttachment(state.parameters, "step" + std::to_string(stepNum) + "_tie", tieButton));
+        tieAttachment = std::make_unique<ButtonAttachment>(
+                state.parameters, "step" + std::to_string(stepNum) + "_tie", tieButton);
 
         volSlider.setSliderStyle(juce::Slider::LinearBarVertical);
         volSlider.setRange(0.0, 1.0);
@@ -83,8 +84,8 @@ public:
         volSlider.setColour(juce::Slider::ColourIds::trackColourId, props::COLOR_OUTLINE);
         addAndMakeVisible(volSlider);
 
-        volAttachment.reset(
-                new SliderAttachment(state.parameters, "step" + std::to_string(stepNum) + "_volume", volSlider));
+        volAttachment = std::make_unique<SliderAttachment>(
+                state.parameters, "step" + std::to_string(stepNum) + "_volume", volSlider);
 
         juce::Image powerOff = FontAwesome::getInstance()->getIcon(true,
                                                                    juce::String::fromUTF8(
@@ -98,8 +99,8 @@ public:
             powerButton.setTooltip(powerButton.getToggleState() ? props::TOOLTIP_POWER_OFF : props::TOOLTIP_POWER_ON);
         };
         addAndMakeVisible(powerButton);
-        powerAttachment.reset(
-                new ButtonAttachment(state.parameters, "step" + std::to_string(stepNum) + "_power", powerButton));
+        powerAttachment = std::make_unique<ButtonAttachment>(
+                state.parameters, "step" + std::to_string(stepNum) + "_power", powerButton);
         powerButton.setTooltip(powerButton.getToggleState() ? props::TOOLTIP_POWER_OFF : props::TOOLTIP_POWER_ON);
 
         refresh();
@@ -158,18 +159,18 @@ public:
 
     void refreshVoices() {
         size_t oldNumVoices = voices.size();
-        size_t newNumVoices = static_cast<size_t>(state.voicesParameter->getIndex() + 1);
+        size_t newNumVoices = static_cast<size_t>(state.voicesParameter->getIndex()) + 1;
         if (newNumVoices > oldNumVoices) {
             for (size_t i = oldNumVoices; i < newNumVoices; i++) {
-                voices.push_back(std::unique_ptr<juce::TextButton>(new juce::TextButton()));
+                voices.push_back(std::make_unique<juce::TextButton>());
                 voices[i]->setClickingTogglesState(true);
                 voices[i]->setButtonText(std::to_string(i + 1));
                 voices[i]->setColour(juce::TextButton::ColourIds::buttonOnColourId, props::COLOR_HIGHLIGHT);
                 addAndMakeVisible(*voices[i]);
-                voicesAttachments.push_back(std::unique_ptr<ButtonAttachment>(
-                        new ButtonAttachment(state.parameters,
-                                             "step" + std::to_string(stepNum) + "_voice" + std::to_string(i),
-                                             *voices[i])));
+                voicesAttachments.push_back(std::make_unique<ButtonAttachment>(
+                        state.parameters,
+                        "step" + std::to_string(stepNum) + "_voice" + std::to_string(i),
+                        *voices[i]));
             }
             oldNumVoices = newNumVoices;
             resized();

@@ -25,5 +25,5 @@ public:
 
 private:
     juce::SpinLock mutex;
-    juce::AudioPlayHead::CurrentPositionInfo info;
+    juce::AudioPlayHead::CurrentPositionInfo info{};
 };

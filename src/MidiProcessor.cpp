@@ -1,8 +1,5 @@
-#include <math.h>
-
 #include "MidiProcessor.h"
 #include "Props.h"
-#include "Step.h"
 
 void MidiProcessor::prepareToPlay(double _sampleRate, int) {
     sampleRate = _sampleRate;

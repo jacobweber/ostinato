@@ -6,14 +6,13 @@
 
 class Stretcher {
 public:
-    Stretcher(State &_state, bool skipLast) : nextStepIndex(0), state(_state), reuseNextStep(false),
-                                              skipLastStepIfMatchesFirst(skipLast) {
+    Stretcher(State &_state, bool skipLast) : state(_state), skipLastStepIfMatchesFirst(skipLast) {
     }
 
     struct StretchedResult {
         std::vector<Step> steps;
-        size_t numSteps;
-        size_t numVoices;
+        size_t numSteps = 0;
+        size_t numVoices = 0;
     };
 
     struct OrigStep {
@@ -48,8 +47,8 @@ public:
         // mult = .3,  at .8,   .95 intdiv .3 = 3, 3 * .3 = .9
         // mult = .3,  at 1.1, 1.25 intdiv .3 = 4, 4 * .3 = 1.2
 
-        recalcStretchInfo(numHeldNotes, static_cast<size_t>(state.stepsParameter->getIndex() + 1),
-                          static_cast<size_t>(state.voicesParameter->getIndex() + 1));
+        recalcStretchInfo(numHeldNotes, static_cast<size_t>(state.stepsParameter->getIndex()) + 1,
+                          static_cast<size_t>(state.voicesParameter->getIndex()) + 1);
         if (skipLastStepIfMatchesFirst && firstLastOrigStepsSame()) numSteps--;
 
         if (nextStepIndex >= numSteps) {
@@ -62,30 +61,30 @@ public:
 
             size_t prevOrigStepNum;
             if (numSteps > origNumSteps) {
-                prevOrigStepNum = static_cast<size_t>((nextStepIndex + 1 + roundingOffset) /
+                prevOrigStepNum = static_cast<size_t>((static_cast<double>(nextStepIndex + 1) + roundingOffset) /
                                                       origStepSizeX) - 1; // ugly
             } else {
-                prevOrigStepNum = static_cast<size_t>((nextStepIndex + roundingOffset) / origStepSizeX);
+                prevOrigStepNum = static_cast<size_t>((static_cast<double>(nextStepIndex) + roundingOffset) /
+                                                      origStepSizeX);
             }
 
             // will immediately become prev
             next.stepNum = prevOrigStepNum;
-            next.x = next.stepNum * origStepSizeX;
+            next.x = static_cast<double>(next.stepNum) * origStepSizeX;
             updateOrigStepFromState(next, state, next.stepNum);
         }
 
-        size_t nextOrigStepNum = static_cast<size_t>((nextStepIndex + 1 + roundingOffset) /
-                                                     origStepSizeX);
+        auto nextOrigStepNum = static_cast<size_t>((static_cast<double>(nextStepIndex + 1) + roundingOffset) /
+                                                   origStepSizeX);
 
         if (nextOrigStepNum > next.stepNum) { // passed the next original step, so recalc things
             prev = next;
             next.stepNum = nextOrigStepNum;
-            next.x = next.stepNum * origStepSizeX;
+            next.x = static_cast<double>(next.stepNum) * origStepSizeX;
 
-            if (next.stepNum == origNumSteps) {
+            if (next.stepNum == origNumSteps || state.stepState[prev.stepNum].tieParameter->get()) {
                 // when on last original step, act as if there's one more step with the same settings
-            } else if (state.stepState[prev.stepNum].tieParameter->get()) {
-                // keep next the same as prev
+                // when tied, keep next the same as prev
             } else {
                 updateOrigStepFromState(next, state, next.stepNum);
             }
@@ -103,8 +102,8 @@ public:
     }
 
     StretchedResult stretch(size_t numHeldNotes) {
-        recalcStretchInfo(numHeldNotes, static_cast<size_t>(state.stepsParameter->getIndex() + 1),
-                          static_cast<size_t>(state.voicesParameter->getIndex() + 1));
+        recalcStretchInfo(numHeldNotes, static_cast<size_t>(state.stepsParameter->getIndex()) + 1,
+                          static_cast<size_t>(state.voicesParameter->getIndex()) + 1);
 
         StretchedResult result;
         result.steps.reserve(numSteps);
@@ -131,7 +130,7 @@ private:
         numVoices = std::min(numNotes, MAX_ACTUAL_VOICES);
         // we'll round up; extra steps will make it more accurate
         numSteps = static_cast<size_t>(1 + std::ceil(
-                static_cast<double>((origNumSteps - 1) * (numNotes - 1)) / (origNumVoices - 1)));
+                static_cast<double>((origNumSteps - 1) * (numNotes - 1)) / static_cast<double>(origNumVoices - 1)));
         // avoid dividing by 0 here and later
         origStepSizeX =
                 numNotes == 1 ? 1 : static_cast<double>(numSteps - 1) / static_cast<double>(origNumSteps - 1);
@@ -155,7 +154,7 @@ private:
             outStep.voices[voiceNum] = false;
         }
 
-        double curStepX = static_cast<double>(stepNum);
+        auto curStepX = static_cast<double>(stepNum);
 
         // with origNumVoices = 3 and numVoices = 5:
         // origVoiceSize = 2
@@ -194,13 +193,13 @@ private:
         outStep.tie = false;
     }
 
-    void updateOrigStepFromState(OrigStep &outStep, State &_state, size_t stepNum) {
+    void updateOrigStepFromState(OrigStep &outStep, State &_state, size_t stepNum) const {
         outStep.numActiveVoices = 0;
         if (_state.stepState[stepNum].powerParameter->get()) {
             for (size_t origVoiceNum = 0; origVoiceNum < origNumVoices; origVoiceNum++) {
                 if (_state.stepState[stepNum].voiceParameters[origVoiceNum]->get()) {
                     outStep.activeVoicesY[outStep.numActiveVoices++] =
-                            origVoiceSizeY * (origNumVoices - 1 - origVoiceNum);
+                            origVoiceSizeY * static_cast<double>(origNumVoices - 1 - origVoiceNum);
                 }
             }
         }
@@ -210,20 +209,20 @@ private:
     }
 
 public:
-    size_t nextStepIndex;
-    size_t numVoices;
-    size_t numSteps;
-    size_t numNotes;
-    OrigStep prev;
-    OrigStep next;
+    size_t nextStepIndex = 0;
+    size_t numVoices = 0;
+    size_t numSteps = 0;
+    size_t numNotes = 0;
+    OrigStep prev{};
+    OrigStep next{};
 
 private:
     State &state;
-    bool reuseNextStep;
-    bool skipLastStepIfMatchesFirst;
-    size_t origNumSteps;
-    size_t origNumVoices;
-    double origStepSizeX;
-    double origVoiceSizeY;
-    double roundingOffset;
+    bool reuseNextStep = false;
+    bool skipLastStepIfMatchesFirst = false;
+    size_t origNumSteps = 0;
+    size_t origNumVoices = 0;
+    double origStepSizeX = 0.0;
+    double origVoiceSizeY = 0.0;
+    double roundingOffset = 0.0;
 };

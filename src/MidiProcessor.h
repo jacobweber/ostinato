@@ -11,7 +11,7 @@
 
 class MidiProcessor {
 public:
-    MidiProcessor(State &s) : state(s) {
+    explicit MidiProcessor(State &s) : state(s) {
     }
 
     void prepareToPlay(double sampleRate, int);
@@ -31,26 +31,26 @@ private:
 
 private:
     State &state;
-    double sampleRate;
+    double sampleRate = 0.0;
 
     juce::SortedSet<MidiValue> pressedNotes;
     juce::SortedSet<MidiValue> playingNotes;
 
-    bool cycleOn;
-    bool transportOn;
-    size_t nextStepIndex;
-    double prevPpqPos;
-    double nextPpqPos; // predicted, in case we jump back in time
-    bool tieActive;
+    bool cycleOn = false;
+    bool transportOn = false;
+    size_t nextStepIndex = 0;
+    double prevPpqPos = 0.0;
+    double nextPpqPos = 0.0; // predicted, in case we jump back in time
+    bool tieActive = false;
 
-    double releasePpqPos; // if transport running, ppq from start
-    double nextStepPpqPos; // if transport running, ppq from start
+    double releasePpqPos = 0.0; // if transport running, ppq from start
+    double nextStepPpqPos = 0.0; // if transport running, ppq from start
 
-    int samplesUntilRelease; // if transport not running, samples left in current note
-    int samplesUntilNextStep; // if transport not running, samples left in current step
+    int samplesUntilRelease = 0; // if transport not running, samples left in current note
+    int samplesUntilNextStep = 0; // if transport not running, samples left in current step
 
-    Step currentStep;
+    Step currentStep{};
 
-    bool stretchActive;
+    bool stretchActive = false;
     Stretcher stretcher{state, true};
 };

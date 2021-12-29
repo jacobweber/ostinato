@@ -2,6 +2,7 @@
 
 #include "juce_audio_utils/juce_audio_utils.h"
 #include "juce_gui_basics/juce_gui_basics.h"
+#include <memory>
 #include <vector>
 
 #include "StepStrip.h"
@@ -10,7 +11,7 @@
 
 class StepStrips : public juce::Component {
 public:
-    StepStrips(State &s) : state(s) {
+    explicit StepStrips(State &s) : state(s) {
         refresh();
     }
 
@@ -20,8 +21,8 @@ public:
     void resized() override {
         auto area = getLocalBounds();
         juce::FlexBox stepsBox;
-        for (size_t i = 0; i < strips.size(); i++)
-            stepsBox.items.add(juce::FlexItem(*strips[i]).withHeight((float) area.getHeight()).withWidth(100));
+        for (auto &strip: strips)
+            stepsBox.items.add(juce::FlexItem(*strip).withHeight((float) area.getHeight()).withWidth(100));
         stepsBox.performLayout(area.toFloat());
     }
 
@@ -56,10 +57,10 @@ public:
 
     void refreshSteps() {
         size_t oldNumSteps = strips.size();
-        size_t newNumSteps = static_cast<size_t>(state.stepsParameter->getIndex() + 1);
+        auto newNumSteps = static_cast<size_t>(state.stepsParameter->getIndex()) + 1;
         if (newNumSteps > oldNumSteps) {
             for (size_t i = oldNumSteps; i < newNumSteps; i++) {
-                strips.push_back(std::unique_ptr<StepStrip>(new StepStrip(state, i)));
+                strips.push_back(std::make_unique<StepStrip>(state, i));
                 addAndMakeVisible(*strips[i]);
             }
             oldNumSteps = newNumSteps;

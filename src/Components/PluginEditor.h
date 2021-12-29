@@ -16,15 +16,11 @@ public:
 
     PluginEditor(PluginProcessor &, State &);
 
-    ~PluginEditor() override;
-
     void paint(juce::Graphics &) override;
 
     void resized() override;
 
     void timerCallback() override;
-
-    PluginProcessor &getProcessor() const;
 
     void refreshSize();
 
@@ -33,6 +29,7 @@ private:
 
 private:
     State &state;
+    PluginProcessor &pluginProcessor;
 
     juce::TooltipWindow tooltipWindow{nullptr, 500};
 

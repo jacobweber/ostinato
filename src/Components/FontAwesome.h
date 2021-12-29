@@ -7,13 +7,13 @@
 // adapted from https://github.com/danlin/danlin_modules
 class FontAwesome : juce::DeletedAtShutdown {
 public:
-    FontAwesome();
+    FontAwesome() = default;
 
-    ~FontAwesome();
+    ~FontAwesome() override;
 
     JUCE_DECLARE_SINGLETON (FontAwesome, false)
 
-    juce::Image getIcon(bool solid, juce::String charCode, float size, juce::Colour colour, float scaleFactor);
+    juce::Image getIcon(bool solid, const juce::String &charCode, float size, juce::Colour colour, float scaleFactor);
 
     juce::Font getSolidFont();
 

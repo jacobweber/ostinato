@@ -7,8 +7,8 @@
 class StateHelper {
 public:
     static void setGrid(State &state, juce::String &grid) {
-        size_t numSteps = static_cast<size_t>(grid.indexOf("\n"));
-        size_t numVoices = static_cast<size_t>(grid.length()) / (numSteps + 1);
+        auto numSteps = static_cast<size_t>(grid.indexOf("\n"));
+        auto numVoices = static_cast<size_t>(grid.length()) / (numSteps + 1);
         *(state.stepsParameter) = static_cast<int>(numSteps - 1); // index
         *(state.voicesParameter) = static_cast<int>(numVoices - 1); // index
         for (size_t i = 0; i < numSteps; i++) {
@@ -20,8 +20,8 @@ public:
     }
 
     static juce::String getGrid(State &state) {
-        size_t numSteps = static_cast<size_t>(state.stepsParameter->getIndex() + 1); // index
-        size_t numVoices = static_cast<size_t>(state.voicesParameter->getIndex() + 1); // index
+        auto numSteps = static_cast<size_t>(state.stepsParameter->getIndex()) + 1; // index
+        auto numVoices = static_cast<size_t>(state.voicesParameter->getIndex()) + 1; // index
         juce::String grid = juce::String();
         for (size_t j = 0; j < numVoices; j++) {
             for (size_t i = 0; i < numSteps; i++) {
