@@ -184,4 +184,42 @@ TEST_CASE("MidiProcessor with transport") {
                                                "833: Note on D3 Velocity 101 Channel 2\n"
                                                "916: Note off D3 Velocity 0 Channel 2\n");
     }
+
+    SECTION("two cycles, change settings") {
+        *(tester.state.stepsParameter) = 3; // 4 steps
+        *(tester.state.voicesParameter) = 3; // 4 voices
+        *(tester.state.rateParameter) = 3; // eighths
+        *(tester.state.stepState[0].voiceParameters[3]) = true;
+        *(tester.state.stepState[1].voiceParameters[2]) = true;
+        *(tester.state.stepState[2].voiceParameters[1]) = true;
+        *(tester.state.stepState[3].voiceParameters[0]) = true;
+
+        tester.midiIn.addEvent(juce::MidiMessage::noteOn(1, 60, (juce::uint8) 100), 10);
+        tester.midiIn.addEvent(juce::MidiMessage::noteOn(2, 62, (juce::uint8) 101), 9);
+        tester.midiIn.addEvent(juce::MidiMessage::noteOn(3, 64, (juce::uint8) 102), 8);
+        tester.midiIn.addEvent(juce::MidiMessage::noteOn(4, 65, (juce::uint8) 103), 7);
+        tester.posInfo.isPlaying = true;
+
+        tester.processBlocks(9);
+        // 250 samples/step
+        REQUIRE(tester.midiOutString(false) == "0: Note on C3 Velocity 100 Channel 1\n"
+                                               "124: Note off C3 Velocity 0 Channel 1\n"
+                                               "249: Note on D3 Velocity 101 Channel 2\n"
+                                               "374: Note off D3 Velocity 0 Channel 2\n"
+                                               "500: Note on E3 Velocity 102 Channel 3\n"
+                                               "625: Note off E3 Velocity 0 Channel 3\n"
+                                               "750: Note on F3 Velocity 103 Channel 4\n"
+                                               "875: Note off F3 Velocity 0 Channel 4\n");
+
+        *(tester.state.rateParameter) = 2; // quarters
+        *(tester.state.stepState[0].voiceParameters[0]) = true;
+        tester.processBlocks(9);
+        // 500 samples/step
+        REQUIRE(tester.midiOutString(false) == "1000: Note on F3 Velocity 103 Channel 4\n"
+                                               "1000: Note on C3 Velocity 100 Channel 1\n"
+                                               "1250: Note off C3 Velocity 0 Channel 1\n"
+                                               "1250: Note off F3 Velocity 0 Channel 4\n"
+                                               "1499: Note on D3 Velocity 101 Channel 2\n"
+                                               "1749: Note off D3 Velocity 0 Channel 2\n");
+    }
 }
