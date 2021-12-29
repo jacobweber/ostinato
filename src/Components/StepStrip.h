@@ -27,9 +27,10 @@ public:
         juce::Image square = FontAwesome::getInstance()->getIcon(false,
                                                                  juce::String::fromUTF8(
                                                                          reinterpret_cast<const char *>(u8"\uf0c8")),
-                                                                 ICON_SIZE, props::COLOR_TOGGLE_INACTIVE,
+                                                                 ICON_SIZE, props::COLOR_TOGGLE_ACTIVE,
                                                                  1);
-        clearButton.setImages(true, false, true, square, 1.0f, {}, {}, 1.0f, {}, {}, 1.0f, props::COLOR_TOGGLE_ACTIVE);
+        clearButton.setImages(true, false, true, square, 1.0f, {}, {}, 1.0f, {}, {}, 1.0f,
+                              props::COLOR_TOGGLE_INACTIVE);
         clearButton.onClick = [this] {
             for (size_t i = 0; i < voices.size(); i++)
                 *(state.stepState[stepNum].voiceParameters[i]) = false;
@@ -40,10 +41,10 @@ public:
         juce::Image checkSquare = FontAwesome::getInstance()->getIcon(false,
                                                                       juce::String::fromUTF8(
                                                                               reinterpret_cast<const char *>(u8"\uf14a")),
-                                                                      ICON_SIZE, props::COLOR_TOGGLE_INACTIVE,
+                                                                      ICON_SIZE, props::COLOR_TOGGLE_ACTIVE,
                                                                       1);
         fillButton.setImages(true, false, true, checkSquare, 1.0f, {}, {}, 1.0f, {}, {}, 1.0f,
-                             props::COLOR_TOGGLE_ACTIVE);
+                             props::COLOR_TOGGLE_INACTIVE);
         fillButton.onClick = [this] {
             for (size_t i = 0; i < voices.size(); i++)
                 *(state.stepState[stepNum].voiceParameters[i]) = true;
