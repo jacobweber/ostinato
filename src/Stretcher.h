@@ -50,7 +50,6 @@ public:
 
         recalcStretchInfo(numHeldNotes, static_cast<size_t>(state.stepsParameter->getIndex()) + 1,
                           static_cast<size_t>(state.voicesParameter->getIndex()) + 1);
-        if (skipLastStepIfMatchesFirst && firstLastOrigStepsSame()) numSteps--;
 
         if (nextStepIndex >= numSteps) {
             nextStepIndex = 0;
@@ -148,6 +147,8 @@ private:
                 numNotes == 1 ? 1 : static_cast<double>(numVoices - 1) / static_cast<double>(origNumVoices - 1);
         roundingOffset = numSteps > origNumSteps ? origStepSizeX - 1 : origStepSizeX / 2;
         DBG("stretching " << origNumSteps << "x" << origNumVoices << " to " << numSteps << "x" << numVoices);
+
+        if (skipLastStepIfMatchesFirst && firstLastOrigStepsSame()) numSteps--;
     }
 
     bool firstLastOrigStepsSame() {
