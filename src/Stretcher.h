@@ -102,8 +102,14 @@ public:
     }
 
     StretchedResult stretch(size_t numHeldNotes) {
+        return stretch(numHeldNotes, 0);
+    }
+
+    StretchedResult stretch(size_t numHeldNotes, size_t totalSteps) {
         recalcStretchInfo(numHeldNotes, static_cast<size_t>(state.stepsParameter->getIndex()) + 1,
                           static_cast<size_t>(state.voicesParameter->getIndex()) + 1);
+
+        if (totalSteps == 0) totalSteps = numSteps;
 
         StretchedResult result;
         result.steps.reserve(numSteps);
@@ -111,7 +117,7 @@ public:
         result.numVoices = numVoices;
 
         setStepIndex(0);
-        for (size_t stepNum = 0; stepNum < numSteps; stepNum++) {
+        for (size_t stepNum = 0; stepNum < totalSteps; stepNum++) {
             Step currentStep;
             getNextStretchedStep(numNotes, currentStep);
             result.steps.push_back(currentStep);
