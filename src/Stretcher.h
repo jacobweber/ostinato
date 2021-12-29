@@ -178,7 +178,7 @@ private:
                     lineNum < next.numActiveVoices ? next.activeVoicesY[lineNum] : prevVoiceY;
             double slope = (nextVoiceY - prevVoiceY) / (next.x - prev.x);
             double curVoiceY = prevVoiceY + slope * (curStepX - prev.x);
-            DBG("  voice " << curVoiceY << " (orig: " << prevVoiceY << " - " << nextVoiceY << ")");
+            DBG("  voice " << curVoiceY << " (orig: " << prevVoiceY << "-" << nextVoiceY << ")");
             size_t voiceNum = numVoices - 1 - std::min(static_cast<size_t>(std::round(curVoiceY)), numVoices - 1);
             outStep.voices[voiceNum] = true;
         }
