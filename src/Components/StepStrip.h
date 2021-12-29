@@ -9,6 +9,7 @@
 #include "../Props.h"
 #include "ActiveLight.h"
 #include "FontAwesome.h"
+#include "LookAndFeel.h"
 
 constexpr int ICON_SIZE = 14;
 
@@ -169,6 +170,7 @@ public:
         if (newNumVoices > oldNumVoices) {
             for (size_t i = oldNumVoices; i < newNumVoices; i++) {
                 voices.push_back(std::make_unique<juce::TextButton>());
+                voices[i]->setLookAndFeel(&lookAndFeel);
                 voices[i]->setClickingTogglesState(true);
                 voices[i]->setColour(juce::TextButton::ColourIds::buttonOnColourId, props::COLOR_TOGGLE_ACTIVE);
                 voices[i]->setColour(juce::TextButton::ColourIds::buttonColourId, props::COLOR_TOGGLE_INACTIVE);
@@ -194,6 +196,8 @@ public:
 private:
     size_t stepNum{0};
     State &state;
+
+    LookAndFeel lookAndFeel;
 
     juce::Font textFont{12.0f};
 
