@@ -83,6 +83,7 @@ target_sources(Ostinato
         PRIVATE
         src/Components/FontAwesome.cpp
         src/Components/PluginEditor.cpp
+        src/Components/Header.cpp
         src/PluginProcessor.cpp
         src/MidiProcessor.cpp)
 
