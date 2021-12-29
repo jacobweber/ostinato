@@ -138,7 +138,7 @@ void PluginEditor::randomizeParams(bool stepsAndVoices) {
     std::uniform_int_distribution<int> randRateType(1, state.rateTypeParameter->getAllValueStrings().size());
 
     std::uniform_int_distribution<int> randVoice(0, 3);
-    std::uniform_int_distribution<int> randOctave(1, static_cast<int>(props::MAX_VOICES) * 2 + 1);
+    std::uniform_int_distribution<int> randOctave(0, static_cast<int>(props::MAX_OCTAVES) * 2);
     std::uniform_real_distribution<float> randLength(0.0, 1.0);
     std::uniform_int_distribution<int> randTie(0, 10);
     std::uniform_real_distribution<float> randVolume(0.0, 1.0);
