@@ -111,7 +111,7 @@ public:
         result.numSteps = numSteps;
         result.numVoices = numVoices;
 
-        reset(0);
+        setStepIndex(0);
         for (size_t stepNum = 0; stepNum < numSteps; stepNum++) {
             Step currentStep;
             getNextStretchedStep(numNotes, currentStep);
