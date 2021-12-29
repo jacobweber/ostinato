@@ -28,6 +28,7 @@ public:
     void setStepIndex(size_t origStepIndex) {
         nextStepIndex = origStepIndex;
         reuseNextStep = false;
+        tieActive = false;
     }
 
     void getNextStretchedStep(size_t numHeldNotes, Step &outStep) {
@@ -53,10 +54,9 @@ public:
 
         if (nextStepIndex >= numSteps) {
             nextStepIndex = 0;
-            reuseNextStep = false;
         }
 
-        if (!reuseNextStep) {
+        if (!reuseNextStep || nextStepIndex == 0) {
             reuseNextStep = true;
 
             size_t prevOrigStepNum;
@@ -71,7 +71,10 @@ public:
             // will immediately become prev
             next.stepNum = prevOrigStepNum;
             next.x = static_cast<double>(next.stepNum) * origStepSizeX;
-            updateOrigStepFromState(next, state, next.stepNum);
+            if (!tieActive) {
+                // when tied, keep next the same as prev
+                updateOrigStepFromState(next, state, next.stepNum);
+            }
         }
 
         auto nextOrigStepNum = static_cast<size_t>((static_cast<double>(nextStepIndex + 1) + roundingOffset) /
@@ -82,8 +85,10 @@ public:
             next.stepNum = nextOrigStepNum;
             next.x = static_cast<double>(next.stepNum) * origStepSizeX;
 
-            if (next.stepNum == origNumSteps || state.stepState[prev.stepNum].tieParameter->get()) {
+            tieActive = state.stepState[prev.stepNum].tieParameter->get();
+            if (next.stepNum == origNumSteps) {
                 // when on last original step, act as if there's one more step with the same settings
+            } else if (tieActive) {
                 // when tied, keep next the same as prev
             } else {
                 updateOrigStepFromState(next, state, next.stepNum);
@@ -97,7 +102,6 @@ public:
         nextStepIndex++;
         if (nextStepIndex >= numSteps) {
             nextStepIndex = 0;
-            reuseNextStep = false;
         }
     }
 
@@ -225,6 +229,7 @@ public:
 private:
     State &state;
     bool reuseNextStep = false;
+    bool tieActive = false;
     bool skipLastStepIfMatchesFirst = false;
     size_t origNumSteps = 0;
     size_t origNumVoices = 0;

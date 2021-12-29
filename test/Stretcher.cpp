@@ -224,6 +224,27 @@ TEST_CASE("Stretcher")
                                         "*--------*\n";
             REQUIRE(actualGrid == expectedGrid);
         }
+
+        SECTION("3x3 to 7x7 repeat") {
+            juce::String grid = "--*\n"
+                                "-*-\n"
+                                "*--\n";
+            StateHelper::setGrid(state, grid);
+            *(state.stepState[2].tieParameter) = true;
+
+            Stretcher::StretchedResult result = str.stretch(7, 14);
+            REQUIRE(result.numSteps == 7);
+
+            juce::String actualGrid = StateHelper::getGrid(result);
+            juce::String expectedGrid = "------**-----*\n"
+                                        "-----*--*---*-\n"
+                                        "----*----*-*--\n"
+                                        "---*------*---\n"
+                                        "--*-----------\n"
+                                        "-*------------\n"
+                                        "*-------------\n";
+            REQUIRE(actualGrid == expectedGrid);
+        }
     }
 
     SECTION("rests") {
