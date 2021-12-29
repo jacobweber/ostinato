@@ -160,7 +160,7 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midiIn, juce::MidiBuffe
                     stretcher.reset(nextStepIndex);
                 }
                 stretcher.getNextStretchedStep(state, static_cast<size_t>(pressedNotes.size()), currentStep);
-                numVoices = stretcher.info.numVoices;
+                numVoices = stretcher.numVoices;
 
                 state.stepIndex = stretcher.prev.stepNum;
             } else {

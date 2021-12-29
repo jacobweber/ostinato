@@ -40,10 +40,10 @@ public:
         size_t origNumSteps = static_cast<size_t>(state.stepsParameter->getIndex() + 1);
         size_t origNumVoices = static_cast<size_t>(state.voicesParameter->getIndex() + 1);
 
-        info = {numNotes, origNumSteps, origNumVoices}; // should cache
-        if (skipLastStepIfMatchesFirst && firstLastOrigStepsSame(state, origNumSteps, origNumVoices)) info.numSteps--;
+        recalcStretchInfo(numNotes, origNumSteps, origNumVoices); // should cache
+        if (skipLastStepIfMatchesFirst && firstLastOrigStepsSame(state, origNumSteps, origNumVoices)) numSteps--;
 
-        if (nextStepIndex >= info.numSteps) {
+        if (nextStepIndex >= numSteps) {
             nextStepIndex = 0;
             started = false;
         }
@@ -52,42 +52,42 @@ public:
             started = true;
 
             size_t prevOrigStepNum;
-            if (info.numSteps > origNumSteps) {
-                prevOrigStepNum = static_cast<size_t>((nextStepIndex + 1 + info.roundingOffset) /
-                                                      info.origStepSizeX) - 1; // ugly
+            if (numSteps > origNumSteps) {
+                prevOrigStepNum = static_cast<size_t>((nextStepIndex + 1 + roundingOffset) /
+                                                      origStepSizeX) - 1; // ugly
             } else {
-                prevOrigStepNum = static_cast<size_t>((nextStepIndex + info.roundingOffset) / info.origStepSizeX);
+                prevOrigStepNum = static_cast<size_t>((nextStepIndex + roundingOffset) / origStepSizeX);
             }
 
             // will immediately become prev
             next.stepNum = prevOrigStepNum;
-            next.x = next.stepNum * info.origStepSizeX;
-            next.fromState(state, origNumVoices, info.origVoiceSizeY);
+            next.x = next.stepNum * origStepSizeX;
+            next.fromState(state, origNumVoices, origVoiceSizeY);
         }
 
-        size_t nextOrigStepNum = static_cast<size_t>((nextStepIndex + 1 + info.roundingOffset) /
-                                                     info.origStepSizeX);
+        size_t nextOrigStepNum = static_cast<size_t>((nextStepIndex + 1 + roundingOffset) /
+                                                     origStepSizeX);
 
         if (nextOrigStepNum > next.stepNum) { // passed the next original step, so recalc things
             prev = next;
             next.stepNum = nextOrigStepNum;
-            next.x = next.stepNum * info.origStepSizeX;
+            next.x = next.stepNum * origStepSizeX;
 
             if (next.stepNum == origNumSteps) {
                 // when on last original step, act as if there's one more step with the same settings
             } else if (state.stepState[prev.stepNum].tieParameter->get()) {
                 // keep next the same as prev
             } else {
-                next.fromState(state, origNumVoices, info.origVoiceSizeY);
+                next.fromState(state, origNumVoices, origVoiceSizeY);
             }
         }
 
         DBG("stretched step " << nextStepIndex << " (orig: " << prev.stepNum << " - " << next.stepNum << ", X: "
                               << prev.x << " - " << next.x << ")");
-        getStretchedStep(nextStepIndex, info.numVoices, outStep);
+        getStretchedStep(nextStepIndex, outStep);
 
         nextStepIndex++;
-        if (nextStepIndex >= info.numSteps) {
+        if (nextStepIndex >= numSteps) {
             nextStepIndex = 0;
             started = false;
         }
@@ -97,15 +97,15 @@ public:
         size_t origNumSteps = static_cast<size_t>(state.stepsParameter->getIndex() + 1);
         size_t origNumVoices = static_cast<size_t>(state.voicesParameter->getIndex() + 1);
 
-        info = {numNotes, origNumSteps, origNumVoices};
+        recalcStretchInfo(numNotes, origNumSteps, origNumVoices);
 
         StretchedResult result;
-        result.steps.reserve(info.numSteps);
-        result.numSteps = info.numSteps;
-        result.numVoices = info.numVoices;
+        result.steps.reserve(numSteps);
+        result.numSteps = numSteps;
+        result.numVoices = numVoices;
 
         reset(0);
-        for (size_t stepNum = 0; stepNum < info.numSteps; stepNum++) {
+        for (size_t stepNum = 0; stepNum < numSteps; stepNum++) {
             Step currentStep;
             getNextStretchedStep(state, numNotes, currentStep);
             result.steps.push_back(currentStep);
@@ -124,7 +124,7 @@ private:
         return true;
     }
 
-    void getStretchedStep(size_t stepNum, size_t numVoices, Step &step) {
+    void getStretchedStep(size_t stepNum, Step &step) {
         for (size_t voiceNum = 0; voiceNum < numVoices; voiceNum++) {
             step.voices[voiceNum] = false;
         }
@@ -168,30 +168,20 @@ private:
         step.tie = false;
     }
 
+    void recalcStretchInfo(size_t numNotes, size_t origNumSteps, size_t origNumVoices) {
+        numVoices = std::min(numNotes, MAX_ACTUAL_VOICES);
+        // we'll round up; extra steps will make it more accurate
+        numSteps = static_cast<size_t>(1 + std::ceil(
+                static_cast<double>((origNumSteps - 1) * (numNotes - 1)) / (origNumVoices - 1)));
+        // avoid dividing by 0 here and later
+        origStepSizeX =
+                numNotes == 1 ? 1 : static_cast<double>(numSteps - 1) / static_cast<double>(origNumSteps - 1);
+        origVoiceSizeY =
+                numNotes == 1 ? 1 : static_cast<double>(numVoices - 1) / static_cast<double>(origNumVoices - 1);
+        roundingOffset = numSteps > origNumSteps ? origStepSizeX - 1 : origStepSizeX / 2;
+    }
+
 public:
-    struct StretchInfo {
-        size_t numSteps;
-        size_t numVoices;
-        double origStepSizeX;
-        double origVoiceSizeY;
-        double roundingOffset;
-
-        StretchInfo() {}
-
-        StretchInfo(size_t numNotes, size_t origNumSteps, size_t origNumVoices) {
-            numVoices = std::min(numNotes, MAX_ACTUAL_VOICES);
-            // we'll round up; extra steps will make it more accurate
-            numSteps = static_cast<size_t>(1 + std::ceil(
-                    static_cast<double>((origNumSteps - 1) * (numNotes - 1)) / (origNumVoices - 1)));
-            // avoid dividing by 0 here and later
-            origStepSizeX =
-                    numNotes == 1 ? 1 : static_cast<double>(numSteps - 1) / static_cast<double>(origNumSteps - 1);
-            origVoiceSizeY =
-                    numNotes == 1 ? 1 : static_cast<double>(numVoices - 1) / static_cast<double>(origNumVoices - 1);
-            roundingOffset = numSteps > origNumSteps ? origStepSizeX - 1 : origStepSizeX / 2;
-        }
-    };
-
     struct OrigStep {
         size_t stepNum;
         double x;
@@ -201,12 +191,12 @@ public:
         double volume;
         int octave;
 
-        void fromState(State &state, size_t origNumVoices, double origVoiceSizeY) {
+        void fromState(State &state, size_t _origNumVoices, double _origVoiceSizeY) {
             numActiveVoices = 0;
             if (state.stepState[stepNum].powerParameter->get()) {
-                for (size_t origVoiceNum = 0; origVoiceNum < origNumVoices; origVoiceNum++) {
+                for (size_t origVoiceNum = 0; origVoiceNum < _origNumVoices; origVoiceNum++) {
                     if (state.stepState[stepNum].voiceParameters[origVoiceNum]->get()) {
-                        activeVoicesY[numActiveVoices++] = origVoiceSizeY * (origNumVoices - 1 - origVoiceNum);
+                        activeVoicesY[numActiveVoices++] = _origVoiceSizeY * (_origNumVoices - 1 - origVoiceNum);
                     }
                 }
             }
@@ -217,11 +207,15 @@ public:
     };
 
     size_t nextStepIndex;
-    StretchInfo info;
+    size_t numVoices;
+    size_t numSteps;
     OrigStep prev;
     OrigStep next;
 
 private:
     bool started;
     bool skipLastStepIfMatchesFirst;
+    double origStepSizeX;
+    double origVoiceSizeY;
+    double roundingOffset;
 };
