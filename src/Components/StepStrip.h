@@ -27,9 +27,9 @@ public:
         juce::Image square = FontAwesome::getInstance()->getIcon(false,
                                                                  juce::String::fromUTF8(
                                                                          reinterpret_cast<const char *>(u8"\uf0c8")),
-                                                                 ICON_SIZE, props::COLOR_STANDARD,
+                                                                 ICON_SIZE, props::COLOR_TOGGLE_INACTIVE,
                                                                  1);
-        clearButton.setImages(true, false, true, square, 1.0f, {}, {}, 1.0f, {}, {}, 1.0f, props::COLOR_HIGHLIGHT);
+        clearButton.setImages(true, false, true, square, 1.0f, {}, {}, 1.0f, {}, {}, 1.0f, props::COLOR_TOGGLE_ACTIVE);
         clearButton.onClick = [this] {
             for (size_t i = 0; i < voices.size(); i++)
                 *(state.stepState[stepNum].voiceParameters[i]) = false;
@@ -40,9 +40,10 @@ public:
         juce::Image checkSquare = FontAwesome::getInstance()->getIcon(false,
                                                                       juce::String::fromUTF8(
                                                                               reinterpret_cast<const char *>(u8"\uf14a")),
-                                                                      ICON_SIZE, props::COLOR_STANDARD,
+                                                                      ICON_SIZE, props::COLOR_TOGGLE_INACTIVE,
                                                                       1);
-        fillButton.setImages(true, false, true, checkSquare, 1.0f, {}, {}, 1.0f, {}, {}, 1.0f, props::COLOR_HIGHLIGHT);
+        fillButton.setImages(true, false, true, checkSquare, 1.0f, {}, {}, 1.0f, {}, {}, 1.0f,
+                             props::COLOR_TOGGLE_ACTIVE);
         fillButton.onClick = [this] {
             for (size_t i = 0; i < voices.size(); i++)
                 *(state.stepState[stepNum].voiceParameters[i]) = true;
@@ -64,14 +65,15 @@ public:
         lengthSlider.setRange(0.0, 1.0);
         lengthSlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 90, 0);
         lengthSlider.setPopupDisplayEnabled(true, false, this);
-        lengthSlider.setColour(juce::Slider::ColourIds::trackColourId, props::COLOR_OUTLINE);
+        lengthSlider.setColour(juce::Slider::ColourIds::trackColourId, props::COLOR_SLIDER);
         addAndMakeVisible(lengthSlider);
         lengthAttachment = std::make_unique<SliderAttachment>(
                 state.parameters, "step" + std::to_string(stepNum) + "_length", lengthSlider);
 
         tieButton.setClickingTogglesState(true);
         tieButton.setButtonText(props::LABEL_TIE);
-        tieButton.setColour(juce::TextButton::ColourIds::buttonOnColourId, props::COLOR_HIGHLIGHT);
+        tieButton.setColour(juce::TextButton::ColourIds::buttonOnColourId, props::COLOR_TOGGLE_ACTIVE);
+        tieButton.setColour(juce::TextButton::ColourIds::buttonColourId, props::COLOR_TOGGLE_INACTIVE);
         tieButton.setTooltip(props::TOOLTIP_TIE);
         addAndMakeVisible(tieButton);
         tieAttachment = std::make_unique<ButtonAttachment>(
@@ -81,7 +83,7 @@ public:
         volSlider.setRange(0.0, 1.0);
         volSlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 90, 0);
         volSlider.setPopupDisplayEnabled(true, false, this);
-        volSlider.setColour(juce::Slider::ColourIds::trackColourId, props::COLOR_OUTLINE);
+        volSlider.setColour(juce::Slider::ColourIds::trackColourId, props::COLOR_SLIDER);
         addAndMakeVisible(volSlider);
 
         volAttachment = std::make_unique<SliderAttachment>(
@@ -90,10 +92,10 @@ public:
         juce::Image powerOff = FontAwesome::getInstance()->getIcon(true,
                                                                    juce::String::fromUTF8(
                                                                            reinterpret_cast<const char *>(u8"\uf011")),
-                                                                   ICON_SIZE, props::COLOR_STANDARD,
+                                                                   ICON_SIZE, props::COLOR_TOGGLE_INACTIVE,
                                                                    1);
         powerButton.setImages(false, false, true, powerOff, 1.0f, {}, {}, 1.0f, {}, {}, 1.0f,
-                              props::COLOR_HIGHLIGHT);
+                              props::COLOR_TOGGLE_ACTIVE);
         powerButton.setClickingTogglesState(true);
         powerButton.onClick = [this] {
             powerButton.setTooltip(powerButton.getToggleState() ? props::TOOLTIP_POWER_OFF : props::TOOLTIP_POWER_ON);
@@ -133,7 +135,7 @@ public:
 
         for (size_t i = 0; i < voices.size(); i++)
             if (voices.size() > i) {
-                voices[i]->setBounds(area.removeFromTop(20));
+                voices[i]->setBounds(area.removeFromTop(20).reduced(2));
                 area.removeFromTop(2);
             }
 
@@ -167,8 +169,8 @@ public:
             for (size_t i = oldNumVoices; i < newNumVoices; i++) {
                 voices.push_back(std::make_unique<juce::TextButton>());
                 voices[i]->setClickingTogglesState(true);
-                voices[i]->setButtonText(std::to_string(i + 1));
-                voices[i]->setColour(juce::TextButton::ColourIds::buttonOnColourId, props::COLOR_HIGHLIGHT);
+                voices[i]->setColour(juce::TextButton::ColourIds::buttonOnColourId, props::COLOR_TOGGLE_ACTIVE);
+                voices[i]->setColour(juce::TextButton::ColourIds::buttonColourId, props::COLOR_TOGGLE_INACTIVE);
                 addAndMakeVisible(*voices[i]);
                 voicesAttachments.push_back(std::make_unique<ButtonAttachment>(
                         state.parameters,
