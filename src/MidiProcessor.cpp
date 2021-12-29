@@ -157,7 +157,7 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midiIn, juce::MidiBuffe
             if (stretch) {
                 if (!stretchActive) {
                     stretchActive = true;
-                    stretcher.reset(nextStepIndex);
+                    stretcher.setStepIndex(nextStepIndex);
                 }
                 stretcher.getNextStretchedStep(static_cast<size_t>(pressedNotes.size()), currentStep);
                 numVoices = stretcher.numVoices;

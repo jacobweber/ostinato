@@ -6,7 +6,7 @@
 
 class Stretcher {
 public:
-    Stretcher(State &_state, bool skipLast) : nextStepIndex(0), state(_state), started(false),
+    Stretcher(State &_state, bool skipLast) : nextStepIndex(0), state(_state), reuseNextStep(false),
                                               skipLastStepIfMatchesFirst(skipLast) {
     }
 
@@ -26,9 +26,9 @@ public:
         int octave;
     };
 
-    void reset(size_t origStepIndex) {
+    void setStepIndex(size_t origStepIndex) {
         nextStepIndex = origStepIndex;
-        started = false;
+        reuseNextStep = false;
     }
 
     void getNextStretchedStep(size_t numHeldNotes, Step &outStep) {
@@ -54,11 +54,11 @@ public:
 
         if (nextStepIndex >= numSteps) {
             nextStepIndex = 0;
-            started = false;
+            reuseNextStep = false;
         }
 
-        if (!started) {
-            started = true;
+        if (!reuseNextStep) {
+            reuseNextStep = true;
 
             size_t prevOrigStepNum;
             if (numSteps > origNumSteps) {
@@ -98,7 +98,7 @@ public:
         nextStepIndex++;
         if (nextStepIndex >= numSteps) {
             nextStepIndex = 0;
-            started = false;
+            reuseNextStep = false;
         }
     }
 
@@ -219,7 +219,7 @@ public:
 
 private:
     State &state;
-    bool started;
+    bool reuseNextStep;
     bool skipLastStepIfMatchesFirst;
     size_t origNumSteps;
     size_t origNumVoices;
