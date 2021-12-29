@@ -97,6 +97,7 @@ public:
         powerButton.setClickingTogglesState(true);
         powerButton.onClick = [this] {
             powerButton.setTooltip(powerButton.getToggleState() ? props::TOOLTIP_POWER_OFF : props::TOOLTIP_POWER_ON);
+            repaint();
         };
         addAndMakeVisible(powerButton);
         powerAttachment = std::make_unique<ButtonAttachment>(
@@ -111,12 +112,14 @@ public:
     }
 
     void paint(juce::Graphics &g) override {
-        g.setColour(props::COLOR_OUTLINE);
-        g.drawRect(getLocalBounds().reduced(1), 2.0f);
+        auto rect = getLocalBounds().reduced(2);
+        bool active = state.stepState[stepNum].powerParameter->get();
+        g.setColour(active ? props::COLOR_STRIP_ACTIVE : props::COLOR_STRIP_INACTIVE);
+        g.fillRect(rect);
     }
 
     void resized() override {
-        auto area = getLocalBounds().reduced(4);
+        auto area = getLocalBounds().reduced(6);
 
         auto iconArea = area.removeFromTop(30);
         juce::FlexBox stepsBox;

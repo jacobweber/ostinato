@@ -67,7 +67,8 @@ Header::Header(State &s, PluginProcessor &p) : state(s), pluginProcessor(p) {
     rateTypeAttachment = std::make_unique<ComboBoxAttachment>(state.parameters, "rateType", rateTypeMenu);
 }
 
-void Header::paint(juce::Graphics &) {
+void Header::paint(juce::Graphics &g) {
+    g.fillAll(props::COLOR_HEADER);
 }
 
 void Header::resized() {

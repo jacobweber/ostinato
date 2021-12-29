@@ -28,7 +28,7 @@ PluginEditor::PluginEditor(PluginProcessor &p, State &s)
 }
 
 void PluginEditor::paint(juce::Graphics &g) {
-    g.fillAll(getLookAndFeel().findColour(juce::ResizableWindow::backgroundColourId));
+    g.fillAll(props::COLOR_BACKGROUND);
 }
 
 void PluginEditor::resized() {

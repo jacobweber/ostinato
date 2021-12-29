@@ -12,6 +12,10 @@ namespace props {
     const juce::Colour COLOR_STANDARD = juce::Colours::white;
     const juce::Colour COLOR_OUTLINE = juce::Colours::grey;
     const juce::Colour COLOR_HIGHLIGHT = juce::Colours::red;
+    const juce::Colour COLOR_BACKGROUND = juce::Colour(42, 42, 42);
+    const juce::Colour COLOR_HEADER = juce::Colour(127, 127, 127);
+    const juce::Colour COLOR_STRIP_ACTIVE = juce::Colour(55, 55, 55);
+    const juce::Colour COLOR_STRIP_INACTIVE = juce::Colour(0, 0, 0);
 
     const juce::String LABEL_TIE = "Tie";
     const juce::String LABEL_STEPS = "Steps";
