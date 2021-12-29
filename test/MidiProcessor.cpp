@@ -85,7 +85,7 @@ TEST_CASE("MidiProcessor with transport") {
 
         tester.processBlocks(9);
         // 250 samples/step
-        REQUIRE(tester.midiOutString(false) == "0: Note on C3 Velocity 100 Channel 1\n" // aligned to next beat
+        REQUIRE(tester.midiOutString(false) == "0: Note on C3 Velocity 100 Channel 1\n" // aligned to prev beat
                                                "124: Note off C3 Velocity 0 Channel 1\n"
                                                "249: Note on D3 Velocity 101 Channel 2\n"
                                                "374: Note off D3 Velocity 0 Channel 2\n"
@@ -93,6 +93,34 @@ TEST_CASE("MidiProcessor with transport") {
                                                "625: Note off E3 Velocity 0 Channel 3\n"
                                                "750: Note on F3 Velocity 103 Channel 4\n"
                                                "875: Note off F3 Velocity 0 Channel 4\n");
+    }
+
+    SECTION("one cycle, late start") {
+        *(tester.state.stepsParameter) = 3; // 4 steps
+        *(tester.state.voicesParameter) = 3; // 4 voices
+        *(tester.state.rateParameter) = 3; // eighths
+        *(tester.state.stepState[0].voiceParameters[3]) = true;
+        *(tester.state.stepState[1].voiceParameters[2]) = true;
+        *(tester.state.stepState[2].voiceParameters[1]) = true;
+        *(tester.state.stepState[3].voiceParameters[0]) = true;
+
+        // currently we only care about the start block, not the exact start time
+        tester.midiIn.addEvent(juce::MidiMessage::noteOn(1, 60, (juce::uint8) 100), 150);
+        tester.midiIn.addEvent(juce::MidiMessage::noteOn(2, 62, (juce::uint8) 101), 151);
+        tester.midiIn.addEvent(juce::MidiMessage::noteOn(3, 64, (juce::uint8) 102), 152);
+        tester.midiIn.addEvent(juce::MidiMessage::noteOn(4, 65, (juce::uint8) 103), 153);
+        tester.posInfo.isPlaying = true;
+
+        tester.processBlocks(12);
+        // 250 samples/step
+        REQUIRE(tester.midiOutString(false) == "249: Note on C3 Velocity 100 Channel 1\n" // aligned to next beat
+                                               "374: Note off C3 Velocity 0 Channel 1\n"
+                                               "500: Note on D3 Velocity 101 Channel 2\n"
+                                               "625: Note off D3 Velocity 0 Channel 2\n"
+                                               "750: Note on E3 Velocity 102 Channel 3\n"
+                                               "875: Note off E3 Velocity 0 Channel 3\n"
+                                               "1000: Note on F3 Velocity 103 Channel 4\n"
+                                               "1125: Note off F3 Velocity 0 Channel 4\n");
     }
 
     SECTION("triplets") {
@@ -113,7 +141,7 @@ TEST_CASE("MidiProcessor with transport") {
 
         tester.processBlocks(6);
         // 166.666... samples/step
-        REQUIRE(tester.midiOutString(false) == "0: Note on C3 Velocity 100 Channel 1\n" // aligned to next beat
+        REQUIRE(tester.midiOutString(false) == "0: Note on C3 Velocity 100 Channel 1\n"
                                                "83: Note off C3 Velocity 0 Channel 1\n"
                                                "166: Note on D3 Velocity 101 Channel 2\n"
                                                "249: Note off D3 Velocity 0 Channel 2\n"
@@ -141,7 +169,7 @@ TEST_CASE("MidiProcessor with transport") {
 
         tester.processBlocks(5);
         // 166.666... samples/step
-        REQUIRE(tester.midiOutString(false) == "0: Note on C3 Velocity 100 Channel 1\n" // aligned to next beat
+        REQUIRE(tester.midiOutString(false) == "0: Note on C3 Velocity 100 Channel 1\n"
                                                "83: Note off C3 Velocity 0 Channel 1\n"
                                                "166: Note on D3 Velocity 101 Channel 2\n"
                                                "249: Note off D3 Velocity 0 Channel 2\n"
