@@ -71,7 +71,7 @@ public:
             // will immediately become prev
             next.stepNum = prevOrigStepNum;
             next.x = next.stepNum * origStepSizeX;
-            updateStepFromState(next, state, next.stepNum);
+            updateOrigStepFromState(next, state, next.stepNum);
         }
 
         size_t nextOrigStepNum = static_cast<size_t>((nextStepIndex + 1 + roundingOffset) /
@@ -87,13 +87,13 @@ public:
             } else if (state.stepState[prev.stepNum].tieParameter->get()) {
                 // keep next the same as prev
             } else {
-                updateStepFromState(next, state, next.stepNum);
+                updateOrigStepFromState(next, state, next.stepNum);
             }
         }
 
         DBG("stretched step " << nextStepIndex << " (orig: " << prev.stepNum << "-" << next.stepNum << ", X: "
                               << prev.x << "-" << next.x << ")");
-        getStretchedStep(nextStepIndex, outStep);
+        updateStretchedStep(nextStepIndex, outStep);
 
         nextStepIndex++;
         if (nextStepIndex >= numSteps) {
@@ -122,59 +122,6 @@ public:
     }
 
 private:
-    bool firstLastOrigStepsSame() {
-        for (size_t voiceNum = 0; voiceNum < origNumVoices; voiceNum++) {
-            if (state.stepState[0].voiceParameters[voiceNum]->get() !=
-                state.stepState[origNumSteps - 1].voiceParameters[voiceNum]->get())
-                return false;
-        }
-        return true;
-    }
-
-    void getStretchedStep(size_t stepNum, Step &step) {
-        for (size_t voiceNum = 0; voiceNum < numVoices; voiceNum++) {
-            step.voices[voiceNum] = false;
-        }
-
-        double curStepX = static_cast<double>(stepNum);
-
-        // with origNumVoices = 3 and numVoices = 5:
-        // origVoiceSize = 2
-        // prev: new:  next:     prev: new:  next:  prevY: curY:
-        // -     .     *         -     .     *      4      4
-        //       .  /                  . ---               3
-        // -     *     *         * --- *     -      2      2
-        //    /  .                  /  .                   1
-        // *     .     -         * --- *     -      0      0
-
-        // start at top
-        // find another prev-step voice that's on, and another next-step voice that's on
-        // if we have both, draw line between them
-        // if we have a prev voice but not a next one, draw horizontal line
-        // if we have a next voice but not a prev one, ignore it
-        // find this step's Y position on that line, and round it to a voice num for this step
-        for (size_t lineNum = 0; lineNum < prev.numActiveVoices; lineNum++) {
-            double prevVoiceY = prev.activeVoicesY[lineNum];
-            double nextVoiceY =
-                    lineNum < next.numActiveVoices ? next.activeVoicesY[lineNum] : prevVoiceY;
-            double slope = (nextVoiceY - prevVoiceY) / (next.x - prev.x);
-            double curVoiceY = prevVoiceY + slope * (curStepX - prev.x);
-            DBG("  voice " << curVoiceY << " (orig: " << prevVoiceY << " - " << nextVoiceY << ")");
-            size_t voiceNum = numVoices - 1 - std::min(static_cast<size_t>(std::round(curVoiceY)), numVoices - 1);
-            step.voices[voiceNum] = true;
-        }
-
-        double lengthSlope = (next.length - prev.length) / (next.x - prev.x);
-        step.length = prev.length + lengthSlope * (curStepX - prev.x);
-
-        double volSlope = (next.volume - prev.volume) / (next.x - prev.x);
-        step.volume = prev.volume + volSlope * (curStepX - prev.x);
-
-        step.octave = prev.octave;
-        step.power = true;
-        step.tie = false;
-    }
-
     void recalcStretchInfo(size_t _numNotes, size_t _origNumSteps, size_t _origNumVoices) {
         if (numNotes == _numNotes && origNumSteps == _origNumSteps && origNumVoices == _origNumVoices) return;
         numNotes = _numNotes;
@@ -194,7 +141,60 @@ private:
         DBG("stretching " << origNumSteps << "x" << origNumVoices << " to " << numSteps << "x" << numVoices);
     }
 
-    void updateStepFromState(OrigStep &outStep, State &_state, size_t stepNum) {
+    bool firstLastOrigStepsSame() {
+        for (size_t voiceNum = 0; voiceNum < origNumVoices; voiceNum++) {
+            if (state.stepState[0].voiceParameters[voiceNum]->get() !=
+                state.stepState[origNumSteps - 1].voiceParameters[voiceNum]->get())
+                return false;
+        }
+        return true;
+    }
+
+    void updateStretchedStep(size_t stepNum, Step &outStep) {
+        for (size_t voiceNum = 0; voiceNum < numVoices; voiceNum++) {
+            outStep.voices[voiceNum] = false;
+        }
+
+        double curStepX = static_cast<double>(stepNum);
+
+        // with origNumVoices = 3 and numVoices = 5:
+        // origVoiceSize = 2
+        // prev: new:  next:     prev: new:  next:  prevY: curY:
+        // -     .     *         -     .     *      4      4
+        //       .  /                  . ---               3
+        // -     *     *         * --- *     -      2      2
+        //    /  .                  /  .                   1
+        // *     .     -         * --- *     -      0      0
+
+        // start at top
+        // find another prev-outStep voice that's on, and another next-outStep voice that's on
+        // if we have both, draw line between them
+        // if we have a prev voice but not a next one, draw horizontal line
+        // if we have a next voice but not a prev one, ignore it
+        // find this outStep's Y position on that line, and round it to a voice num for this outStep
+        for (size_t lineNum = 0; lineNum < prev.numActiveVoices; lineNum++) {
+            double prevVoiceY = prev.activeVoicesY[lineNum];
+            double nextVoiceY =
+                    lineNum < next.numActiveVoices ? next.activeVoicesY[lineNum] : prevVoiceY;
+            double slope = (nextVoiceY - prevVoiceY) / (next.x - prev.x);
+            double curVoiceY = prevVoiceY + slope * (curStepX - prev.x);
+            DBG("  voice " << curVoiceY << " (orig: " << prevVoiceY << " - " << nextVoiceY << ")");
+            size_t voiceNum = numVoices - 1 - std::min(static_cast<size_t>(std::round(curVoiceY)), numVoices - 1);
+            outStep.voices[voiceNum] = true;
+        }
+
+        double lengthSlope = (next.length - prev.length) / (next.x - prev.x);
+        outStep.length = prev.length + lengthSlope * (curStepX - prev.x);
+
+        double volSlope = (next.volume - prev.volume) / (next.x - prev.x);
+        outStep.volume = prev.volume + volSlope * (curStepX - prev.x);
+
+        outStep.octave = prev.octave;
+        outStep.power = true;
+        outStep.tie = false;
+    }
+
+    void updateOrigStepFromState(OrigStep &outStep, State &_state, size_t stepNum) {
         outStep.numActiveVoices = 0;
         if (_state.stepState[stepNum].powerParameter->get()) {
             for (size_t origVoiceNum = 0; origVoiceNum < origNumVoices; origVoiceNum++) {
