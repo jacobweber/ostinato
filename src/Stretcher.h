@@ -20,7 +20,7 @@ public:
         started = false;
     }
 
-    void getNextStretchedStep(State &state, size_t numNotes, Step &outStep) {
+    void getNextStretchedStep(State &state, size_t numHeldNotes, Step &outStep) {
         // with origNumSteps = 3 and numSteps = 5:
         // origStepSizeX = 2
         // stepNum and stepX  = 0 1 2 3 4
@@ -37,11 +37,9 @@ public:
         // mult = .3,  at .8,   .95 intdiv .3 = 3, 3 * .3 = .9
         // mult = .3,  at 1.1, 1.25 intdiv .3 = 4, 4 * .3 = 1.2
 
-        size_t origNumSteps = static_cast<size_t>(state.stepsParameter->getIndex() + 1);
-        size_t origNumVoices = static_cast<size_t>(state.voicesParameter->getIndex() + 1);
-
-        recalcStretchInfo(numNotes, origNumSteps, origNumVoices); // should cache
-        if (skipLastStepIfMatchesFirst && firstLastOrigStepsSame(state, origNumSteps, origNumVoices)) numSteps--;
+        recalcStretchInfo(numHeldNotes, static_cast<size_t>(state.stepsParameter->getIndex() + 1),
+                          static_cast<size_t>(state.voicesParameter->getIndex() + 1));
+        if (skipLastStepIfMatchesFirst && firstLastOrigStepsSame(state)) numSteps--;
 
         if (nextStepIndex >= numSteps) {
             nextStepIndex = 0;
@@ -82,8 +80,8 @@ public:
             }
         }
 
-        DBG("stretched step " << nextStepIndex << " (orig: " << prev.stepNum << " - " << next.stepNum << ", X: "
-                              << prev.x << " - " << next.x << ")");
+        DBG("stretched step " << nextStepIndex << " (orig: " << prev.stepNum << "-" << next.stepNum << ", X: "
+                              << prev.x << "-" << next.x << ")");
         getStretchedStep(nextStepIndex, outStep);
 
         nextStepIndex++;
@@ -93,11 +91,9 @@ public:
         }
     }
 
-    StretchedResult stretch(State &state, size_t numNotes) {
-        size_t origNumSteps = static_cast<size_t>(state.stepsParameter->getIndex() + 1);
-        size_t origNumVoices = static_cast<size_t>(state.voicesParameter->getIndex() + 1);
-
-        recalcStretchInfo(numNotes, origNumSteps, origNumVoices);
+    StretchedResult stretch(State &state, size_t numHeldNotes) {
+        recalcStretchInfo(numHeldNotes, static_cast<size_t>(state.stepsParameter->getIndex() + 1),
+                          static_cast<size_t>(state.voicesParameter->getIndex() + 1));
 
         StretchedResult result;
         result.steps.reserve(numSteps);
@@ -115,7 +111,7 @@ public:
     }
 
 private:
-    bool firstLastOrigStepsSame(State &state, size_t origNumSteps, size_t origNumVoices) {
+    bool firstLastOrigStepsSame(State &state) {
         for (size_t voiceNum = 0; voiceNum < origNumVoices; voiceNum++) {
             if (state.stepState[0].voiceParameters[voiceNum]->get() !=
                 state.stepState[origNumSteps - 1].voiceParameters[voiceNum]->get())
@@ -168,7 +164,12 @@ private:
         step.tie = false;
     }
 
-    void recalcStretchInfo(size_t numNotes, size_t origNumSteps, size_t origNumVoices) {
+    void recalcStretchInfo(size_t _numNotes, size_t _origNumSteps, size_t _origNumVoices) {
+        if (numNotes == _numNotes && origNumSteps == _origNumSteps && origNumVoices == _origNumVoices) return;
+        numNotes = _numNotes;
+        origNumSteps = _origNumSteps;
+        origNumVoices = _origNumVoices;
+
         numVoices = std::min(numNotes, MAX_ACTUAL_VOICES);
         // we'll round up; extra steps will make it more accurate
         numSteps = static_cast<size_t>(1 + std::ceil(
@@ -179,6 +180,7 @@ private:
         origVoiceSizeY =
                 numNotes == 1 ? 1 : static_cast<double>(numVoices - 1) / static_cast<double>(origNumVoices - 1);
         roundingOffset = numSteps > origNumSteps ? origStepSizeX - 1 : origStepSizeX / 2;
+        DBG("stretching " << origNumSteps << "x" << origNumVoices << " to " << numSteps << "x" << numVoices);
     }
 
 public:
@@ -209,12 +211,15 @@ public:
     size_t nextStepIndex;
     size_t numVoices;
     size_t numSteps;
+    size_t numNotes;
     OrigStep prev;
     OrigStep next;
 
 private:
     bool started;
     bool skipLastStepIfMatchesFirst;
+    size_t origNumSteps;
+    size_t origNumVoices;
     double origStepSizeX;
     double origVoiceSizeY;
     double roundingOffset;
