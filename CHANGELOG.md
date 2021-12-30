@@ -30,4 +30,4 @@
 ### 0.0.5
 
 * Use pamplejuce template.
-* Upgrade to JUCE 6.1.2.
+* Upgrade to JUCE 6.1.4.
