@@ -21,8 +21,6 @@ public:
 
     void resized() override;
 
-    void timerCallback();
-
 public:
     std::function<void()> onUpdateSteps = [] {};
     std::function<void()> onUpdateVoices = [] {};
@@ -36,7 +34,6 @@ private:
 
     juce::ImageButton stretchButton{};
     juce::ImageButton randomButton{};
-    juce::Label timecodeDisplayLabel;
     juce::Label stepsLabel{{}, props::LABEL_STEPS};
     juce::ComboBox stepsMenu;
     juce::Label voicesLabel{{}, props::LABEL_VOICES};

@@ -1,10 +1,6 @@
 #include "Header.h"
-#include "../Timecode.h"
 
 Header::Header(State &s, PluginProcessor &p) : state(s), pluginProcessor(p) {
-    addAndMakeVisible(timecodeDisplayLabel);
-    timecodeDisplayLabel.setFont(juce::Font(juce::Font::getDefaultMonospacedFontName(), 15.0f, juce::Font::plain));
-
     juce::Image arrowsLeftRight = FontAwesome::getInstance()->getIcon(true,
                                                                       juce::String::fromUTF8(
                                                                               reinterpret_cast<const char *>(u8"\uf07e")),
@@ -73,9 +69,6 @@ void Header::paint(juce::Graphics &g) {
 
 void Header::resized() {
     auto area = getLocalBounds();
-
-    timecodeDisplayLabel.setBounds(area.removeFromTop(26));
-
     auto bottom = area.removeFromBottom(48).reduced(8);
     const int MENU_HEIGHT = 24;
     juce::FlexBox bottomBox;
@@ -96,9 +89,4 @@ void Header::resized() {
                     static_cast<float>(ICON_SIZE + 10)).withWidth(
                     static_cast<float>(randomButton.getWidth() + 15)));
     bottomBox.performLayout(bottom);
-}
-
-void Header::timerCallback() {
-    juce::String newText = updateTimecodeDisplay(pluginProcessor.lastPosInfo.get());
-    timecodeDisplayLabel.setText(newText, juce::dontSendNotification);
 }

@@ -40,12 +40,11 @@ void PluginEditor::paint(juce::Graphics &g) {
 
 void PluginEditor::resized() {
     auto area = getLocalBounds();
-    header.setBounds(area.removeFromTop(76));
+    header.setBounds(area.removeFromTop(60));
     stepStrips.setBounds(area);
 }
 
 void PluginEditor::timerCallback() {
-    header.timerCallback();
     stepStrips.refreshActiveStep();
 }
 
