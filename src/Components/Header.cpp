@@ -8,10 +8,10 @@ Header::Header(State &s, PluginProcessor &p) : state(s), pluginProcessor(p) {
     juce::Image arrowsLeftRight = FontAwesome::getInstance()->getIcon(true,
                                                                       juce::String::fromUTF8(
                                                                               reinterpret_cast<const char *>(u8"\uf07e")),
-                                                                      ICON_SIZE, props::COLOR_TOGGLE_INACTIVE,
+                                                                      ICON_SIZE, props::COLOR_TOGGLE_ACTIVE,
                                                                       1);
     stretchButton.setImages(true, false, true, arrowsLeftRight, 1.0f, {}, {}, 1.0f, {}, {}, 1.0f,
-                            props::COLOR_TOGGLE_ACTIVE);
+                            props::COLOR_TOGGLE_INACTIVE);
     stretchButton.setClickingTogglesState(true);
     stretchButton.setTooltip(props::TOOLTIP_STRETCH);
     addAndMakeVisible(stretchButton);
@@ -20,9 +20,9 @@ Header::Header(State &s, PluginProcessor &p) : state(s), pluginProcessor(p) {
     juce::Image dice = FontAwesome::getInstance()->getIcon(true,
                                                            juce::String::fromUTF8(
                                                                    reinterpret_cast<const char *>(u8"\uf522")),
-                                                           ICON_SIZE, props::COLOR_TOGGLE_INACTIVE,
+                                                           ICON_SIZE, props::COLOR_TOGGLE_ACTIVE,
                                                            1);
-    randomButton.setImages(true, false, true, dice, 1.0f, {}, {}, 1.0f, {}, {}, 1.0f, props::COLOR_TOGGLE_ACTIVE);
+    randomButton.setImages(true, false, true, dice, 1.0f, {}, {}, 1.0f, {}, {}, 1.0f, props::COLOR_TOGGLE_INACTIVE);
     randomButton.setTooltip(props::TOOLTIP_RANDOM);
     randomButton.onClick = [this] { onClickRandom(); };
     addAndMakeVisible(randomButton);

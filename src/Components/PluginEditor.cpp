@@ -27,6 +27,10 @@ PluginEditor::PluginEditor(PluginProcessor &p, State &s)
     startTimerHz(60);
 }
 
+PluginEditor::~PluginEditor() noexcept {
+    setLookAndFeel(nullptr);
+}
+
 void PluginEditor::paint(juce::Graphics &g) {
     g.fillAll(props::COLOR_BACKGROUND);
 }
