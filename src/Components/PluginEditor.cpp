@@ -32,7 +32,10 @@ PluginEditor::~PluginEditor() {
 }
 
 void PluginEditor::paint(juce::Graphics &g) {
-    g.fillAll(props::COLOR_BACKGROUND);
+    juce::ColourGradient gradient(props::COLOR_BACKGROUND, 0, 0, (props::COLOR_BACKGROUND).brighter(.25f), getWidth(),
+                                  0, false);
+    g.setGradientFill(gradient);
+    g.fillAll();
 }
 
 void PluginEditor::resized() {
