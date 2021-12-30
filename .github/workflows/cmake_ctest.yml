@@ -97,7 +97,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           path: ${{ env.BUILD_DIR }}/${{ env.PROJECT_NAME }}-${{ matrix.artifact }}.zip
-          name: ${{ env.PROJECT_NAME }}-${{ matrix.artifact }}.zip
+          name: ${{ env.PROJECT_NAME }}-${{ matrix.artifact }}
 
   release:
     if: contains(github.ref, 'tags/v')
