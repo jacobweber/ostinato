@@ -136,7 +136,7 @@ public:
 
         auto iconArea = area.removeFromTop(30);
         juce::FlexBox stepsBox;
-        stepsBox.alignItems = juce::FlexBox::AlignItems::center;
+        stepsBox.alignContent = juce::FlexBox::AlignContent::center;
         stepsBox.justifyContent = juce::FlexBox::JustifyContent::center;
         stepsBox.items.add(
                 juce::FlexItem(activeLight).withMargin(3).withHeight(ICON_SIZE).withWidth(ICON_SIZE));
