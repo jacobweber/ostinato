@@ -18,7 +18,7 @@ private:
                               juce::Button &button,
                               const juce::Colour &backgroundColour,
                               bool shouldDrawButtonAsHighlighted,
-                              bool shouldDrawButtonAsDown) {
+                              bool shouldDrawButtonAsDown) override {
         auto bounds = button.getLocalBounds().toFloat().reduced(0.5f, 0.5f);
 
         auto baseColour = backgroundColour.withMultipliedSaturation(button.hasKeyboardFocus(true) ? 1.3f : 0.9f)
