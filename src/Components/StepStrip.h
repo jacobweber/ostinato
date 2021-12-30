@@ -72,10 +72,9 @@ public:
         lengthAttachment = std::make_unique<SliderAttachment>(
                 state.parameters, "step" + std::to_string(stepNum) + "_length", lengthSlider);
 
+        tieButton.setLookAndFeel(&lookAndFeel);
         tieButton.setClickingTogglesState(true);
         tieButton.setButtonText(props::LABEL_TIE);
-        tieButton.setColour(juce::TextButton::ColourIds::buttonOnColourId, props::COLOR_TOGGLE_ACTIVE);
-        tieButton.setColour(juce::TextButton::ColourIds::buttonColourId, props::COLOR_TOGGLE_INACTIVE);
         tieButton.setTooltip(props::TOOLTIP_TIE);
         addAndMakeVisible(tieButton);
         tieAttachment = std::make_unique<ButtonAttachment>(
@@ -94,10 +93,9 @@ public:
         juce::Image powerOff = FontAwesome::getInstance()->getIcon(true,
                                                                    juce::String::fromUTF8(
                                                                            reinterpret_cast<const char *>(u8"\uf011")),
-                                                                   ICON_SIZE, props::COLOR_TOGGLE_INACTIVE,
+                                                                   ICON_SIZE, props::COLOR_TOGGLE_ACTIVE,
                                                                    1);
-        powerButton.setImages(false, false, true, powerOff, 1.0f, {}, {}, 1.0f, {}, {}, 1.0f,
-                              props::COLOR_TOGGLE_ACTIVE);
+        powerButton.setImages(false, false, true, powerOff, 1.0f, {}, {}, 1.0f, {}, {}, 1.0f, {});
         powerButton.setClickingTogglesState(true);
         powerButton.onClick = [this] {
             powerButton.setTooltip(powerButton.getToggleState() ? props::TOOLTIP_POWER_OFF : props::TOOLTIP_POWER_ON);
@@ -115,11 +113,16 @@ public:
         DBG("destroyed strip " << stepNum);
     }
 
-    void paint(juce::Graphics &g) override {
-        auto rect = getLocalBounds().reduced(2);
+    void paint(juce::Graphics &) override {
+    }
+
+    void paintOverChildren(juce::Graphics &g) override {
         bool active = state.stepState[stepNum].powerParameter->get();
-        g.setColour(active ? props::COLOR_STRIP_ACTIVE : props::COLOR_STRIP_INACTIVE);
-        g.fillRect(rect);
+        if (!active) {
+            auto rect = getLocalBounds();
+            g.setColour(juce::Colour(0.0f, 0.0f, 0.0f, 0.5f));
+            g.fillRect(rect);
+        }
     }
 
     void resized() override {
@@ -172,8 +175,6 @@ public:
                 voices.push_back(std::make_unique<juce::TextButton>());
                 voices[i]->setLookAndFeel(&lookAndFeel);
                 voices[i]->setClickingTogglesState(true);
-                voices[i]->setColour(juce::TextButton::ColourIds::buttonOnColourId, props::COLOR_TOGGLE_ACTIVE);
-                voices[i]->setColour(juce::TextButton::ColourIds::buttonColourId, props::COLOR_TOGGLE_INACTIVE);
                 addAndMakeVisible(*voices[i]);
                 voicesAttachments.push_back(std::make_unique<ButtonAttachment>(
                         state.parameters,
@@ -197,7 +198,7 @@ private:
     size_t stepNum{0};
     State &state;
 
-    LookAndFeel lookAndFeel;
+    LookAndFeel lookAndFeel{};
 
     juce::Font textFont{12.0f};
 

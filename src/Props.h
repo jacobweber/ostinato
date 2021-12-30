@@ -18,12 +18,14 @@ namespace props {
     const juce::Colour COLOR_STRIP_INACTIVE = juce::Colours::black;
     const juce::Colour COLOR_TOGGLE_ACTIVE = COLOR_HIGHLIGHT;
     const juce::Colour COLOR_TOGGLE_INACTIVE = juce::Colour(76, 76, 76);
+    const juce::Colour COLOR_TOGGLE_ACTIVE_TEXT = COLOR_TOGGLE_INACTIVE;
+    const juce::Colour COLOR_TOGGLE_INACTIVE_TEXT = COLOR_TOGGLE_ACTIVE;
     const juce::Colour COLOR_LIGHT_ACTIVE = COLOR_HIGHLIGHT;
     const juce::Colour COLOR_LIGHT_INACTIVE = COLOR_HIGHLIGHT;
 
     const juce::String LABEL_TIE = "Tie";
     const juce::String LABEL_STEPS = "Steps";
-    const juce::String LABEL_VOICES = "Steps";
+    const juce::String LABEL_VOICES = "Voices";
     const juce::String LABEL_RATE = "Step Length";
 
     const juce::String TOOLTIP_STRETCH = "Stretch pattern to fit played notes";

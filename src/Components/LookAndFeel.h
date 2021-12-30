@@ -2,8 +2,18 @@
 
 #include "juce_gui_basics/juce_gui_basics.h"
 
-class LookAndFeel : public juce::LookAndFeel_V4 {
+#include "../Props.h"
 
+class LookAndFeel : public juce::LookAndFeel_V4 {
+public:
+    LookAndFeel() {
+        setColour(juce::TextButton::ColourIds::buttonOnColourId, props::COLOR_TOGGLE_ACTIVE);
+        setColour(juce::TextButton::ColourIds::buttonColourId, props::COLOR_TOGGLE_INACTIVE);
+        setColour(juce::TextButton::ColourIds::textColourOnId, props::COLOR_TOGGLE_ACTIVE_TEXT);
+        setColour(juce::TextButton::ColourIds::textColourOffId, props::COLOR_TOGGLE_INACTIVE_TEXT);
+    }
+
+private:
     void drawButtonBackground(juce::Graphics &g,
                               juce::Button &button,
                               const juce::Colour &backgroundColour,
