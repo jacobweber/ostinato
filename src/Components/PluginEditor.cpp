@@ -7,7 +7,7 @@
 PluginEditor::PluginEditor(PluginProcessor &p, State &s)
         : AudioProcessorEditor(&p), state(s), pluginProcessor(p) {
 
-    //auto &laf = juce::Desktop::getInstance().getDefaultLookAndFeel();
+    setLookAndFeel(&lookAndFeel);
 
     header.onUpdateSteps = [this] {
         refreshSize();

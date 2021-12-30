@@ -9,7 +9,6 @@
 #include "../Props.h"
 #include "ActiveLight.h"
 #include "FontAwesome.h"
-#include "LookAndFeel.h"
 
 constexpr int ICON_SIZE = 14;
 
@@ -72,7 +71,6 @@ public:
         lengthAttachment = std::make_unique<SliderAttachment>(
                 state.parameters, "step" + std::to_string(stepNum) + "_length", lengthSlider);
 
-        tieButton.setLookAndFeel(&lookAndFeel);
         tieButton.setClickingTogglesState(true);
         tieButton.setButtonText(props::LABEL_TIE);
         tieButton.setTooltip(props::TOOLTIP_TIE);
@@ -173,7 +171,6 @@ public:
         if (newNumVoices > oldNumVoices) {
             for (size_t i = oldNumVoices; i < newNumVoices; i++) {
                 voices.push_back(std::make_unique<juce::TextButton>());
-                voices[i]->setLookAndFeel(&lookAndFeel);
                 voices[i]->setClickingTogglesState(true);
                 addAndMakeVisible(*voices[i]);
                 voicesAttachments.push_back(std::make_unique<ButtonAttachment>(
@@ -197,8 +194,6 @@ public:
 private:
     size_t stepNum{0};
     State &state;
-
-    LookAndFeel lookAndFeel{};
 
     juce::Font textFont{12.0f};
 

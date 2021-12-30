@@ -6,6 +6,7 @@
 #include "../PluginProcessor.h"
 #include "../State.h"
 #include "../Props.h"
+#include "LookAndFeel.h"
 #include "StepStrips.h"
 #include "Header.h"
 
@@ -27,6 +28,8 @@ private:
 private:
     State &state;
     PluginProcessor &pluginProcessor; // store subclass reference so we don't need to cast dynamically
+
+    LookAndFeel lookAndFeel{};
 
     juce::TooltipWindow tooltipWindow{nullptr, 500};
 
