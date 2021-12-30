@@ -108,30 +108,29 @@ public:
         return stretch(numHeldNotes, 0);
     }
 
-    StretchedResult stretch(size_t numHeldNotes, size_t totalSteps) {
+    StretchedResult stretch(size_t numHeldNotes, size_t generateSteps) {
         recalcStretchInfo(numHeldNotes, static_cast<size_t>(state.stepsParameter->getIndex()) + 1,
                           static_cast<size_t>(state.voicesParameter->getIndex()) + 1);
 
-        if (totalSteps == 0) totalSteps = numSteps;
+        if (generateSteps == 0) generateSteps = numSteps;
 
         StretchedResult result;
-        result.steps.reserve(numSteps);
-        result.numSteps = numSteps;
-        result.numVoices = numVoices;
-
-        setStepIndex(0);
-        for (size_t stepNum = 0; stepNum < totalSteps; stepNum++) {
+        for (size_t stepNum = 0; stepNum < generateSteps; stepNum++) {
             Step currentStep;
             getNextStretchedStep(numNotes, currentStep);
             result.steps.push_back(currentStep);
         }
 
+        result.numSteps = numSteps;
+        result.numVoices = numVoices;
         return result;
     }
 
 private:
     void recalcStretchInfo(size_t _numNotes, size_t _origNumSteps, size_t _origNumVoices) {
-        if (numNotes == _numNotes && origNumSteps == _origNumSteps && origNumVoices == _origNumVoices) return;
+        if (numNotes == _numNotes && origNumSteps == _origNumSteps && origNumVoices == _origNumVoices
+            && (!skipLastStepIfMatchesFirst || nextStepIndex < numSteps - 1))
+            return;
         numNotes = _numNotes;
         origNumSteps = _origNumSteps;
         origNumVoices = _origNumVoices;
@@ -146,9 +145,9 @@ private:
         origVoiceSizeY =
                 numNotes == 1 ? 1 : static_cast<double>(numVoices - 1) / static_cast<double>(origNumVoices - 1);
         roundingOffset = numSteps > origNumSteps ? origStepSizeX - 1 : origStepSizeX / 2;
-        DBG("stretching " << origNumSteps << "x" << origNumVoices << " to " << numSteps << "x" << numVoices);
 
         if (skipLastStepIfMatchesFirst && firstLastOrigStepsSame()) numSteps--;
+        DBG("stretching " << origNumSteps << "x" << origNumVoices << " to " << numSteps << "x" << numVoices);
     }
 
     bool firstLastOrigStepsSame() {

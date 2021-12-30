@@ -98,6 +98,38 @@ TEST_CASE("Stretcher")
         REQUIRE(actualGrid == expectedGrid);
     }
 
+    SECTION("3x2 to 9x5 change midstream affects skip last") {
+        str.skipLastStepIfMatchesFirst = true;
+        juce::String grid = "-*-\n"
+                            "*-*\n";
+        StateHelper::setGrid(state, grid);
+
+        Stretcher::StretchedResult result = str.stretch(5, 4);
+        REQUIRE(result.numSteps == 8);
+
+        juce::String actualGrid = StateHelper::getGrid(result);
+        juce::String expectedGrid = "----\n"
+                                    "---*\n"
+                                    "--*-\n"
+                                    "-*--\n"
+                                    "*---\n";
+        REQUIRE(actualGrid == expectedGrid);
+
+        *(state.stepState[2].voiceParameters[0]) = true;
+        *(state.stepState[2].voiceParameters[1]) = false;
+
+        result = str.stretch(5, 10);
+        REQUIRE(result.numSteps == 9);
+
+        actualGrid = StateHelper::getGrid(result);
+        expectedGrid = "*****----*\n"
+                       "--------*-\n"
+                       "-------*--\n"
+                       "------*---\n"
+                       "-----*----\n";
+        REQUIRE(actualGrid == expectedGrid);
+    }
+
     SECTION("5x3 to 9x5") {
         juce::String grid = "--*--\n"
                             "-*-*-\n"
