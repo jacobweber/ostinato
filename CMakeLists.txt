@@ -1,57 +1,65 @@
-# Ostinato CMakeLists.txt
-
-# To get started on a new plugin, copy this entire folder (containing this file and C++ sources) to
-# a convenient location, and then start making modifications.
-
-# The first line of any CMake project should be a call to `cmake_minimum_required`, which checks
-# that the installed CMake will be able to understand the following CMakeLists, and ensures that
-# CMake's behaviour is compatible with the named version. This is a standard CMake command, so more
-# information can be found in the CMake docs.
-
-cmake_minimum_required(VERSION 3.15)
+# 3.18 is latest bundled by VS 2019 as of Jan 2021
+# 3.19 is latest bundled CLion as of 2021.1
+cmake_minimum_required(VERSION 3.18)
 
 set(CMAKE_OSX_DEPLOYMENT_TARGET "10.13" CACHE STRING "Minimum OS X deployment version")
 
-# The top-level CMakeLists.txt file for a project must contain a literal, direct call to the
-# `project()` command. `project()` sets up some helpful variables that describe source/binary
-# directories, and the current project version. This is a standard CMake command.
+# Change this to your project name
+set(PROJECT_NAME "Ostinato")
 
-project(OSTINATO VERSION 0.0.4)
+# Set the plugin formats you'll be building here. Valid formats: AAX Unity VST AU AUv3 Standalone
+set(FORMATS AU VST3 Standalone)
 
-# If you've installed JUCE somehow (via a package manager, or directly using the CMake install
-# target), you'll need to tell this project that it depends on the installed copy of JUCE. If you've
-# included JUCE directly in your source tree (perhaps as a submodule), you'll need to tell CMake to
-# include that subdirectory as part of the build.
+# Automate/coordinate version with GitHub tagging?
+project(${PROJECT_NAME} VERSION 0.0.5)
 
-# find_package(JUCE CONFIG REQUIRED)        # If you've installed JUCE to your system
-# or
-# add_subdirectory(JUCE)                    # If you've put JUCE in a subdirectory called JUCE
+# By default we don't want Xcode schemes to be made for modules, etc
+set(CMAKE_XCODE_GENERATE_SCHEME OFF)
+
+# No ZERO_CHECK target on XCode (it helps bust cache for cmake)
+if (CMAKE_GENERATOR STREQUAL Xcode)
+    set(CMAKE_SUPPRESS_REGENERATION true)
+endif ()
+
+# Building universals will increase build times
+# set(CMAKE_OSX_ARCHITECTURES arm64 x86_64)
+
+# clang-tidy needs this to be happy
+set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
+
+# Adds all the module sources so they appear correctly in the IDE
+# Must be set before JUCE is added as a sub-dir (or any targets are made)
+# https://github.com/juce-framework/JUCE/commit/6b1b4cf7f6b1008db44411f2c8887d71a3348889
+set_property(GLOBAL PROPERTY USE_FOLDERS YES)
+
+# This is a failed attempt to bury ALL_BUILD in Targets/
+# This should be called before any target is made
+# Bug in Xcode? https://gitlab.kitware.com/cmake/cmake/-/issues/21383
+set_property(GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER "Targets")
+
+# Create a /Modules directory in the IDE with the JUCE Module code
+option(JUCE_ENABLE_MODULE_SOURCE_GROUPS "Show all module sources in IDE projects" ON)
+
+# JUCE is setup as a submodule in the /JUCE folder
+# Locally, you need to run `git submodule update --init --recursive` once
+# On Github Actions, it's managed by actions/checkout
+# add_subdirectory(JUCE)
 
 include(FetchContent)
 FetchContent_Declare(
         JUCE
         GIT_REPOSITORY https://github.com/juce-framework/JUCE.git
-        GIT_TAG 6.0.5
+        GIT_TAG 6.1.4
 )
 FetchContent_MakeAvailable(JUCE)
 
-# If you are building a VST2 or AAX plugin, CMake needs to be told where to find these SDKs on your
-# system. This setup should be done before calling `juce_add_plugin`.
-
-# juce_set_vst2_sdk_path(...)
-# juce_set_aax_sdk_path(...)
-
-# `juce_add_plugin` adds a static library target with the name passed as the first argument
-# (Ostinato here). This target is a normal CMake target, but has a lot of extra properties set
-# up by default. As well as this shared code static library, this function adds targets for each of
-# the formats specified by the FORMATS arguments. This function accepts many optional arguments.
-# Check the readme at `docs/CMake API.md` in the JUCE repo for the full list.
-
-juce_add_plugin(Ostinato
+# Check the readme at `docs/CMake API.md` in the JUCE repo for full config
+juce_add_plugin("${PROJECT_NAME}"
         # VERSION ...                               # Set this if the plugin version is different to the project version
         # ICON_BIG ...                              # ICON_* arguments specify a path to an image file to use as an icon for the Standalone
         # ICON_SMALL ...
         COMPANY_NAME chunkymonkey                   # Specify the name of the plugin's author
+        BUNDLE_ID com.jacobweber.ostinato
         IS_SYNTH TRUE                               # Is this a synth or an effect?
         NEEDS_MIDI_INPUT TRUE                       # Does the plugin need midi input?
         NEEDS_MIDI_OUTPUT TRUE                      # Does the plugin need midi output?
@@ -61,70 +69,73 @@ juce_add_plugin(Ostinato
         PLUGIN_MANUFACTURER_CODE Chun               # A four-character manufacturer id with at least one upper-case character
         PLUGIN_CODE Osti                            # A unique four-character plugin id with exactly one upper-case character
         # GarageBand 10.3 requires the first letter to be upper-case, and the remaining letters to be lower-case
-        FORMATS AU VST3 Standalone                  # The formats to build. Other valid formats are: AAX Unity VST AU AUv3
-        PRODUCT_NAME "Ostinato")                    # The name of the final executable, which can differ from the target name
+        FORMATS "${FORMATS}"                        # The formats to build. Other valid formats are: AAX Unity VST AU AUv3
+        PRODUCT_NAME "${PROJECT_NAME}")             # The name of the final executable, which can differ from the target name
 
-target_compile_features(Ostinato PRIVATE cxx_std_20)
+# C++20 please
+target_compile_features("${PROJECT_NAME}" PRIVATE cxx_std_20)
 
-# `juce_generate_juce_header` will create a JuceHeader.h for a given target, which will be generated
-# into your build tree. This should be included with `#include <JuceHeader.h>`. The include path for
-# this header will be automatically added to the target. The main function of the JuceHeader is to
-# include all your JUCE module headers; if you're happy to include module headers directly, you
-# probably don't need to call this.
-
-# juce_generate_juce_header(Ostinato)
-
-# `target_sources` adds source files to a target. We pass the target that needs the sources as the
-# first argument, then a visibility parameter for the sources which should normally be PRIVATE.
-# Finally, we supply a list of source files that will be built into the target. This is a standard
-# CMake command.
-
-target_sources(Ostinato
-        PRIVATE
+# Manually list all .h and .cpp files for the plugin, don't use globs:
+set(SourceFiles
         src/Components/FontAwesome.cpp
         src/Components/PluginEditor.cpp
         src/Components/Header.cpp
         src/PluginProcessor.cpp
         src/MidiProcessor.cpp)
+target_sources("${PROJECT_NAME}" PRIVATE ${SourceFiles})
 
-# `target_compile_definitions` adds some preprocessor definitions to our target. In a Projucer
-# project, these might be passed in the 'Preprocessor Definitions' field. JUCE modules also make use
-# of compile definitions to switch certain features on/off, so if there's a particular feature you
-# need that's not on by default, check the module header for the correct flag to set here. These
-# definitions will be visible both to your code, and also the JUCE module code, so for new
-# definitions, pick unique names that are unlikely to collide! This is a standard CMake command.
+# No, we don't want our source buried in extra nested folders
+set_target_properties("${PROJECT_NAME}" PROPERTIES FOLDER "")
 
-target_compile_definitions(Ostinato
+# The source tree should uhhh, still look like the source tree, yo
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/src PREFIX "" FILES ${SourceFiles})
+
+# Setup our binary data as a target
+juce_add_binary_data(Assets SOURCES
+        media/fontAwestomeRegular.otf
+        media/fontAwesomeSolid.otf)
+
+# Required for Linux happiness:
+# See https://forum.juce.com/t/loading-pytorch-model-using-binarydata/39997/2
+set_target_properties(Assets PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
+
+# This cleans up the folder organization, especially on Xcode.
+# It tucks the Plugin varieties into a "Targets" folder and generate an Xcode Scheme manually
+# Xcode scheme generation is turned off globally to limit noise from other targets
+# The non-hacky way of doing this is via the global PREDEFINED_TARGETS_FOLDER propety
+# However that doesn't seem to be working in Xcode
+# Not all plugin types (au, vst) available on each build type (win, macos, linux)
+foreach (target ${FORMATS} "All")
+    if (TARGET ${PROJECT_NAME}_${target})
+        set_target_properties(${PROJECT_NAME}_${target} PROPERTIES
+                # Tuck the actual plugin targets into a folder where they won't bother us
+                FOLDER "Targets"
+
+                # MacOS only: Sets the default executable that Xcode will open on build
+                # For this exact path to to work, manually build the AudioPluginHost.xcodeproj in the JUCE subdir
+                XCODE_SCHEME_EXECUTABLE "${CMAKE_CURRENT_SOURCE_DIR}/JUCE/extras/AudioPluginHost/Builds/MacOSX/build/Debug/AudioPluginHost.app"
+
+                # Let us build the target in Xcode
+                XCODE_GENERATE_SCHEME ON)
+    endif ()
+endforeach ()
+set_target_properties(Assets PROPERTIES FOLDER "Targets")
+
+# We'll need to link to these from our plugin as well as our tests
+set(JUCE_DEPENDENCIES
+        juce::juce_audio_utils)
+
+target_compile_definitions("${PROJECT_NAME}"
         PUBLIC
         # JUCE_WEB_BROWSER and JUCE_USE_CURL would be on by default, but you might not need them.
         JUCE_WEB_BROWSER=0  # If you remove this, add `NEEDS_WEB_BROWSER TRUE` to the `juce_add_plugin` call
         JUCE_USE_CURL=0     # If you remove this, add `NEEDS_CURL TRUE` to the `juce_add_plugin` call
         JUCE_VST3_CAN_REPLACE_VST2=0)
 
-# If your target needs extra binary assets, you can add them here. The first argument is the name of
-# a new static library target that will include all the binary resources. There is an optional
-# `NAMESPACE` argument that can specify the namespace of the generated binary data class. Finally,
-# the SOURCES argument should be followed by a list of source files that should be built into the
-# static library. These source files can be of any kind (wav data, images, fonts, icons etc.).
-# Conversion to binary-data will happen when your target is built.
-
-juce_add_binary_data(OstinatoData SOURCES
-        media/fontAwestomeRegular.otf
-        media/fontAwesomeSolid.otf)
-
-# https://forum.juce.com/t/building-my-vst3-with-linux-and-juce6-couple-of-tiny-things/39014
-set_target_properties(OstinatoData PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
-
-# `target_link_libraries` links libraries and JUCE modules to other libraries or executables. Here,
-# we're linking our executable target to the `juce::juce_audio_utils` module. Inter-module
-# dependencies are resolved automatically, so `juce_core`, `juce_events` and so on will also be
-# linked automatically. If we'd generated a binary data target above, we would need to link to it
-# here too. This is a standard CMake command.
-
-target_link_libraries(Ostinato
+target_link_libraries("${PROJECT_NAME}"
         PRIVATE
-        OstinatoData
-        juce::juce_audio_utils
+        Assets
+        ${JUCE_DEPENDENCIES}
         PUBLIC
         juce::juce_recommended_config_flags
         juce::juce_recommended_lto_flags
@@ -156,12 +167,12 @@ target_compile_features(Tests PRIVATE cxx_std_20)
 
 # Pull in our plugin code for tests
 target_include_directories(Tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
-target_link_libraries(Tests PRIVATE Catch2::Catch2 Ostinato OstinatoData juce::juce_audio_utils)
+target_link_libraries(Tests PRIVATE Catch2::Catch2 "${PROJECT_NAME}" Assets ${JUCE_DEPENDENCIES})
 
 # Make an Xcode Scheme for the test executable so we can run tests in the IDE
 set_target_properties(Tests PROPERTIES XCODE_GENERATE_SCHEME ON)
 
-# Organize the test source in the Tests/ folder in the IDE
+# Organize the test source in the test/ folder in the IDE
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/test PREFIX "" FILES ${TestFiles})
 
 # Load and use the .cmake file provided by Catch2
