@@ -27,6 +27,8 @@ namespace props {
     const juce::String LABEL_STEPS = "Steps";
     const juce::String LABEL_VOICES = "Voices";
     const juce::String LABEL_RATE = "Step Length";
+    const juce::String LABEL_LENGTH = "Length";
+    const juce::String LABEL_OCTAVE = "Octave";
 
     const juce::String TOOLTIP_STRETCH = "Stretch pattern to fit played notes";
     const juce::String TOOLTIP_RANDOM = "Randomize settings";

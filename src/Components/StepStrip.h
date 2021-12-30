@@ -53,9 +53,11 @@ public:
         fillButton.setTooltip(props::TOOLTIP_VOICES_FILL);
         addAndMakeVisible(fillButton);
 
-        addAndMakeVisible(octaveLabel);
-        octaveLabel.setFont(textFont);
-        octaveLabel.attachToComponent(&octaveMenu, false);
+        if (stepNum == 0) {
+            addAndMakeVisible(octaveLabel);
+            octaveLabel.setFont(textFont);
+            octaveLabel.attachToComponent(&octaveMenu, false);
+        }
         int itemId = 1;
         for (int i = -static_cast<int>(props::MAX_OCTAVES); i <= static_cast<int>(props::MAX_OCTAVES); i++)
             octaveMenu.addItem(std::to_string(i), itemId++);
@@ -63,6 +65,11 @@ public:
         octaveAttachment = std::make_unique<ComboBoxAttachment>(
                 state.parameters, "step" + std::to_string(stepNum) + "_octave", octaveMenu);
 
+        if (stepNum == 0) {
+            addAndMakeVisible(lengthLabel);
+            lengthLabel.setFont(textFont);
+            lengthLabel.attachToComponent(&lengthSlider, false);
+        }
         lengthSlider.setSliderStyle(juce::Slider::LinearBar);
         lengthSlider.setRange(0.0, 1.0);
         lengthSlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 90, 0);
@@ -151,11 +158,12 @@ public:
         area.removeFromTop(30);
         lengthSlider.setBounds(area.removeFromTop(20));
 
-        area.removeFromTop(30);
+        area.removeFromTop(5);
         tieButton.setBounds(area.removeFromTop(20));
 
         area.removeFromTop(30);
-        volSlider.setBounds(area);
+        auto sliderArea = area.withSizeKeepingCentre(juce::jmax(area.getWidth() / 2, 30), area.getHeight());
+        volSlider.setBounds(sliderArea);
     }
 
     void refreshActiveLight() {
@@ -201,8 +209,9 @@ private:
     ActiveLight activeLight{state, stepNum};
     juce::ImageButton clearButton{};
     juce::ImageButton fillButton{};
-    juce::Label octaveLabel{{}, "Octave"};
+    juce::Label octaveLabel{{}, props::LABEL_OCTAVE};
     juce::ComboBox octaveMenu;
+    juce::Label lengthLabel{{}, props::LABEL_LENGTH};
     juce::Slider lengthSlider;
     juce::TextButton tieButton{};
     std::vector<std::unique_ptr<juce::TextButton>> voices;
