@@ -31,4 +31,13 @@ private:
 
         g.fillRect(bounds);
     }
+
+    void drawImageButton(juce::Graphics &g, juce::Image *image,
+                         int imageX, int imageY, int imageW, int imageH,
+                         const juce::Colour &overlayColour,
+                         float imageOpacity,
+                         juce::ImageButton &button) override {
+        juce::LookAndFeel_V4::drawImageButton(g, image, imageX, imageY, imageW, imageH, overlayColour, imageOpacity,
+                                              button);
+    }
 };
