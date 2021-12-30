@@ -72,21 +72,23 @@ void Header::resized() {
     auto bottom = area.removeFromBottom(48).reduced(8);
     const int MENU_HEIGHT = 24;
     juce::FlexBox bottomBox;
+    juce::FlexItem::Margin margin{0.0, 5.0, 0.0, 0.0};
+    bottomBox.justifyContent = juce::FlexBox::JustifyContent::flexStart;
     bottomBox.alignItems = juce::FlexBox::AlignItems::center;
     bottomBox.items.add(juce::FlexItem(stepsMenu).withAlignSelf(juce::FlexItem::AlignSelf::autoAlign).withHeight(
-            MENU_HEIGHT).withWidth(90));
+            MENU_HEIGHT).withWidth(90).withMargin(margin));
     bottomBox.items.add(juce::FlexItem(voicesMenu).withAlignSelf(juce::FlexItem::AlignSelf::autoAlign).withHeight(
-            MENU_HEIGHT).withWidth(90));
+            MENU_HEIGHT).withWidth(90).withMargin(margin));
     bottomBox.items.add(juce::FlexItem(rateMenu).withAlignSelf(juce::FlexItem::AlignSelf::autoAlign).withHeight(
-            MENU_HEIGHT).withWidth(130));
+            MENU_HEIGHT).withWidth(130).withMargin(margin));
     bottomBox.items.add(juce::FlexItem(rateTypeMenu).withAlignSelf(juce::FlexItem::AlignSelf::autoAlign).withHeight(
-            MENU_HEIGHT).withWidth(130));
+            MENU_HEIGHT).withWidth(130).withMargin(margin));
     bottomBox.items.add(juce::FlexItem(stretchButton).withAlignSelf(juce::FlexItem::AlignSelf::autoAlign).withHeight(
             static_cast<float>(ICON_SIZE + 10)).withWidth(
-            static_cast<float>(stretchButton.getWidth() + 15)));
+            static_cast<float>(stretchButton.getWidth())).withMargin({0.0, 5.0, 0.0, 5.0}));
     bottomBox.items.add(
             juce::FlexItem(randomButton).withAlignSelf(juce::FlexItem::AlignSelf::autoAlign).withHeight(
                     static_cast<float>(ICON_SIZE + 10)).withWidth(
-                    static_cast<float>(randomButton.getWidth() + 15)));
+                    static_cast<float>(randomButton.getWidth())).withMargin({0.0, 0.0, 0.0, 5.0}));
     bottomBox.performLayout(bottom);
 }
