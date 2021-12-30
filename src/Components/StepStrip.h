@@ -10,10 +10,11 @@
 #include "ActiveLight.h"
 #include "FontAwesome.h"
 
-constexpr int ICON_SIZE = 14;
 
 class StepStrip : public juce::Component {
 public:
+    const int ICON_SIZE = 14;
+
     typedef juce::AudioProcessorValueTreeState::ButtonAttachment ButtonAttachment;
     typedef juce::AudioProcessorValueTreeState::SliderAttachment SliderAttachment;
     typedef juce::AudioProcessorValueTreeState::ComboBoxAttachment ComboBoxAttachment;

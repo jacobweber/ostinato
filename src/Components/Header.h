@@ -9,6 +9,8 @@
 
 class Header : public juce::Component {
 public:
+    const int ICON_SIZE = 24;
+
     typedef juce::AudioProcessorValueTreeState::SliderAttachment SliderAttachment;
     typedef juce::AudioProcessorValueTreeState::ComboBoxAttachment ComboBoxAttachment;
     typedef juce::AudioProcessorValueTreeState::ButtonAttachment ButtonAttachment;

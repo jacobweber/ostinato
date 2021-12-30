@@ -27,7 +27,7 @@ PluginEditor::PluginEditor(PluginProcessor &p, State &s)
     startTimerHz(60);
 }
 
-PluginEditor::~PluginEditor() noexcept {
+PluginEditor::~PluginEditor() {
     setLookAndFeel(nullptr);
 }
 
