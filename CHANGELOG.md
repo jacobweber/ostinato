@@ -26,8 +26,3 @@
 * Add stretch mode.
 * Improve design.
 * Remove timecode display.
-
-### 0.0.5
-
-* Use pamplejuce template.
-* Upgrade to JUCE 6.1.4.
