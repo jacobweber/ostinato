@@ -16,13 +16,13 @@ public:
 
     void prepareToPlay(double sampleRate, int);
 
-    void stopPlaying(juce::MidiBuffer &midiOut, int offset);
-
     void
     process(int numSamples, juce::MidiBuffer &midiIn, juce::MidiBuffer &midiOut,
             const juce::AudioPlayHead::CurrentPositionInfo &posInfo);
 
 private:
+    void stopPlaying(juce::MidiBuffer &midiOut, int offset);
+
     static double getPpqPosPerStep(State &state);
 
     static double roundStartPpqPos(double scheduledPpqPos, double ppqPosPerStep);
