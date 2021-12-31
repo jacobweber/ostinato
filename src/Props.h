@@ -31,6 +31,7 @@ namespace props {
     const juce::String LABEL_LENGTH = "Length";
     const juce::String LABEL_OCTAVE = "Octave";
 
+    const juce::String TOOLTIP_RECORD = "Record pattern";
     const juce::String TOOLTIP_STRETCH = "Stretch pattern to fit played notes";
     const juce::String TOOLTIP_RANDOM = "Randomize settings";
     const juce::String TOOLTIP_VOICES_CLEAR = "Turn off all voices for this step";

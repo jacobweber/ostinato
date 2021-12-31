@@ -44,4 +44,5 @@ public:
 
     std::atomic<size_t> stepIndex{0};
     std::atomic<bool> playing{false};
+    std::atomic<bool> recording{false};
 };

@@ -32,6 +32,7 @@ private:
 
     juce::Font textFont{12.0f};
 
+    juce::ImageButton recordButton{};
     juce::ImageButton stretchButton{};
     juce::ImageButton randomButton{};
     juce::Label stepsLabel{{}, props::LABEL_STEPS};

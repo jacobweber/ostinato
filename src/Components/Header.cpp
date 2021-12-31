@@ -1,6 +1,20 @@
 #include "Header.h"
 
 Header::Header(State &s, PluginProcessor &p) : state(s), pluginProcessor(p) {
+    juce::Image microphone = FontAwesome::getInstance()->getIcon(true,
+                                                                 juce::String::fromUTF8(
+                                                                         reinterpret_cast<const char *>(u8"\uf130")),
+                                                                 ICON_SIZE, props::COLOR_TOGGLE_ACTIVE,
+                                                                 1);
+    recordButton.setImages(true, false, true, microphone, 1.0f, {}, {}, 1.0f, {}, {}, 1.0f,
+                           props::COLOR_TOGGLE_INACTIVE);
+    recordButton.setClickingTogglesState(true);
+    recordButton.setTooltip(props::TOOLTIP_RECORD);
+    addAndMakeVisible(recordButton);
+    recordButton.onStateChange = [this] {
+        state.recording = recordButton.getToggleState();
+    };
+
     juce::Image arrowsLeftRight = FontAwesome::getInstance()->getIcon(true,
                                                                       juce::String::fromUTF8(
                                                                               reinterpret_cast<const char *>(u8"\uf07e")),
@@ -83,6 +97,9 @@ void Header::resized() {
             MENU_HEIGHT).withWidth(130).withMargin(margin));
     bottomBox.items.add(juce::FlexItem(rateTypeMenu).withAlignSelf(juce::FlexItem::AlignSelf::autoAlign).withHeight(
             MENU_HEIGHT).withWidth(130).withMargin(margin));
+    bottomBox.items.add(juce::FlexItem(recordButton).withAlignSelf(juce::FlexItem::AlignSelf::autoAlign).withHeight(
+            static_cast<float>(ICON_SIZE + 10)).withWidth(
+            static_cast<float>(recordButton.getWidth())).withMargin({0.0, 5.0, 0.0, 5.0}));
     bottomBox.items.add(juce::FlexItem(stretchButton).withAlignSelf(juce::FlexItem::AlignSelf::autoAlign).withHeight(
             static_cast<float>(ICON_SIZE + 10)).withWidth(
             static_cast<float>(stretchButton.getWidth())).withMargin({0.0, 5.0, 0.0, 5.0}));
