@@ -22,6 +22,7 @@ namespace props {
     const juce::Colour COLOR_TOGGLE_INACTIVE_TEXT = COLOR_TOGGLE_ACTIVE;
     const juce::Colour COLOR_LIGHT_ACTIVE = COLOR_HIGHLIGHT;
     const juce::Colour COLOR_LIGHT_INACTIVE = COLOR_HIGHLIGHT;
+    const juce::Colour COLOR_COMBO_BG = COLOR_TOGGLE_INACTIVE;
 
     const juce::String LABEL_TIE = "Tie";
     const juce::String LABEL_STEPS = "Steps";

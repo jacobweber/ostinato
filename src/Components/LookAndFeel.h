@@ -11,6 +11,8 @@ public:
         setColour(juce::TextButton::ColourIds::buttonColourId, props::COLOR_TOGGLE_INACTIVE);
         setColour(juce::TextButton::ColourIds::textColourOnId, props::COLOR_TOGGLE_ACTIVE_TEXT);
         setColour(juce::TextButton::ColourIds::textColourOffId, props::COLOR_TOGGLE_INACTIVE_TEXT);
+        setColour(juce::ComboBox::ColourIds::backgroundColourId, props::COLOR_COMBO_BG);
+        setColour(juce::PopupMenu::ColourIds::backgroundColourId, props::COLOR_COMBO_BG);
     }
 
 private:
