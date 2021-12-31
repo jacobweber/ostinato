@@ -31,6 +31,26 @@ public:
         tieActive = false;
     }
 
+    size_t getNumVoices() {
+        return numVoices;
+    }
+
+    size_t getNumSteps() {
+        return numSteps;
+    }
+
+    size_t getOrigStepIndex() {
+        return prev.stepNum;
+    }
+
+    size_t getNextStepIndex() {
+        return nextStepIndex;
+    }
+
+    void setSkipLastStepIfMatchesFirst(bool skip) {
+        skipLastStepIfMatchesFirst = skip;
+    }
+
     void getNextStretchedStep(size_t numHeldNotes, Step &outStep) {
         // with origNumSteps = 3 and numSteps = 5:
         // origStepSizeX = 2
@@ -218,22 +238,23 @@ private:
         outStep.octave = _state.stepState[stepNum].octaveParameter->getIndex();
     }
 
-public:
-    size_t nextStepIndex = 0;
+private:
+    State &state;
+
+    bool skipLastStepIfMatchesFirst = true;
     size_t numVoices = 0;
     size_t numSteps = 0;
     size_t numNotes = 0;
     OrigStep prev{};
     OrigStep next{};
-    bool skipLastStepIfMatchesFirst = true;
 
-private:
-    State &state;
-    bool reuseNextStep = false;
-    bool tieActive = false;
     size_t origNumSteps = 0;
     size_t origNumVoices = 0;
     double origStepSizeX = 0.0;
     double origVoiceSizeY = 0.0;
     double roundingOffset = 0.0;
+
+    bool tieActive = false;
+    size_t nextStepIndex = 0;
+    bool reuseNextStep = false;
 };

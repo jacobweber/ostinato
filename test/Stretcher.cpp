@@ -11,7 +11,7 @@ TEST_CASE("Stretcher")
     TestAudioProcessor ap{ParametersFactory::create()};
     State state{ap.state};
     Stretcher str{state};
-    str.skipLastStepIfMatchesFirst = false;
+    str.setSkipLastStepIfMatchesFirst(false);
     // numSteps = 1 + (origNumSteps - 1) * (numNotes - 1) / (origNumVoices - 1)
 
     SECTION("2x2 to 4x4") {
@@ -47,7 +47,7 @@ TEST_CASE("Stretcher")
     }
 
     SECTION("2x2 to 4x4 skip last") {
-        str.skipLastStepIfMatchesFirst = true;
+        str.setSkipLastStepIfMatchesFirst(true);
         juce::String grid = "-*\n"
                             "*-\n";
         StateHelper::setGrid(state, grid);
@@ -81,7 +81,7 @@ TEST_CASE("Stretcher")
     }
 
     SECTION("3x2 to 9x5 skip last") {
-        str.skipLastStepIfMatchesFirst = true;
+        str.setSkipLastStepIfMatchesFirst(true);
         juce::String grid = "-*-\n"
                             "*-*\n";
         StateHelper::setGrid(state, grid);
@@ -99,7 +99,7 @@ TEST_CASE("Stretcher")
     }
 
     SECTION("3x2 to 9x5 change midstream affects skip last") {
-        str.skipLastStepIfMatchesFirst = true;
+        str.setSkipLastStepIfMatchesFirst(true);
         juce::String grid = "-*-\n"
                             "*-*\n";
         StateHelper::setGrid(state, grid);

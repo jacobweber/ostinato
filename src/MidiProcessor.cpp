@@ -157,13 +157,13 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midiIn, juce::MidiBuffe
                     stretcher.setStepIndex(nextStepIndex);
                 }
                 stretcher.getNextStretchedStep(static_cast<size_t>(pressedNotes.size()), currentStep);
-                numVoices = stretcher.numVoices;
+                numVoices = stretcher.getNumVoices();
 
-                state.stepIndex = stretcher.prev.stepNum;
+                state.stepIndex = stretcher.getOrigStepIndex();
             } else {
                 if (stretchActive) {
                     stretchActive = false;
-                    nextStepIndex = stretcher.nextStepIndex;
+                    nextStepIndex = stretcher.getNextStepIndex();
                 }
 
                 size_t numSteps = static_cast<size_t>(state.stepsParameter->getIndex()) + 1;
