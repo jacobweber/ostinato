@@ -4,6 +4,7 @@
 
 #include "StepState.h"
 #include "Props.h"
+#include "audiothread_fifo.h"
 
 class State {
 public:
@@ -45,4 +46,6 @@ public:
     std::atomic<size_t> stepIndex{0};
     std::atomic<bool> playing{false};
     std::atomic<bool> recording{false};
+
+    LockFreeCallQueue changeQueueFromAudio{2048};
 };

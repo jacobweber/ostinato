@@ -46,6 +46,7 @@ void PluginEditor::resized() {
 
 void PluginEditor::timerCallback() {
     stepStrips.refreshActiveStep();
+    state.changeQueueFromAudio.synchronize();
 }
 
 void PluginEditor::refreshSize() {
