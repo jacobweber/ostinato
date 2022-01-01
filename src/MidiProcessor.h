@@ -7,6 +7,7 @@
 #include "MidiValue.h"
 #include "State.h"
 #include "Stretcher.h"
+#include "Recorder.h"
 #include "Step.h"
 
 class MidiProcessor {
@@ -53,4 +54,6 @@ private:
 
     bool stretchActive = false;
     Stretcher stretcher{state};
+
+    Recorder recorder{state};
 };

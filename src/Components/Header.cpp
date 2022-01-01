@@ -12,7 +12,7 @@ Header::Header(State &s, PluginProcessor &p) : state(s), pluginProcessor(p) {
     recordButton.setTooltip(props::TOOLTIP_RECORD);
     addAndMakeVisible(recordButton);
     recordButton.onStateChange = [this] {
-        state.recording = recordButton.getToggleState();
+        state.recordButton = recordButton.getToggleState();
     };
 
     juce::Image arrowsLeftRight = FontAwesome::getInstance()->getIcon(true,
@@ -75,6 +75,12 @@ Header::Header(State &s, PluginProcessor &p) : state(s), pluginProcessor(p) {
     rateTypeMenu.addItem("Dotted", 3);
     addAndMakeVisible(rateTypeMenu);
     rateTypeAttachment = std::make_unique<ComboBoxAttachment>(state.parameters, "rateType", rateTypeMenu);
+}
+
+void Header::timerCallback() {
+    if (state.recordButton != recordButton.getToggleState()) {
+        recordButton.setToggleState(state.recordButton, juce::NotificationType::dontSendNotification);
+    }
 }
 
 void Header::paint(juce::Graphics &g) {

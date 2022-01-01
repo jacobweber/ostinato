@@ -17,6 +17,8 @@ public:
 
     Header(State &s, PluginProcessor &p);
 
+    void timerCallback();
+
     void paint(juce::Graphics &) override;
 
     void resized() override;

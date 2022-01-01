@@ -1,8 +1,9 @@
 #include "MidiProcessor.h"
 #include "Props.h"
 
-void MidiProcessor::prepareToPlay(double _sampleRate, int) {
+void MidiProcessor::prepareToPlay(double _sampleRate, int _maximumExpectedSamplesPerBlock) {
     sampleRate = _sampleRate;
+    recorder.prepareToPlay(_sampleRate, _maximumExpectedSamplesPerBlock);
 
     pressedNotes.clear();
     playingNotes.clear();
@@ -26,6 +27,19 @@ void MidiProcessor::stopPlaying(juce::MidiBuffer &midiOut, int offset) {
 void
 MidiProcessor::process(int numSamples, juce::MidiBuffer &midiIn, juce::MidiBuffer &midiOut,
                        const juce::AudioPlayHead::CurrentPositionInfo &posInfo) {
+    if (state.recordButton) {
+        if (!recorder.isRecording()) {
+            stopPlaying(midiOut, 0);
+            recorder.handleRecordButtonEnabled();
+        }
+        recorder.process(numSamples, midiIn, midiOut, posInfo);
+        return;
+    } else {
+        if (recorder.isRecording()) {
+            recorder.handleRecordButtonDisabled();
+        }
+    }
+
     for (const auto metadata: midiIn) {
         const auto msg = metadata.getMessage();
         MidiValue noteValue{msg.getNoteNumber(), msg.getChannel(), msg.getVelocity()};
@@ -150,8 +164,7 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midiIn, juce::MidiBuffe
             // play a step within this block
             size_t numVoices;
 
-            bool stretch = state.stretchParameter->get();
-            if (stretch) {
+            if (state.stretchParameter->get()) {
                 if (!stretchActive) {
                     stretchActive = true;
                     stretcher.setStepIndex(nextStepIndex);
