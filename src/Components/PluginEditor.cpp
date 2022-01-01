@@ -25,10 +25,26 @@ PluginEditor::PluginEditor(PluginProcessor &p, State &s)
 
     refreshSize(); // resize after initialization
     startTimerHz(60);
+
+    setWantsKeyboardFocus(true);
+    addKeyListener(this);
 }
 
 PluginEditor::~PluginEditor() {
+    removeKeyListener(this);
     setLookAndFeel(nullptr);
+}
+
+bool PluginEditor::keyPressed(const juce::KeyPress &key) {
+    if (state.recordButton && key.isKeyCode(juce::KeyPress::spaceKey)) {
+        state.recordedRest = true;
+        return true;
+    }
+    return false;
+}
+
+bool PluginEditor::keyPressed(const juce::KeyPress &key, juce::Component *) {
+    return keyPressed(key);
 }
 
 void PluginEditor::paint(juce::Graphics &g) {

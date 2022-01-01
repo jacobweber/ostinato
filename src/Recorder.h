@@ -54,6 +54,10 @@ public:
 
     void process(int numSamples, juce::MidiBuffer &midiIn, juce::MidiBuffer &midiOut,
                  const juce::AudioPlayHead::CurrentPositionInfo &) {
+        if (state.recordedRest) {
+            state.recordedRest = false;
+            insertRest();
+        }
         int lastNoteInBlockSamplePos = 0;
         for (const auto metadata: midiIn) {
             const auto msg = metadata.getMessage();
@@ -158,8 +162,8 @@ private:
                 }
             }
             outSteps[stepNum].length = .5;
-            int avgVel = totalVel / numActualNotes;
-            outSteps[stepNum].volume = numActualNotes == 0 ? .5f : static_cast<float>(avgVel) / 127.0f;
+            int avgVel = numActualNotes == 0 ? 64 : totalVel / numActualNotes;
+            outSteps[stepNum].volume = static_cast<float>(avgVel) / 127.0f;
         }
 
         /*

@@ -10,11 +10,15 @@
 #include "StepStrips.h"
 #include "Header.h"
 
-class PluginEditor : public juce::AudioProcessorEditor, private juce::Timer {
+class PluginEditor : public juce::AudioProcessorEditor, private juce::Timer, private juce::KeyListener {
 public:
     PluginEditor(PluginProcessor &, State &);
 
     ~PluginEditor() override;
+
+    bool keyPressed(const juce::KeyPress &key) override;
+
+    bool keyPressed(const juce::KeyPress &key, juce::Component *originatingComponent) override;
 
     void paint(juce::Graphics &) override;
 
