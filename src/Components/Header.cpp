@@ -104,14 +104,14 @@ void Header::resized() {
     bottomBox.items.add(juce::FlexItem(rateTypeMenu).withAlignSelf(juce::FlexItem::AlignSelf::autoAlign).withHeight(
             MENU_HEIGHT).withWidth(130).withMargin(margin));
     bottomBox.items.add(juce::FlexItem(recordButton).withAlignSelf(juce::FlexItem::AlignSelf::autoAlign).withHeight(
-            static_cast<float>(ICON_SIZE + 10)).withWidth(
+            ICON_SIZE + 10).withWidth(
             static_cast<float>(recordButton.getWidth())).withMargin({0.0, 5.0, 0.0, 5.0}));
     bottomBox.items.add(juce::FlexItem(stretchButton).withAlignSelf(juce::FlexItem::AlignSelf::autoAlign).withHeight(
-            static_cast<float>(ICON_SIZE + 10)).withWidth(
+            ICON_SIZE + 10).withWidth(
             static_cast<float>(stretchButton.getWidth())).withMargin({0.0, 5.0, 0.0, 5.0}));
     bottomBox.items.add(
             juce::FlexItem(randomButton).withAlignSelf(juce::FlexItem::AlignSelf::autoAlign).withHeight(
-                    static_cast<float>(ICON_SIZE + 10)).withWidth(
+                    ICON_SIZE + 10).withWidth(
                     static_cast<float>(randomButton.getWidth())).withMargin({0.0, 0.0, 0.0, 5.0}));
     bottomBox.performLayout(bottom);
 }
