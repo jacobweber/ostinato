@@ -12,7 +12,9 @@ public:
 
     void paint(juce::Graphics &g) override {
         bool highlighted = state.playing && state.stepIndex == stepNum;
-        g.setColour(highlighted ? props::COLOR_LIGHT_ACTIVE : props::COLOR_LIGHT_INACTIVE);
+        g.setColour(highlighted ? props::COLOR_LIGHT_ACTIVE : (isEnabled() ? props::COLOR_LIGHT_INACTIVE
+                                                                           : props::COLOR_LIGHT_INACTIVE.withAlpha(
+                        0.3f)));
         juce::Rectangle<float> outer = getLocalBounds().toFloat();
         g.drawEllipse(outer.reduced(1), 1.5f);
         if (highlighted)

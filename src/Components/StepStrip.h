@@ -177,6 +177,7 @@ public:
 
     void refreshEnabled() {
         const bool enabled = !state.recordButton;
+        activeLight.setEnabled(enabled);
         clearButton.setEnabled(enabled);
         fillButton.setEnabled(enabled);
         for (auto &voice: voices) {
