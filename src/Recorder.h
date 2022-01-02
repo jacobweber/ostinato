@@ -72,7 +72,11 @@ public:
                     notesInCurrentStep.add(noteValue);
                 }
             }
-            midiOut.addEvent(msg, metadata.samplePosition);
+            if (msg.isSustainPedalOn()) {
+                insertRest();
+            } else {
+                midiOut.addEvent(msg, metadata.samplePosition);
+            }
         }
         if (samplesUntilStepFinalized != -1) {
             samplesUntilStepFinalized = juce::jmax(0,
