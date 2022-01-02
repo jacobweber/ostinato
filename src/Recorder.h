@@ -15,6 +15,7 @@ public:
     }
 
     void prepareToPlay(double _sampleRate, int) {
+        DBG("prepareToPlay: stop recording");
         sampleRate = _sampleRate;
         maxSamplesBetweenSteps = static_cast<int>(props::PLAY_DELAY_SEC * sampleRate);
         recording = false;
@@ -26,11 +27,11 @@ public:
 
     void handleRecordButtonEnabled() {
         if (recording) return;
+        DBG("start recording");
         notesInCurrentStep.clear();
         samplesUntilNextStep = -1;
         recording = true;
         numSteps = 0;
-        DBG("start recording");
     }
 
     void handleRecordButtonDisabled() {
