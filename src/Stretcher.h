@@ -31,19 +31,19 @@ public:
         tieActive = false;
     }
 
-    size_t getNumVoices() {
+    size_t getNumVoices() const {
         return numVoices;
     }
 
-    size_t getNumSteps() {
+    size_t getNumSteps() const {
         return numSteps;
     }
 
-    size_t getOrigStepIndex() {
+    size_t getOrigStepIndex() const {
         return prev.stepNum;
     }
 
-    size_t getNextStepIndex() {
+    size_t getNextStepIndex() const {
         return nextStepIndex;
     }
 
