@@ -13,6 +13,7 @@ Header::Header(State &s, PluginProcessor &p) : state(s), pluginProcessor(p) {
     addAndMakeVisible(recordButton);
     recordButton.onStateChange = [this] {
         state.recordButton = recordButton.getToggleState();
+        refreshMessage();
     };
 
     juce::Image arrowsLeftRight = FontAwesome::getInstance()->getIcon(true,
@@ -75,43 +76,65 @@ Header::Header(State &s, PluginProcessor &p) : state(s), pluginProcessor(p) {
     rateTypeMenu.addItem("Dotted", 3);
     addAndMakeVisible(rateTypeMenu);
     rateTypeAttachment = std::make_unique<ComboBoxAttachment>(state.parameters, "rateType", rateTypeMenu);
+
+    addAndMakeVisible(messageLabel);
+    messageLabel.setFont(messageFont);
+    messageLabel.setColour(juce::Label::ColourIds::textColourId, props::COLOR_MESSAGE_TEXT);
 }
 
 void Header::timerCallback() {
     if (state.recordButton != recordButton.getToggleState()) {
         recordButton.setToggleState(state.recordButton, juce::NotificationType::dontSendNotification);
+        refreshMessage();
     }
 }
 
+void Header::refreshMessage() {
+    juce::String text;
+    if (recordButton.getToggleState()) {
+        text = props::TEXT_RECORD;
+    } else {
+        text = "";
+    }
+    messageLabel.setText(text, juce::NotificationType::dontSendNotification);
+    repaint();
+}
+
 void Header::paint(juce::Graphics &g) {
-    g.fillAll(props::COLOR_HEADER);
+    auto area = getLocalBounds();
+    if (messageLabel.getText() == "") {
+        area = area.withTrimmedBottom(25);
+    }
+    g.setColour(props::COLOR_HEADER);
+    g.fillRect(area);
 }
 
 void Header::resized() {
     auto area = getLocalBounds();
-    auto bottom = area.removeFromBottom(48).reduced(8);
-    const int MENU_HEIGHT = 24;
-    juce::FlexBox bottomBox;
+    messageLabel.setBounds(area.removeFromBottom(25).withTrimmedRight(4).withTrimmedLeft(4).withTrimmedBottom(4));
+
+    auto toolbarRect = area.removeFromBottom(48).reduced(8);
+    juce::FlexBox toolbar;
     juce::FlexItem::Margin margin{0.0, 5.0, 0.0, 0.0};
-    bottomBox.justifyContent = juce::FlexBox::JustifyContent::flexStart;
-    bottomBox.alignItems = juce::FlexBox::AlignItems::center;
-    bottomBox.items.add(juce::FlexItem(stepsMenu).withAlignSelf(juce::FlexItem::AlignSelf::autoAlign).withHeight(
+    toolbar.justifyContent = juce::FlexBox::JustifyContent::flexStart;
+    toolbar.alignItems = juce::FlexBox::AlignItems::center;
+    toolbar.items.add(juce::FlexItem(stepsMenu).withAlignSelf(juce::FlexItem::AlignSelf::autoAlign).withHeight(
             MENU_HEIGHT).withWidth(90).withMargin(margin));
-    bottomBox.items.add(juce::FlexItem(voicesMenu).withAlignSelf(juce::FlexItem::AlignSelf::autoAlign).withHeight(
+    toolbar.items.add(juce::FlexItem(voicesMenu).withAlignSelf(juce::FlexItem::AlignSelf::autoAlign).withHeight(
             MENU_HEIGHT).withWidth(90).withMargin(margin));
-    bottomBox.items.add(juce::FlexItem(rateMenu).withAlignSelf(juce::FlexItem::AlignSelf::autoAlign).withHeight(
+    toolbar.items.add(juce::FlexItem(rateMenu).withAlignSelf(juce::FlexItem::AlignSelf::autoAlign).withHeight(
             MENU_HEIGHT).withWidth(130).withMargin(margin));
-    bottomBox.items.add(juce::FlexItem(rateTypeMenu).withAlignSelf(juce::FlexItem::AlignSelf::autoAlign).withHeight(
+    toolbar.items.add(juce::FlexItem(rateTypeMenu).withAlignSelf(juce::FlexItem::AlignSelf::autoAlign).withHeight(
             MENU_HEIGHT).withWidth(130).withMargin(margin));
-    bottomBox.items.add(juce::FlexItem(recordButton).withAlignSelf(juce::FlexItem::AlignSelf::autoAlign).withHeight(
+    toolbar.items.add(juce::FlexItem(recordButton).withAlignSelf(juce::FlexItem::AlignSelf::autoAlign).withHeight(
             ICON_SIZE + 10).withWidth(
             static_cast<float>(recordButton.getWidth())).withMargin({0.0, 5.0, 0.0, 5.0}));
-    bottomBox.items.add(juce::FlexItem(stretchButton).withAlignSelf(juce::FlexItem::AlignSelf::autoAlign).withHeight(
+    toolbar.items.add(juce::FlexItem(stretchButton).withAlignSelf(juce::FlexItem::AlignSelf::autoAlign).withHeight(
             ICON_SIZE + 10).withWidth(
             static_cast<float>(stretchButton.getWidth())).withMargin({0.0, 5.0, 0.0, 5.0}));
-    bottomBox.items.add(
+    toolbar.items.add(
             juce::FlexItem(randomButton).withAlignSelf(juce::FlexItem::AlignSelf::autoAlign).withHeight(
                     ICON_SIZE + 10).withWidth(
                     static_cast<float>(randomButton.getWidth())).withMargin({0.0, 0.0, 0.0, 5.0}));
-    bottomBox.performLayout(bottom);
+    toolbar.performLayout(toolbarRect);
 }

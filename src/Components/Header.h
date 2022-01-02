@@ -9,7 +9,8 @@
 
 class Header : public juce::Component {
 public:
-    const float ICON_SIZE = 24.0f;
+    constexpr static float ICON_SIZE = 24.0f;
+    constexpr static int MENU_HEIGHT = 24;
 
     typedef juce::AudioProcessorValueTreeState::SliderAttachment SliderAttachment;
     typedef juce::AudioProcessorValueTreeState::ComboBoxAttachment ComboBoxAttachment;
@@ -18,6 +19,8 @@ public:
     Header(State &s, PluginProcessor &p);
 
     void timerCallback();
+
+    void refreshMessage();
 
     void paint(juce::Graphics &) override;
 
@@ -33,6 +36,7 @@ private:
     PluginProcessor &pluginProcessor;
 
     juce::Font textFont{12.0f};
+    juce::Font messageFont{16.0f};
 
     juce::ImageButton recordButton{};
     juce::ImageButton stretchButton{};
@@ -44,6 +48,7 @@ private:
     juce::Label rateLabel{{}, props::LABEL_RATE};
     juce::ComboBox rateMenu;
     juce::ComboBox rateTypeMenu;
+    juce::Label messageLabel{{}};
 
     // use unique_ptr so it can be destroyed when UI is
     // declare after components so it's destroyed before them

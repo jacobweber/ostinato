@@ -23,6 +23,7 @@ namespace props {
     const juce::Colour COLOR_LIGHT_ACTIVE = COLOR_HIGHLIGHT;
     const juce::Colour COLOR_LIGHT_INACTIVE = COLOR_HIGHLIGHT;
     const juce::Colour COLOR_COMBO_BG = COLOR_TOGGLE_INACTIVE;
+    const juce::Colour COLOR_MESSAGE_TEXT = juce::Colours::white;
 
     const juce::String LABEL_TIE = "Tie";
     const juce::String LABEL_STEPS = "Steps";
@@ -39,6 +40,8 @@ namespace props {
     const juce::String TOOLTIP_TIE = "Hold this step instead of playing the next step";
     const juce::String TOOLTIP_POWER_OFF = "Disable this step";
     const juce::String TOOLTIP_POWER_ON = "Enable this step";
+
+    const juce::String TEXT_RECORD = "Play an arpeggiation to record it. Press the space bar or sustain pedal to enter a rest.";
 
     constexpr double PLAY_DELAY_SEC = 0.1; // so cycle starts at first note when you press multiple notes at once
     constexpr double START_DELAY_ALLOWANCE = 0.05; // if we start playing before this many ppqs after the beat, round down to the beat. Reaper seems to start a little late.
