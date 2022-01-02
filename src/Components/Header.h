@@ -22,6 +22,8 @@ public:
 
     void refreshMessage();
 
+    void refreshEnabled();
+
     void paint(juce::Graphics &) override;
 
     void resized() override;
@@ -29,6 +31,7 @@ public:
 public:
     std::function<void()> onUpdateSteps = [] {};
     std::function<void()> onUpdateVoices = [] {};
+    std::function<void()> onClickRecord = [] {};
     std::function<void()> onClickRandom = [] {};
 
 private:

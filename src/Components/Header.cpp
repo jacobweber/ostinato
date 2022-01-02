@@ -14,6 +14,8 @@ Header::Header(State &s, PluginProcessor &p) : state(s), pluginProcessor(p) {
     recordButton.onStateChange = [this] {
         state.recordButton = recordButton.getToggleState();
         refreshMessage();
+        refreshEnabled();
+        onClickRecord();
     };
 
     juce::Image arrowsLeftRight = FontAwesome::getInstance()->getIcon(true,
@@ -84,8 +86,7 @@ Header::Header(State &s, PluginProcessor &p) : state(s), pluginProcessor(p) {
 
 void Header::timerCallback() {
     if (state.recordButton != recordButton.getToggleState()) {
-        recordButton.setToggleState(state.recordButton, juce::NotificationType::dontSendNotification);
-        refreshMessage();
+        recordButton.setToggleState(state.recordButton, juce::NotificationType::sendNotification);
     }
 }
 
@@ -98,6 +99,14 @@ void Header::refreshMessage() {
     }
     messageLabel.setText(text, juce::NotificationType::dontSendNotification);
     repaint();
+}
+
+void Header::refreshEnabled() {
+    const bool enabled = !state.recordButton;
+    stepsMenu.setEnabled(enabled);
+    voicesMenu.setEnabled(enabled);
+    stretchButton.setEnabled(enabled);
+    randomButton.setEnabled(enabled);
 }
 
 void Header::paint(juce::Graphics &g) {

@@ -18,6 +18,9 @@ PluginEditor::PluginEditor(PluginProcessor &p, State &s)
         refreshSize();
         stepStrips.refresh();
     };
+    header.onClickRecord = [this] {
+        stepStrips.refresh();
+    };
     header.onClickRandom = [this] {
         randomizeParams(true);
     };
