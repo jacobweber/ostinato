@@ -51,9 +51,11 @@ void PluginProcessor::changeProgramName(int, const juce::String &) {
 
 void PluginProcessor::prepareToPlay(double sampleRate, int maximumExpectedSamplesPerBlock) {
     midiProcessor.prepareToPlay(sampleRate, maximumExpectedSamplesPerBlock);
+    messageReader.startTimer(100);
 }
 
 void PluginProcessor::releaseResources() {
+    messageReader.stopTimer();
 }
 
 bool PluginProcessor::isBusesLayoutSupported(const BusesLayout &layouts) const {

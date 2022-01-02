@@ -7,6 +7,7 @@
 #include "State.h"
 #include "Components/StepStrip.h"
 #include "Props.h"
+#include "MessageReader.h"
 
 class PluginProcessor : public juce::AudioProcessor {
 public:
@@ -56,6 +57,7 @@ public:
 private:
     juce::AudioProcessorValueTreeState parameters;
     State state{parameters};
+    MessageReader messageReader{state};
     MidiProcessor midiProcessor{state};
     juce::MidiBuffer midiOut;
 
