@@ -105,6 +105,8 @@ void Header::refreshEnabled() {
     const bool enabled = !state.recordButton;
     stepsMenu.setEnabled(enabled);
     voicesMenu.setEnabled(enabled);
+    rateMenu.setEnabled(enabled);
+    rateTypeMenu.setEnabled(enabled);
     stretchButton.setEnabled(enabled);
     randomButton.setEnabled(enabled);
 }

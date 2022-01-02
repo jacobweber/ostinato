@@ -26,3 +26,7 @@
 * Add stretch mode.
 * Improve design.
 * Remove timecode display.
+
+### 0.0.5
+
+* Add record mode.
