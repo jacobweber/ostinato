@@ -32,7 +32,7 @@ public:
         rateChoices.add("Sixteenth");
         rateChoices.add("Thirty-Second");
         rateChoices.add("Sixty-Fourth");
-        layout.add(std::make_unique<juce::AudioParameterChoice>("rate", "Step Length", rateChoices, 2));
+        layout.add(std::make_unique<juce::AudioParameterChoice>("rate", "Step Length", rateChoices, 3));
 
         juce::StringArray rateTypeChoices;
         rateTypeChoices.add("Straight");
