@@ -46,7 +46,12 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midiIn, juce::MidiBuffe
         if (msg.isNoteOn()) {
             pressedNotes.add(noteValue);
         } else if (msg.isNoteOff()) {
-            pressedNotes.removeValue(noteValue);
+            int index = pressedNotes.indexOf(noteValue);
+            if (index != -1) {
+                pressedNotes.remove(index);
+            } else {
+                midiOut.addEvent(msg, metadata.samplePosition);
+            }
         } else {
             midiOut.addEvent(msg, metadata.samplePosition);
         }
