@@ -5,17 +5,11 @@
 #include "State.h"
 #include "Props.h"
 #include "MidiValue.h"
+#include "Step.h"
 
 class Recorder {
 public:
-    struct UpdatedStep {
-        std::array<bool, props::MAX_VOICES> voices;
-        float length;
-        float volume;
-    };
-
     typedef std::array<juce::SortedSet<MidiValue>, props::MAX_STEPS> NotesInSteps;
-    typedef std::array<UpdatedStep, props::MAX_STEPS> UpdatedSteps;
 
     explicit Recorder(State &_state) : state(_state), recording(false) {
     }
@@ -87,6 +81,22 @@ public:
         }
     }
 
+    static void refreshParamsFromGUIThread(State &_state, const UpdatedSteps &steps) {
+        DBG("get refresh state with " << steps.numSteps << " steps and " << steps.numVoices << " voices");
+        *(_state.voicesParameter) = static_cast<int>(steps.numVoices) - 1;
+        *(_state.stepsParameter) = static_cast<int>(steps.numSteps) - 1;
+        for (size_t stepNum = 0; stepNum < steps.numSteps; stepNum++) {
+            for (size_t voiceNum = 0; voiceNum < steps.numVoices; voiceNum++) {
+                *(_state.stepState[stepNum].voiceParameters[voiceNum]) = steps.steps[stepNum].voices[voiceNum];
+            }
+            *(_state.stepState[stepNum].powerParameter) = true;
+            *(_state.stepState[stepNum].tieParameter) = false;
+            *(_state.stepState[stepNum].octaveParameter) = props::MAX_OCTAVES;
+            *(_state.stepState[stepNum].volParameter) = steps.steps[stepNum].volume;
+            *(_state.stepState[stepNum].lengthParameter) = steps.steps[stepNum].length;
+        }
+    }
+
 private:
     void forceStopRecording() {
         DBG("force stop recording");
@@ -103,38 +113,15 @@ private:
         if (numSteps == props::MAX_STEPS) {
             forceStopRecording();
         }
-        refreshState();
+        // hacky; should avoid copying
+        state.updateStepsFromAudioThread.try_enqueue(getUpdatedSteps());
     }
 
-    void refreshState() {
+    UpdatedSteps getUpdatedSteps() {
         UpdatedSteps steps{};
-        getUpdatedSteps(steps, numVoices);
-        DBG("post refresh state");
-        // very hacky
-        state.changeQueueFromAudio.callf([this, steps] {
-            refreshParamsFromGUIThread(steps, numSteps, numVoices);
-        });
-    }
-
-    void refreshParamsFromGUIThread(const UpdatedSteps &steps, size_t _numSteps, size_t _numVoices) {
-        DBG("get refresh state with " << _numSteps << " steps and " << _numVoices << " voices");
-        *(state.voicesParameter) = static_cast<int>(numVoices) - 1;
-        *(state.stepsParameter) = static_cast<int>(numSteps) - 1;
-        for (size_t stepNum = 0; stepNum < numSteps; stepNum++) {
-            for (size_t voiceNum = 0; voiceNum < numVoices; voiceNum++) {
-                *(state.stepState[stepNum].voiceParameters[voiceNum]) = steps[stepNum].voices[voiceNum];
-            }
-            *(state.stepState[stepNum].powerParameter) = true;
-            *(state.stepState[stepNum].tieParameter) = false;
-            *(state.stepState[stepNum].octaveParameter) = props::MAX_OCTAVES;
-            *(state.stepState[stepNum].volParameter) = steps[stepNum].volume;
-            *(state.stepState[stepNum].lengthParameter) = steps[stepNum].length;
-        }
-    }
-
-    void getUpdatedSteps(UpdatedSteps &outSteps, size_t &outNumVoices) {
         juce::SortedSet<int> voices;
-        for (size_t stepNum = 0; stepNum < numSteps; stepNum++) {
+        steps.numSteps = numSteps;
+        for (size_t stepNum = 0; stepNum < steps.numSteps; stepNum++) {
             DBG("step " << stepNum);
             auto const &notesInStep = notesInSteps[stepNum];
             for (auto const &midiValue: notesInStep) {
@@ -144,38 +131,39 @@ private:
         }
 
         // ignore extra notes on top
-        outNumVoices = juce::jmin(props::MAX_VOICES, static_cast<size_t>(voices.size()));
+        steps.numVoices = juce::jmin(props::MAX_VOICES, static_cast<size_t>(voices.size()));
 
-        for (size_t stepNum = 0; stepNum < numSteps; stepNum++) {
+        for (size_t stepNum = 0; stepNum < steps.numSteps; stepNum++) {
             auto const &notesInStep = notesInSteps[stepNum];
-            for (size_t voiceNum = 0; voiceNum < outNumVoices; voiceNum++) {
-                outSteps[stepNum].voices[outNumVoices - 1 - voiceNum] = false;
+            for (size_t voiceNum = 0; voiceNum < steps.numVoices; voiceNum++) {
+                steps.steps[stepNum].voices[steps.numVoices - 1 - voiceNum] = false;
             }
             int totalVel = 0;
             int numActualNotes = 0;
             for (auto const &midiValue: notesInStep) {
                 int index = voices.indexOf(midiValue.note);
-                if (index != -1 && index < static_cast<int>(outNumVoices)) {
-                    outSteps[stepNum].voices[outNumVoices - 1 - static_cast<size_t>(index)] = true;
+                if (index != -1 && index < static_cast<int>(steps.numVoices)) {
+                    steps.steps[stepNum].voices[steps.numVoices - 1 - static_cast<size_t>(index)] = true;
                     totalVel += midiValue.vel;
                     numActualNotes++;
                 }
             }
-            outSteps[stepNum].length = .5;
+            steps.steps[stepNum].length = .5;
             int avgVel = numActualNotes == 0 ? 64 : totalVel / numActualNotes;
-            outSteps[stepNum].volume = static_cast<float>(avgVel) / 127.0f;
+            steps.steps[stepNum].volume = static_cast<float>(avgVel) / 127.0f;
         }
 
         /*
         juce::String grid = juce::String();
-        for (size_t j = 0; j < outNumVoices; j++) {
-            for (size_t i = 0; i < numSteps; i++) {
-                grid += outSteps[i].voices[j] ? '*' : '-';
+        for (size_t j = 0; j < steps.numVoices; j++) {
+            for (size_t i = 0; i < steps.numSteps; i++) {
+                grid += steps.steps[i].voices[j] ? '*' : '-';
             }
             grid += '\n';
         }
         DBG(grid);
         */
+        return steps;
     }
 
 private:
@@ -190,7 +178,6 @@ private:
 
     NotesInSteps notesInSteps;
     size_t numSteps = 0;
-    size_t numVoices = 0;
 
     std::atomic<bool> refreshUI = false;
 };

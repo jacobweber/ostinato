@@ -1,10 +1,11 @@
 #pragma once
 
 #include <juce_audio_utils/juce_audio_utils.h>
+#include <readerwriterqueue.h>
 
 #include "StepState.h"
 #include "Props.h"
-#include "audiothread_fifo.h"
+#include "Step.h"
 
 class State {
 public:
@@ -48,5 +49,5 @@ public:
     std::atomic<bool> recordButton{false};
     std::atomic<bool> recordedRest{false};
 
-    LockFreeCallQueue changeQueueFromAudio{2048};
+    moodycamel::ReaderWriterQueue<UpdatedSteps> updateStepsFromAudioThread{5};
 };

@@ -6,6 +6,7 @@
 #include "../PluginProcessor.h"
 #include "../State.h"
 #include "../Props.h"
+#include "../Step.h"
 #include "LookAndFeel.h"
 #include "StepStrips.h"
 #include "Header.h"
@@ -25,6 +26,8 @@ public:
     void resized() override;
 
     void timerCallback() override;
+
+    void updateSteps(const UpdatedSteps &steps);
 
     void refreshSize();
 

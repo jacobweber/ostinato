@@ -13,3 +13,14 @@ struct Step {
     bool power = true;
     bool tie = false;
 };
+
+struct UpdatedStep {
+    std::array<bool, props::MAX_VOICES> voices;
+    float length;
+    float volume;
+};
+struct UpdatedSteps {
+    std::array<UpdatedStep, props::MAX_STEPS> steps;
+    size_t numSteps;
+    size_t numVoices;
+};

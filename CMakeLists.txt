@@ -35,6 +35,13 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(JUCE)
 
+FetchContent_Declare(
+        readerwriterqueue
+        GIT_REPOSITORY https://github.com/cameron314/readerwriterqueue
+        GIT_TAG master
+)
+FetchContent_MakeAvailable(readerwriterqueue)
+
 # If you are building a VST2 or AAX plugin, CMake needs to be told where to find these SDKs on your
 # system. This setup should be done before calling `juce_add_plugin`.
 
@@ -63,6 +70,8 @@ juce_add_plugin(Ostinato
         # GarageBand 10.3 requires the first letter to be upper-case, and the remaining letters to be lower-case
         FORMATS AU VST3 Standalone                  # The formats to build. Other valid formats are: AAX Unity VST AU AUv3
         PRODUCT_NAME "Ostinato")                    # The name of the final executable, which can differ from the target name
+
+target_link_libraries(Ostinato PUBLIC readerwriterqueue)
 
 target_compile_features(Ostinato PRIVATE cxx_std_20)
 
