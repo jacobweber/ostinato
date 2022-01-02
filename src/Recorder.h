@@ -25,7 +25,7 @@ public:
         return recording;
     }
 
-    void handleRecordButtonEnabled() {
+    void handleRecordButtonOn() {
         if (recording) return;
         DBG("start recording");
         notesInCurrentStep.clear();
@@ -34,7 +34,7 @@ public:
         numSteps = 0;
     }
 
-    void handleRecordButtonDisabled() {
+    void handleRecordButtonOff() {
         if (!recording) return;
         DBG("stop recording");
         recording = false;
