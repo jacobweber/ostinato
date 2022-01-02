@@ -29,7 +29,7 @@ public:
         if (recording) return;
         DBG("start recording");
         notesInCurrentStep.clear();
-        samplesUntilNextStep = -1;
+        samplesUntilStepFinalized = -1;
         recording = true;
         numSteps = 0;
     }
@@ -59,25 +59,26 @@ public:
             if (msg.isNoteOn()) {
                 DBG("note " << msg.getDescription() << "  " << (metadata.samplePosition - lastNoteInBlockSamplePos)
                             << " since last in block, "
-                            << samplesUntilNextStep << " until next");
-                if (samplesUntilNextStep != -1) {
-                    if (metadata.samplePosition - lastNoteInBlockSamplePos > samplesUntilNextStep) {
+                            << samplesUntilStepFinalized << " until finalized");
+                if (samplesUntilStepFinalized != -1) {
+                    if (metadata.samplePosition - lastNoteInBlockSamplePos > samplesUntilStepFinalized) {
                         finalizeStep(false);
-                        if (!recording) return;
                     }
                 }
-                lastNoteInBlockSamplePos = metadata.samplePosition;
-                samplesUntilNextStep = maxSamplesBetweenSteps;
-                MidiValue noteValue{msg.getNoteNumber(), msg.getChannel(), msg.getVelocity()};
-                notesInCurrentStep.add(noteValue);
+                if (recording) {
+                    lastNoteInBlockSamplePos = metadata.samplePosition;
+                    samplesUntilStepFinalized = maxSamplesBetweenSteps;
+                    MidiValue noteValue{msg.getNoteNumber(), msg.getChannel(), msg.getVelocity()};
+                    notesInCurrentStep.add(noteValue);
+                }
             }
             midiOut.addEvent(msg, metadata.samplePosition);
         }
-        if (samplesUntilNextStep != -1) {
-            samplesUntilNextStep = juce::jmax(0, samplesUntilNextStep - (numSamples - lastNoteInBlockSamplePos));
-            if (samplesUntilNextStep == 0) {
+        if (samplesUntilStepFinalized != -1) {
+            samplesUntilStepFinalized = juce::jmax(0,
+                                                   samplesUntilStepFinalized - (numSamples - lastNoteInBlockSamplePos));
+            if (samplesUntilStepFinalized == 0) {
                 finalizeStep(false);
-                samplesUntilNextStep = -1;
             }
         }
     }
@@ -90,6 +91,7 @@ private:
     }
 
     void finalizeStep(bool allowEmpty) {
+        samplesUntilStepFinalized = -1;
         if (!allowEmpty && notesInCurrentStep.isEmpty()) return;
         DBG("finalize step " << numSteps);
         notesInSteps[numSteps] = notesInCurrentStep;
@@ -98,7 +100,7 @@ private:
         if (numSteps == props::MAX_STEPS) {
             forceStopRecording();
         }
-        // hacky; should avoid copying
+        // should avoid copying
         state.updateStepsFromAudioThread.try_enqueue(getUpdatedSteps());
     }
 
@@ -159,7 +161,7 @@ private:
     bool recording = false;
 
     juce::SortedSet<MidiValue> notesInCurrentStep;
-    int samplesUntilNextStep = -1;
+    int samplesUntilStepFinalized = -1;
 
     NotesInSteps notesInSteps;
     size_t numSteps = 0;
