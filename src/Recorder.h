@@ -81,22 +81,6 @@ public:
         }
     }
 
-    static void refreshParamsFromGUIThread(State &_state, const UpdatedSteps &steps) {
-        DBG("get refresh state with " << steps.numSteps << " steps and " << steps.numVoices << " voices");
-        *(_state.voicesParameter) = static_cast<int>(steps.numVoices) - 1;
-        *(_state.stepsParameter) = static_cast<int>(steps.numSteps) - 1;
-        for (size_t stepNum = 0; stepNum < steps.numSteps; stepNum++) {
-            for (size_t voiceNum = 0; voiceNum < steps.numVoices; voiceNum++) {
-                *(_state.stepState[stepNum].voiceParameters[voiceNum]) = steps.steps[stepNum].voices[voiceNum];
-            }
-            *(_state.stepState[stepNum].powerParameter) = true;
-            *(_state.stepState[stepNum].tieParameter) = false;
-            *(_state.stepState[stepNum].octaveParameter) = props::MAX_OCTAVES;
-            *(_state.stepState[stepNum].volParameter) = steps.steps[stepNum].volume;
-            *(_state.stepState[stepNum].lengthParameter) = steps.steps[stepNum].length;
-        }
-    }
-
 private:
     void forceStopRecording() {
         DBG("force stop recording");
