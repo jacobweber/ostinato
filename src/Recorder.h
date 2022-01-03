@@ -122,7 +122,8 @@ private:
         }
 
         // ignore extra notes on top
-        steps.numVoices = juce::jmin(props::MAX_VOICES, static_cast<size_t>(voices.size()));
+        steps.numVoices = juce::jmax(static_cast<size_t>(1),
+                                     juce::jmin(props::MAX_VOICES, static_cast<size_t>(voices.size())));
 
         for (size_t stepNum = 0; stepNum < steps.numSteps; stepNum++) {
             auto const &notesInStep = notesInSteps[stepNum];
