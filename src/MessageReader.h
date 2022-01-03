@@ -11,7 +11,6 @@ public:
     }
 
     void timerCallback() override {
-        UpdatedSteps updatedSteps{};
         if (state.updateStepsFromAudioThread.try_dequeue(updatedSteps)) {
             updateSteps(updatedSteps);
         }
@@ -35,4 +34,5 @@ public:
 
 private:
     State &state;
+    UpdatedSteps updatedSteps{};
 };
