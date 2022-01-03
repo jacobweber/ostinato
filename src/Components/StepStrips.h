@@ -30,7 +30,9 @@ public:
         if (state.playing) {
             if (oldPlaying) {
                 if (oldStepIndex != state.stepIndex) {
-                    strips[oldStepIndex]->refreshActiveLight();
+                    if (oldStepIndex < strips.size()) {
+                        strips[oldStepIndex]->refreshActiveLight();
+                    }
                     strips[state.stepIndex]->refreshActiveLight();
                     oldStepIndex = state.stepIndex;
                 }
@@ -41,7 +43,9 @@ public:
             }
         } else {
             if (oldPlaying) { // stop
-                strips[oldStepIndex]->refreshActiveLight();
+                if (oldStepIndex < strips.size()) {
+                    strips[oldStepIndex]->refreshActiveLight();
+                }
                 oldPlaying = state.playing;
             }
         }
