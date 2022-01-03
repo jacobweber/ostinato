@@ -33,7 +33,7 @@ namespace props {
     const juce::String LABEL_OCTAVE = "Octave";
 
     const juce::String TOOLTIP_RECORD = "Record pattern";
-    const juce::String TOOLTIP_STRETCH = "Stretch pattern to fit played notes";
+    const juce::String TOOLTIP_STRETCH = "Stretch pattern to fit held notes";
     const juce::String TOOLTIP_RANDOM = "Randomize settings";
     const juce::String TOOLTIP_VOICES_CLEAR = "Turn off all voices for this step";
     const juce::String TOOLTIP_VOICES_FILL = "Turn on all voices for this step";
@@ -42,7 +42,7 @@ namespace props {
     const juce::String TOOLTIP_POWER_ON = "Enable this step";
 
     const juce::String MSG_RECORD = "Play an arpeggiation to record it. Press the space bar or sustain pedal to enter a rest.";
-    const juce::String MSG_STRETCH = "The shape of the pattern below will be stretched/shrunk to include all held notes.";
+    const juce::String MSG_STRETCH = "The shape of the pattern below will be stretched/shrunk to cover most held notes.";
 
     constexpr double PLAY_DELAY_SEC = 0.1; // so cycle starts at first note when you press multiple notes at once
     constexpr double START_DELAY_ALLOWANCE = 0.05; // if we start playing before this many ppqs after the beat, round down to the beat. Reaper seems to start a little late.
