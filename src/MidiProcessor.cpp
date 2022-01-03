@@ -30,12 +30,15 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midiIn, juce::MidiBuffe
     if (state.recordButton) {
         if (!recorder.isRecording()) {
             stopPlaying(midiOut, 0);
+            pressedNotes.clear();
+            cycleOn = false;
+            state.playing = false;
             recorder.handleRecordButtonOn();
         }
         recorder.process(numSamples, midiIn, midiOut, posInfo);
         return;
     } else {
-        if (recorder.isRecording()) {
+        if (recorder.isRecording()) { // recorder can also force recording to stop
             recorder.handleRecordButtonOff();
         }
     }
