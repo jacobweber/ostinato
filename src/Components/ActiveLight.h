@@ -10,6 +10,10 @@ public:
     ActiveLight(State &s, size_t n) : stepNum(n), state(s) {
     }
 
+    void enablementChanged() override {
+        repaint();
+    }
+
     void paint(juce::Graphics &g) override {
         bool highlighted = state.playing && state.stepIndex == stepNum;
         g.setColour(highlighted ? props::COLOR_LIGHT_ACTIVE : (isEnabled() ? props::COLOR_LIGHT_INACTIVE
