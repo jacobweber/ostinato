@@ -11,7 +11,7 @@ Header::Header(State &s, PluginProcessor &p) : state(s), pluginProcessor(p) {
     recordButton.setClickingTogglesState(true);
     recordButton.setTooltip(props::TOOLTIP_RECORD);
     addAndMakeVisible(recordButton);
-    recordButton.onStateChange = [this] {
+    recordButton.onClick = [this] {
         state.recordButton = recordButton.getToggleState();
         refreshMessage();
         refreshEnabled();
