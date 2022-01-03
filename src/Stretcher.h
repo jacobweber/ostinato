@@ -10,7 +10,7 @@ public:
     }
 
     struct StretchedResult {
-        std::vector<Step> steps;
+        std::vector<CurrentStep> steps;
         size_t numSteps = 0;
         size_t numVoices = 0;
     };
@@ -51,7 +51,7 @@ public:
         skipLastStepIfMatchesFirst = skip;
     }
 
-    void getNextStretchedStep(size_t numHeldNotes, Step &outStep) {
+    void getNextStretchedStep(size_t numHeldNotes, CurrentStep &outStep) {
         // with origNumSteps = 3 and numSteps = 5:
         // origStepSizeX = 2
         // stepNum and stepX  = 0 1 2 3 4
@@ -136,7 +136,7 @@ public:
 
         StretchedResult result;
         for (size_t stepNum = 0; stepNum < generateSteps; stepNum++) {
-            Step currentStep;
+            CurrentStep currentStep;
             getNextStretchedStep(numNotes, currentStep);
             result.steps.push_back(currentStep);
         }
@@ -179,7 +179,7 @@ private:
         return true;
     }
 
-    void updateStretchedStep(size_t stepNum, Step &outStep) {
+    void updateStretchedStep(size_t stepNum, CurrentStep &outStep) {
         for (size_t voiceNum = 0; voiceNum < numVoices; voiceNum++) {
             outStep.voices[voiceNum] = false;
         }

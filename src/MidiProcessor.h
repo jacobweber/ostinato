@@ -50,7 +50,7 @@ private:
     int samplesUntilRelease = 0; // if transport not running, samples left in current note
     int samplesUntilNextStep = 0; // if transport not running, samples left in current step
 
-    Step currentStep{};
+    CurrentStep currentStep{};
 
     bool stretchActive = false;
     Stretcher stretcher{state};
