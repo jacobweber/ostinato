@@ -166,8 +166,10 @@ private:
                 numNotes == 1 ? 1 : static_cast<double>(numVoices - 1) / static_cast<double>(origNumVoices - 1);
         roundingOffset = numSteps > origNumSteps ? origStepSizeX - 1 : origStepSizeX / 2;
 
-        if (skipLastStepIfMatchesFirst && firstLastOrigStepsSame()) numSteps--;
-        DBG("stretching " << origNumSteps << "x" << origNumVoices << " to " << numSteps << "x" << numVoices);
+        bool skipLast = skipLastStepIfMatchesFirst && firstLastOrigStepsSame();
+        if (skipLast) numSteps--;
+        DBG("stretching " << origNumSteps << "x" << origNumVoices << " to " << numSteps << "x" << numVoices
+                          << (skipLast ? " (skip last)" : ""));
     }
 
     bool firstLastOrigStepsSame() {
