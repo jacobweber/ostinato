@@ -28,6 +28,9 @@ Header::Header(State &s, PluginProcessor &p) : state(s), pluginProcessor(p) {
     stretchButton.setClickingTogglesState(true);
     stretchButton.setTooltip(props::TOOLTIP_STRETCH);
     addAndMakeVisible(stretchButton);
+    stretchButton.onClick = [this] {
+        refreshMessage();
+    };
     stretchAttachment = std::make_unique<ButtonAttachment>(state.parameters, "stretch", stretchButton);
 
     juce::Image dice = FontAwesome::getInstance()->getIcon(true,
@@ -93,7 +96,9 @@ void Header::timerCallback() {
 void Header::refreshMessage() {
     juce::String text;
     if (recordButton.getToggleState()) {
-        text = props::TEXT_RECORD;
+        text = props::MSG_RECORD;
+    } else if (stretchButton.getToggleState()) {
+        text = props::MSG_STRETCH;
     } else {
         text = "";
     }
