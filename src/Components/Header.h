@@ -5,7 +5,7 @@
 
 #include "../PluginProcessor.h"
 #include "../State.h"
-#include "../Props.h"
+#include "../Constants.h"
 
 class Header : public juce::Component {
 public:
@@ -44,11 +44,11 @@ private:
     juce::ImageButton recordButton{};
     juce::ImageButton stretchButton{};
     juce::ImageButton randomButton{};
-    juce::Label stepsLabel{{}, props::LABEL_STEPS};
+    juce::Label stepsLabel{{}, constants::LABEL_STEPS};
     juce::ComboBox stepsMenu;
-    juce::Label voicesLabel{{}, props::LABEL_VOICES};
+    juce::Label voicesLabel{{}, constants::LABEL_VOICES};
     juce::ComboBox voicesMenu;
-    juce::Label rateLabel{{}, props::LABEL_RATE};
+    juce::Label rateLabel{{}, constants::LABEL_RATE};
     juce::ComboBox rateMenu;
     juce::ComboBox rateTypeMenu;
     juce::Label messageLabel{{}};

@@ -26,7 +26,7 @@ public:
             }
             *(state.stepState[stepNum].powerParameter) = true;
             *(state.stepState[stepNum].tieParameter) = false;
-            *(state.stepState[stepNum].octaveParameter) = props::MAX_OCTAVES;
+            *(state.stepState[stepNum].octaveParameter) = constants::MAX_OCTAVES;
             *(state.stepState[stepNum].volParameter) = steps.steps[stepNum].volume;
             *(state.stepState[stepNum].lengthParameter) = steps.steps[stepNum].length;
         }

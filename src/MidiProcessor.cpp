@@ -1,5 +1,5 @@
 #include "MidiProcessor.h"
-#include "Props.h"
+#include "Constants.h"
 
 void MidiProcessor::prepareToPlay(double _sampleRate, int _maximumExpectedSamplesPerBlock) {
     sampleRate = _sampleRate;
@@ -106,7 +106,7 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midiIn, juce::MidiBuffe
                 // don't calculate in samples, since tempo may change
                 DBG("first step at " << nextStepPpqPos << " ppq, " << pressedNotes.size() << " pressed notes");
             } else {
-                samplesUntilNextStep = static_cast<int>(props::PLAY_DELAY_SEC * sampleRate);
+                samplesUntilNextStep = static_cast<int>(constants::PLAY_DELAY_SEC * sampleRate);
                 samplesUntilRelease = -1;
                 DBG("first step in " << samplesUntilNextStep << " samples, " << pressedNotes.size()
                                      << " pressed notes");
@@ -211,7 +211,7 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midiIn, juce::MidiBuffe
             }
 
             if (currentStep.power && !tieActive) {
-                int transpose = (currentStep.octave - static_cast<int>(props::MAX_OCTAVES)) * 12;
+                int transpose = (currentStep.octave - static_cast<int>(constants::MAX_OCTAVES)) * 12;
                 for (size_t voiceNum = 0; voiceNum < numVoices; voiceNum++) {
                     if (currentStep.voices[voiceNum]) {
                         int voiceIndex = static_cast<int>(numVoices - 1 - voiceNum); // they're flipped
@@ -293,7 +293,7 @@ double MidiProcessor::roundStartPpqPos(double scheduledPpqPos, double ppqPosPerS
     double offsetWithinStep = std::fmod(scheduledPpqPos, ppqPosPerStep);
     double prevStepPpqPos = scheduledPpqPos - offsetWithinStep;
     double nextStepPpqPos = prevStepPpqPos + ppqPosPerStep;
-    return offsetWithinStep < props::START_DELAY_ALLOWANCE ? prevStepPpqPos : nextStepPpqPos;
+    return offsetWithinStep < constants::START_DELAY_ALLOWANCE ? prevStepPpqPos : nextStepPpqPos;
 }
 
 double MidiProcessor::roundNextPpqPos(double scheduledPpqPos, double ppqPosPerStep) {

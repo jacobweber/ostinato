@@ -4,12 +4,12 @@ Header::Header(State &s, PluginProcessor &p) : state(s), pluginProcessor(p) {
     juce::Image microphone = FontAwesome::getInstance()->getIcon(true,
                                                                  juce::String::fromUTF8(
                                                                          reinterpret_cast<const char *>(u8"\uf130")),
-                                                                 ICON_SIZE, props::COLOR_TOGGLE_ACTIVE,
+                                                                 ICON_SIZE, constants::COLOR_TOGGLE_ACTIVE,
                                                                  1);
     recordButton.setImages(true, false, true, microphone, 1.0f, {}, {}, 1.0f, {}, {}, 1.0f,
-                           props::COLOR_TOGGLE_INACTIVE);
+                           constants::COLOR_TOGGLE_INACTIVE);
     recordButton.setClickingTogglesState(true);
-    recordButton.setTooltip(props::TOOLTIP_RECORD);
+    recordButton.setTooltip(constants::TOOLTIP_RECORD);
     addAndMakeVisible(recordButton);
     recordButton.onClick = [this] {
         state.recordButton = recordButton.getToggleState();
@@ -21,12 +21,12 @@ Header::Header(State &s, PluginProcessor &p) : state(s), pluginProcessor(p) {
     juce::Image arrowsLeftRight = FontAwesome::getInstance()->getIcon(true,
                                                                       juce::String::fromUTF8(
                                                                               reinterpret_cast<const char *>(u8"\uf07e")),
-                                                                      ICON_SIZE, props::COLOR_TOGGLE_ACTIVE,
+                                                                      ICON_SIZE, constants::COLOR_TOGGLE_ACTIVE,
                                                                       1);
     stretchButton.setImages(true, false, true, arrowsLeftRight, 1.0f, {}, {}, 1.0f, {}, {}, 1.0f,
-                            props::COLOR_TOGGLE_INACTIVE);
+                            constants::COLOR_TOGGLE_INACTIVE);
     stretchButton.setClickingTogglesState(true);
-    stretchButton.setTooltip(props::TOOLTIP_STRETCH);
+    stretchButton.setTooltip(constants::TOOLTIP_STRETCH);
     addAndMakeVisible(stretchButton);
     stretchButton.onClick = [this] {
         refreshMessage();
@@ -36,17 +36,17 @@ Header::Header(State &s, PluginProcessor &p) : state(s), pluginProcessor(p) {
     juce::Image dice = FontAwesome::getInstance()->getIcon(true,
                                                            juce::String::fromUTF8(
                                                                    reinterpret_cast<const char *>(u8"\uf522")),
-                                                           ICON_SIZE, props::COLOR_TOGGLE_ACTIVE,
+                                                           ICON_SIZE, constants::COLOR_TOGGLE_ACTIVE,
                                                            1);
-    randomButton.setImages(true, false, true, dice, 1.0f, {}, {}, 1.0f, {}, {}, 1.0f, props::COLOR_TOGGLE_INACTIVE);
-    randomButton.setTooltip(props::TOOLTIP_RANDOM);
+    randomButton.setImages(true, false, true, dice, 1.0f, {}, {}, 1.0f, {}, {}, 1.0f, constants::COLOR_TOGGLE_INACTIVE);
+    randomButton.setTooltip(constants::TOOLTIP_RANDOM);
     randomButton.onClick = [this] { onClickRandom(); };
     addAndMakeVisible(randomButton);
 
     addAndMakeVisible(stepsLabel);
     stepsLabel.setFont(textFont);
     stepsLabel.attachToComponent(&stepsMenu, false);
-    for (size_t i = 1; i <= props::MAX_STEPS; i++) {
+    for (size_t i = 1; i <= constants::MAX_STEPS; i++) {
         stepsMenu.addItem(std::to_string(i), static_cast<int>(i));
     }
     stepsMenu.onChange = [this] { onUpdateSteps(); };
@@ -56,7 +56,7 @@ Header::Header(State &s, PluginProcessor &p) : state(s), pluginProcessor(p) {
     addAndMakeVisible(voicesLabel);
     voicesLabel.setFont(textFont);
     voicesLabel.attachToComponent(&voicesMenu, false);
-    for (size_t i = 1; i <= props::MAX_VOICES; i++) {
+    for (size_t i = 1; i <= constants::MAX_VOICES; i++) {
         voicesMenu.addItem(std::to_string(i), static_cast<int>(i));
     }
     voicesMenu.onChange = [this] { onUpdateVoices(); };
@@ -84,7 +84,7 @@ Header::Header(State &s, PluginProcessor &p) : state(s), pluginProcessor(p) {
 
     addAndMakeVisible(messageLabel);
     messageLabel.setFont(messageFont);
-    messageLabel.setColour(juce::Label::ColourIds::textColourId, props::COLOR_MESSAGE_TEXT);
+    messageLabel.setColour(juce::Label::ColourIds::textColourId, constants::COLOR_MESSAGE_TEXT);
 }
 
 void Header::timerCallback() {
@@ -96,9 +96,9 @@ void Header::timerCallback() {
 void Header::refreshMessage() {
     juce::String text;
     if (recordButton.getToggleState()) {
-        text = props::MSG_RECORD;
+        text = constants::MSG_RECORD;
     } else if (stretchButton.getToggleState()) {
-        text = props::MSG_STRETCH;
+        text = constants::MSG_STRETCH;
     } else {
         text = "";
     }
@@ -121,7 +121,7 @@ void Header::paint(juce::Graphics &g) {
     if (messageLabel.getText() == "") {
         area = area.withTrimmedBottom(25);
     }
-    g.setColour(props::COLOR_HEADER);
+    g.setColour(constants::COLOR_HEADER);
     g.fillRect(area);
 }
 

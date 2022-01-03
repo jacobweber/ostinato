@@ -5,7 +5,7 @@
 
 #include "../PluginProcessor.h"
 #include "../State.h"
-#include "../Props.h"
+#include "../Constants.h"
 #include "../Step.h"
 #include "LookAndFeel.h"
 #include "StepStrips.h"

@@ -1,9 +1,9 @@
 #pragma once
 
-#include "Props.h"
+#include "Constants.h"
 
 constexpr size_t MAX_ACTUAL_VOICES =
-        2 + static_cast<size_t>((props::MAX_STEPS - 1) * (props::MAX_NOTES - 1) / (props::MAX_VOICES - 1));
+        2 + static_cast<size_t>((constants::MAX_STEPS - 1) * (constants::MAX_NOTES - 1) / (constants::MAX_VOICES - 1));
 
 struct CurrentStep {
     std::array<bool, MAX_ACTUAL_VOICES> voices{};
@@ -15,12 +15,12 @@ struct CurrentStep {
 };
 
 struct UpdatedStep {
-    std::array<bool, props::MAX_VOICES> voices;
+    std::array<bool, constants::MAX_VOICES> voices;
     float length;
     float volume;
 };
 struct UpdatedSteps {
-    std::array<UpdatedStep, props::MAX_STEPS> steps;
+    std::array<UpdatedStep, constants::MAX_STEPS> steps;
     size_t numSteps;
     size_t numVoices;
 };

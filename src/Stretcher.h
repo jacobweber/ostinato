@@ -1,7 +1,7 @@
 #pragma once
 
 #include "State.h"
-#include "Props.h"
+#include "Constants.h"
 #include "Step.h"
 
 class Stretcher {
@@ -18,7 +18,7 @@ public:
     struct OrigStep {
         size_t stepNum;
         double x;
-        std::array<double, props::MAX_VOICES> activeVoicesY;
+        std::array<double, constants::MAX_VOICES> activeVoicesY;
         size_t numActiveVoices;
         double length;
         double volume;

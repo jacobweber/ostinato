@@ -52,7 +52,8 @@ bool PluginEditor::keyPressed(const juce::KeyPress &key, juce::Component *) {
 }
 
 void PluginEditor::paint(juce::Graphics &g) {
-    juce::ColourGradient gradient(props::COLOR_BACKGROUND, 0, 0, (props::COLOR_BACKGROUND).brighter(.25f), getWidth(),
+    juce::ColourGradient gradient(constants::COLOR_BACKGROUND, 0, 0, (constants::COLOR_BACKGROUND).brighter(.25f),
+                                  getWidth(),
                                   0, false);
     g.setGradientFill(gradient);
     g.fillAll();
@@ -79,13 +80,13 @@ void PluginEditor::randomizeParams(bool stepsAndVoices) {
     std::random_device rd;
     std::mt19937 mt(rd());
 
-    std::uniform_int_distribution<size_t> randNumSteps(1, props::MAX_STEPS);
-    std::uniform_int_distribution<size_t> randNumVoices(1, props::MAX_VOICES);
+    std::uniform_int_distribution<size_t> randNumSteps(1, constants::MAX_STEPS);
+    std::uniform_int_distribution<size_t> randNumVoices(1, constants::MAX_VOICES);
     std::uniform_int_distribution<int> randRate(1, state.rateParameter->getAllValueStrings().size());
     std::uniform_int_distribution<int> randRateType(1, state.rateTypeParameter->getAllValueStrings().size());
 
     std::uniform_int_distribution<int> randVoice(0, 3);
-    std::uniform_int_distribution<int> randOctave(0, static_cast<int>(props::MAX_OCTAVES) * 2);
+    std::uniform_int_distribution<int> randOctave(0, static_cast<int>(constants::MAX_OCTAVES) * 2);
     std::uniform_real_distribution<float> randLength(0.0, 1.0);
     std::uniform_int_distribution<int> randTie(0, 10);
     std::uniform_real_distribution<float> randVolume(0.0, 1.0);

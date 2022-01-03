@@ -425,22 +425,22 @@ TEST_CASE("Stretcher")
             juce::String grid = "-*-\n"
                                 "*-*\n";
             StateHelper::setGrid(state, grid);
-            *(state.stepState[0].octaveParameter) = props::MAX_OCTAVES;
-            *(state.stepState[1].octaveParameter) = props::MAX_OCTAVES - 1;
-            *(state.stepState[2].octaveParameter) = props::MAX_OCTAVES + 1;
+            *(state.stepState[0].octaveParameter) = constants::MAX_OCTAVES;
+            *(state.stepState[1].octaveParameter) = constants::MAX_OCTAVES - 1;
+            *(state.stepState[2].octaveParameter) = constants::MAX_OCTAVES + 1;
 
             Stretcher::StretchedResult result = str.stretch(5);
 
             // makes sense, since 4 new steps span 1 old step
-            REQUIRE(result.steps[0].octave == props::MAX_OCTAVES);
-            REQUIRE(result.steps[1].octave == props::MAX_OCTAVES);
-            REQUIRE(result.steps[2].octave == props::MAX_OCTAVES);
-            REQUIRE(result.steps[3].octave == props::MAX_OCTAVES);
-            REQUIRE(result.steps[4].octave == props::MAX_OCTAVES - 1);
-            REQUIRE(result.steps[5].octave == props::MAX_OCTAVES - 1);
-            REQUIRE(result.steps[6].octave == props::MAX_OCTAVES - 1);
-            REQUIRE(result.steps[7].octave == props::MAX_OCTAVES - 1);
-            REQUIRE(result.steps[8].octave == props::MAX_OCTAVES + 1);
+            REQUIRE(result.steps[0].octave == constants::MAX_OCTAVES);
+            REQUIRE(result.steps[1].octave == constants::MAX_OCTAVES);
+            REQUIRE(result.steps[2].octave == constants::MAX_OCTAVES);
+            REQUIRE(result.steps[3].octave == constants::MAX_OCTAVES);
+            REQUIRE(result.steps[4].octave == constants::MAX_OCTAVES - 1);
+            REQUIRE(result.steps[5].octave == constants::MAX_OCTAVES - 1);
+            REQUIRE(result.steps[6].octave == constants::MAX_OCTAVES - 1);
+            REQUIRE(result.steps[7].octave == constants::MAX_OCTAVES - 1);
+            REQUIRE(result.steps[8].octave == constants::MAX_OCTAVES + 1);
         }
     }
 }

@@ -4,7 +4,7 @@
 #include <readerwriterqueue.h>
 
 #include "StepState.h"
-#include "Props.h"
+#include "Constants.h"
 #include "Step.h"
 
 class State {
@@ -15,8 +15,8 @@ public:
         voicesParameter = dynamic_cast<juce::AudioParameterChoice *> (parameters.getParameter("voices"));
         rateParameter = dynamic_cast<juce::AudioParameterChoice *> (parameters.getParameter("rate"));
         rateTypeParameter = dynamic_cast<juce::AudioParameterChoice *> (parameters.getParameter("rateType"));
-        for (size_t i = 0; i < props::MAX_STEPS; i++) {
-            for (size_t j = 0; j < props::MAX_VOICES; j++) {
+        for (size_t i = 0; i < constants::MAX_STEPS; i++) {
+            for (size_t j = 0; j < constants::MAX_VOICES; j++) {
                 juce::AudioParameterBool *voiceParameter = dynamic_cast<juce::AudioParameterBool *> (parameters.getParameter(
                         "step" + std::to_string(i) + "_voice" + std::to_string(j)));
                 stepState[i].voiceParameters[j] = voiceParameter ? voiceParameter : nullptr;
@@ -42,7 +42,7 @@ public:
     juce::AudioParameterChoice *voicesParameter = nullptr;
     juce::AudioParameterChoice *rateParameter = nullptr;
     juce::AudioParameterChoice *rateTypeParameter = nullptr;
-    std::array<StepState, props::MAX_STEPS> stepState;
+    std::array<StepState, constants::MAX_STEPS> stepState;
 
     std::atomic<size_t> stepIndex{0};
     std::atomic<bool> playing{false};

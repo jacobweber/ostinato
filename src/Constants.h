@@ -3,7 +3,7 @@
 #include "juce_gui_basics/juce_gui_basics.h"
 #include <cstddef>
 
-namespace props {
+namespace constants {
     constexpr size_t MAX_NOTES = 24;
     constexpr size_t MAX_STEPS = 16;
     constexpr size_t MAX_VOICES = 8;

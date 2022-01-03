@@ -3,13 +3,13 @@
 #include <juce_audio_utils/juce_audio_utils.h>
 
 #include "State.h"
-#include "Props.h"
+#include "Constants.h"
 #include "MidiValue.h"
 #include "Step.h"
 
 class Recorder {
 public:
-    typedef std::array<juce::SortedSet<MidiValue>, props::MAX_STEPS> NotesInSteps;
+    typedef std::array<juce::SortedSet<MidiValue>, constants::MAX_STEPS> NotesInSteps;
 
     explicit Recorder(State &_state) : state(_state), recording(false) {
     }
@@ -17,7 +17,7 @@ public:
     void prepareToPlay(double _sampleRate, int) {
         DBG("prepareToPlay: stop recording");
         sampleRate = _sampleRate;
-        maxSamplesBetweenSteps = static_cast<int>(props::PLAY_DELAY_SEC * sampleRate);
+        maxSamplesBetweenSteps = static_cast<int>(constants::PLAY_DELAY_SEC * sampleRate);
         recording = false;
     }
 
@@ -101,7 +101,7 @@ private:
         notesInSteps[numSteps] = notesInCurrentStep;
         numSteps++;
         notesInCurrentStep.clear();
-        if (numSteps == props::MAX_STEPS) {
+        if (numSteps == constants::MAX_STEPS) {
             forceStopRecording();
         }
         // should avoid copying
@@ -123,7 +123,7 @@ private:
 
         // ignore extra notes on top
         steps.numVoices = juce::jmax(static_cast<size_t>(1),
-                                     juce::jmin(props::MAX_VOICES, static_cast<size_t>(voices.size())));
+                                     juce::jmin(constants::MAX_VOICES, static_cast<size_t>(voices.size())));
 
         for (size_t stepNum = 0; stepNum < steps.numSteps; stepNum++) {
             auto const &notesInStep = notesInSteps[stepNum];

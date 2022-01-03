@@ -7,7 +7,7 @@
 
 #include "StepStrip.h"
 #include "../State.h"
-#include "../Props.h"
+#include "../Constants.h"
 
 class StepStrips : public juce::Component {
 public:
