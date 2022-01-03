@@ -172,22 +172,6 @@ public:
 
     void refresh() {
         refreshVoices();
-        refreshEnabled();
-    }
-
-    void refreshEnabled() {
-        const bool enabled = !state.recordButton;
-        activeLight.setEnabled(enabled);
-        clearButton.setEnabled(enabled);
-        fillButton.setEnabled(enabled);
-        for (auto &voice: voices) {
-            voice->setEnabled(enabled);
-        }
-        octaveMenu.setEnabled(enabled);
-        lengthSlider.setEnabled(enabled);
-        tieButton.setEnabled(enabled);
-        volSlider.setEnabled(enabled);
-        powerButton.setEnabled(enabled);
     }
 
     void refreshVoices() {

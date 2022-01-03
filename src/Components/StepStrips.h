@@ -53,6 +53,7 @@ public:
         for (size_t i = 0; i < numSteps; i++) {
             strips[i]->refresh();
         }
+        setEnabled(!state.recordButton);
     }
 
     void refreshSteps() {
