@@ -67,34 +67,27 @@ Header::Header(State &s, PluginProcessor &p) : state(s), pluginProcessor(p) {
     addAndMakeVisible(rateLabel);
     rateLabel.setFont(textFont);
     rateLabel.attachToComponent(&rateMenu, false);
-    rateMenu.addItem("Whole", 1);
-    rateMenu.addItem("Half", 2);
-    rateMenu.addItem("Quarter", 3);
-    rateMenu.addItem("Eighth", 4);
-    rateMenu.addItem("Sixteenth", 5);
-    rateMenu.addItem("Thirty-Second", 6);
-    rateMenu.addItem("Sixty-Fourth", 7);
+    int rateIndex = 1;
+    for (const juce::String &value: state.rateParameter->getAllValueStrings()) {
+        rateMenu.addItem(value, rateIndex++);
+    }
     addAndMakeVisible(rateMenu);
     rateAttachment = std::make_unique<ComboBoxAttachment>(state.parameters, "rate", rateMenu);
 
-    rateTypeMenu.addItem("Straight", 1);
-    rateTypeMenu.addItem("Triplet", 2);
-    rateTypeMenu.addItem("Dotted", 3);
+    int rateTypeIndex = 1;
+    for (const juce::String &value: state.rateTypeParameter->getAllValueStrings()) {
+        rateTypeMenu.addItem(value, rateTypeIndex++);
+    }
     addAndMakeVisible(rateTypeMenu);
     rateTypeAttachment = std::make_unique<ComboBoxAttachment>(state.parameters, "rateType", rateTypeMenu);
 
     addAndMakeVisible(notesLabel);
     notesLabel.setFont(textFont);
     notesLabel.attachToComponent(&notesMenu, false);
-    notesMenu.addItem("Pressed Keys", 1);
-    notesMenu.addItem("Major", 2);
-    notesMenu.addItem("Minor", 3);
-    notesMenu.addItem("Harmonic Minor", 4);
-    notesMenu.addItem("Locrian", 5);
-    notesMenu.addItem("Dorian", 6);
-    notesMenu.addItem("Phrygian", 7);
-    notesMenu.addItem("Lydian", 8);
-    notesMenu.addItem("Mixolydian", 9);
+    int notesIndex = 1;
+    for (const juce::String &value: state.notesParameter->getAllValueStrings()) {
+        notesMenu.addItem(value, notesIndex++);
+    }
     addAndMakeVisible(notesMenu);
     notesAttachment = std::make_unique<ComboBoxAttachment>(state.parameters, "notes", notesMenu);
     notesMenu.onChange = [this] {
