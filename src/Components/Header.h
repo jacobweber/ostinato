@@ -20,6 +20,8 @@ public:
 
     void timerCallback();
 
+    void refresh();
+
     void refreshMessage();
 
     void refreshEnabled();

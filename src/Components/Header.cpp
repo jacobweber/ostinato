@@ -1,4 +1,5 @@
 #include "Header.h"
+#include "../Scales.h"
 
 Header::Header(State &s, PluginProcessor &p) : state(s), pluginProcessor(p) {
     juce::Image microphone = FontAwesome::getInstance()->getIcon(true,
@@ -96,16 +97,33 @@ Header::Header(State &s, PluginProcessor &p) : state(s), pluginProcessor(p) {
     notesMenu.addItem("Mixolydian", 9);
     addAndMakeVisible(notesMenu);
     notesAttachment = std::make_unique<ComboBoxAttachment>(state.parameters, "notes", notesMenu);
+    notesMenu.onChange = [this] {
+        // shouldn't do this in UI
+        Scales scales{};
+        int notesSource = state.notesParameter->getIndex();
+        if (notesSource != 0) {
+            const std::vector<int> &scale = scales.allScales[static_cast<size_t>(notesSource) - 1];
+            *(state.voicesParameter) = static_cast<int>(juce::jmax(constants::MAX_VOICES, scale.size() + 1));
+        }
+        refreshEnabled();
+    };
 
     addAndMakeVisible(messageLabel);
     messageLabel.setFont(messageFont);
     messageLabel.setColour(juce::Label::ColourIds::textColourId, constants::COLOR_MESSAGE_TEXT);
+
+    refresh();
 }
 
 void Header::timerCallback() {
     if (state.recordButton != recordButton.getToggleState()) {
         recordButton.setToggleState(state.recordButton, juce::NotificationType::sendNotification);
     }
+}
+
+void Header::refresh() {
+    refreshMessage();
+    refreshEnabled();
 }
 
 void Header::refreshMessage() {
@@ -122,14 +140,16 @@ void Header::refreshMessage() {
 }
 
 void Header::refreshEnabled() {
-    const bool enabled = !state.recordButton;
-    stepsMenu.setEnabled(enabled);
-    voicesMenu.setEnabled(enabled);
-    rateMenu.setEnabled(enabled);
-    rateTypeMenu.setEnabled(enabled);
-    notesMenu.setEnabled(enabled);
-    stretchButton.setEnabled(enabled);
-    randomButton.setEnabled(enabled);
+    const bool notRecording = !state.recordButton;
+    stepsMenu.setEnabled(notRecording);
+    voicesMenu.setEnabled(notRecording);
+    rateMenu.setEnabled(notRecording);
+    rateTypeMenu.setEnabled(notRecording);
+    notesMenu.setEnabled(notRecording);
+    stretchButton.setEnabled(notRecording);
+    int notesSource = state.notesParameter->getIndex();
+    stretchButton.setEnabled(notRecording && notesSource == 0);
+    randomButton.setEnabled(notRecording);
 }
 
 void Header::paint(juce::Graphics &g) {

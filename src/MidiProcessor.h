@@ -9,6 +9,7 @@
 #include "Stretcher.h"
 #include "Recorder.h"
 #include "Step.h"
+#include "Scales.h"
 
 class MidiProcessor {
 public:
@@ -56,4 +57,6 @@ private:
     Stretcher stretcher{state};
 
     Recorder recorder{state};
+
+    Scales scales;
 };

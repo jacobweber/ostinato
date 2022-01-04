@@ -212,11 +212,27 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midiIn, juce::MidiBuffe
 
             if (currentStep.power && !tieActive) {
                 int transpose = (currentStep.octave - static_cast<int>(constants::MAX_OCTAVES)) * 12;
+                MidiValue noteValue{};
                 for (size_t voiceNum = 0; voiceNum < numVoices; voiceNum++) {
                     if (currentStep.voices[voiceNum]) {
                         int voiceIndex = static_cast<int>(numVoices - 1 - voiceNum); // they're flipped
-                        if (voiceIndex < pressedNotes.size()) {
-                            MidiValue noteValue = pressedNotes[static_cast<int>(voiceIndex)];
+                        int notesSource = state.notesParameter->getIndex();
+                        noteValue.note = -1;
+                        if (notesSource == 0) { // pressed notes
+                            if (voiceIndex < pressedNotes.size()) {
+                                noteValue = pressedNotes[static_cast<int>(voiceIndex)];
+                            }
+                        } else { // scale
+                            noteValue = pressedNotes[0];
+                            const std::vector<int> &scale = scales.allScales[static_cast<size_t>(notesSource) - 1];
+                            int notesPerOctave = static_cast<int>(scale.size());
+                            int octave = voiceIndex / notesPerOctave;
+                            int scaleIndex = voiceIndex % notesPerOctave;
+                            DBG("scale degree " << scaleIndex << " octave " << octave);
+                            noteValue.note +=
+                                    scale[static_cast<size_t>(scaleIndex)] + static_cast<int>(12 * octave);
+                        }
+                        if (noteValue.note != -1) {
                             noteValue.note += transpose;
                             if (noteValue.note >= 0 && noteValue.note <= 127) {
                                 double vel = juce::jmin(currentStep.volume * 2 * noteValue.vel, 127.0);
