@@ -5,6 +5,7 @@
 
 #include "../PluginProcessor.h"
 #include "../State.h"
+#include "../Scales.h"
 #include "../Constants.h"
 
 class Header : public juce::Component {
@@ -39,6 +40,7 @@ public:
 private:
     State &state;
     PluginProcessor &pluginProcessor;
+    Scales scales{};
 
     juce::Font textFont{12.0f};
     juce::Font messageFont{16.0f};

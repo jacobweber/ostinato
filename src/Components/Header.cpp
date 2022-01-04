@@ -1,5 +1,4 @@
 #include "Header.h"
-#include "../Scales.h"
 
 Header::Header(State &s, PluginProcessor &p) : state(s), pluginProcessor(p) {
     juce::Image microphone = FontAwesome::getInstance()->getIcon(true,
@@ -92,7 +91,6 @@ Header::Header(State &s, PluginProcessor &p) : state(s), pluginProcessor(p) {
     notesAttachment = std::make_unique<ComboBoxAttachment>(state.parameters, "notes", notesMenu);
     notesMenu.onChange = [this] {
         // shouldn't do this in UI
-        Scales scales{};
         int notesSource = state.notesParameter->getIndex();
         if (notesSource != 0) {
             const std::vector<int> &scale = scales.allScales[static_cast<size_t>(notesSource) - 1];
