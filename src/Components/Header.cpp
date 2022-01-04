@@ -104,6 +104,7 @@ Header::Header(State &s, PluginProcessor &p) : state(s), pluginProcessor(p) {
         if (notesSource != 0) {
             const std::vector<int> &scale = scales.allScales[static_cast<size_t>(notesSource) - 1];
             *(state.voicesParameter) = static_cast<int>(juce::jmax(constants::MAX_VOICES, scale.size() + 1));
+            *(state.stretchParameter) = false;
         }
         refreshEnabled();
     };
