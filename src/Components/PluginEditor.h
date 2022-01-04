@@ -32,9 +32,6 @@ public:
     void refreshSize();
 
 private:
-    void randomizeParams(bool stepsAndVoices);
-
-private:
     State &state;
     PluginProcessor &pluginProcessor; // store subclass reference so we don't need to cast dynamically
 

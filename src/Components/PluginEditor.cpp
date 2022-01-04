@@ -1,9 +1,4 @@
-#include <memory>
-#include <random>
-
-#include "../PluginProcessor.h"
 #include "PluginEditor.h"
-#include "../Step.h"
 
 PluginEditor::PluginEditor(PluginProcessor &p, State &s)
         : AudioProcessorEditor(&p), state(s), pluginProcessor(p) {
@@ -22,7 +17,7 @@ PluginEditor::PluginEditor(PluginProcessor &p, State &s)
         stepStrips.refresh();
     };
     header.onClickRandom = [this] {
-        randomizeParams(true);
+        state.randomizeParams(true);
     };
     addAndMakeVisible(header);
     addAndMakeVisible(stepStrips);
@@ -76,45 +71,3 @@ void PluginEditor::refreshSize() {
     setSize(width, 600);
 }
 
-void PluginEditor::randomizeParams(bool stepsAndVoices) {
-    std::random_device rd;
-    std::mt19937 mt(rd());
-
-    std::uniform_int_distribution<size_t> randNumSteps(1, constants::MAX_STEPS);
-    std::uniform_int_distribution<size_t> randNumVoices(1, constants::MAX_VOICES);
-    std::uniform_int_distribution<int> randRate(1, state.rateParameter->getAllValueStrings().size());
-    std::uniform_int_distribution<int> randRateType(1, state.rateTypeParameter->getAllValueStrings().size());
-
-    std::uniform_int_distribution<int> randVoice(0, 3);
-    std::uniform_int_distribution<int> randOctave(0, static_cast<int>(constants::MAX_OCTAVES) * 2);
-    std::uniform_real_distribution<float> randLength(0.0, 1.0);
-    std::uniform_int_distribution<int> randTie(0, 10);
-    std::uniform_real_distribution<float> randVolume(0.0, 1.0);
-    std::uniform_int_distribution<int> randPower(0, 10);
-
-    *(state.stretchParameter) = false;
-    size_t numSteps;
-    size_t numVoices;
-    if (stepsAndVoices) {
-        numSteps = randNumSteps(mt);
-        numVoices = randNumVoices(mt);
-        *(state.stepsParameter) = static_cast<int>(numSteps - 1); // index
-        *(state.voicesParameter) = static_cast<int>(numVoices - 1); // index
-    } else {
-        numSteps = static_cast<size_t>(state.stepsParameter->getIndex()) + 1;
-        numVoices = static_cast<size_t>(state.voicesParameter->getIndex()) + 1;
-    }
-    *(state.rateParameter) = randRate(mt); // index
-    *(state.rateTypeParameter) = randRateType(mt); // index
-    *(state.notesParameter) = 0; // index
-    for (size_t i = 0; i < numSteps; i++) {
-        for (size_t j = 0; j < numVoices; j++) {
-            *(state.stepState[i].voiceParameters[j]) = randVoice(mt) == 0;
-        }
-        *(state.stepState[i].octaveParameter) = randOctave(mt); // index
-        *(state.stepState[i].lengthParameter) = randLength(mt);
-        *(state.stepState[i].tieParameter) = randTie(mt) == 0;
-        *(state.stepState[i].volParameter) = randVolume(mt);
-        *(state.stepState[i].powerParameter) = randPower(mt) != 0;
-    }
-}
