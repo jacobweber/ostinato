@@ -51,6 +51,8 @@ private:
     juce::Label rateLabel{{}, constants::LABEL_RATE};
     juce::ComboBox rateMenu;
     juce::ComboBox rateTypeMenu;
+    juce::Label notesLabel{{}, constants::LABEL_NOTES};
+    juce::ComboBox notesMenu;
     juce::Label messageLabel{{}};
 
     // use unique_ptr so it can be destroyed when UI is
@@ -60,6 +62,7 @@ private:
     std::unique_ptr<ComboBoxAttachment> voicesAttachment;
     std::unique_ptr<ComboBoxAttachment> rateAttachment;
     std::unique_ptr<ComboBoxAttachment> rateTypeAttachment;
+    std::unique_ptr<ComboBoxAttachment> notesAttachment;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Header)
 };

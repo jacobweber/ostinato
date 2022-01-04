@@ -29,6 +29,7 @@ namespace constants {
     inline const juce::String LABEL_STEPS = "Steps";
     inline const juce::String LABEL_VOICES = "Voices";
     inline const juce::String LABEL_RATE = "Step Length";
+    inline const juce::String LABEL_NOTES = "Note Source";
     inline const juce::String LABEL_LENGTH = "Length";
     inline const juce::String LABEL_OCTAVE = "Octave";
 

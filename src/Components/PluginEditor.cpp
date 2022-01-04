@@ -72,7 +72,7 @@ void PluginEditor::timerCallback() {
 
 void PluginEditor::refreshSize() {
     int numSteps = state.stepsParameter->getIndex() + 1;
-    int width = juce::jmin(1200, juce::jmax(600, 100 * numSteps));
+    int width = juce::jmin(1200, juce::jmax(800, 100 * numSteps));
     setSize(width, 600);
 }
 
@@ -106,6 +106,7 @@ void PluginEditor::randomizeParams(bool stepsAndVoices) {
     }
     *(state.rateParameter) = randRate(mt); // index
     *(state.rateTypeParameter) = randRateType(mt); // index
+    *(state.notesParameter) = 0; // index
     for (size_t i = 0; i < numSteps; i++) {
         for (size_t j = 0; j < numVoices; j++) {
             *(state.stepState[i].voiceParameters[j]) = randVoice(mt) == 0;

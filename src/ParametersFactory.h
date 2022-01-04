@@ -40,6 +40,18 @@ public:
         rateTypeChoices.add("Dotted");
         layout.add(std::make_unique<juce::AudioParameterChoice>("rateType", "Step Length Type", rateTypeChoices, 0));
 
+        juce::StringArray notesChoices;
+        notesChoices.add("Pressed Keys");
+        notesChoices.add("Major");
+        notesChoices.add("Minor");
+        notesChoices.add("Harmonic Minor");
+        notesChoices.add("Locrian");
+        notesChoices.add("Dorian");
+        notesChoices.add("Phrygian");
+        notesChoices.add("Lydian");
+        notesChoices.add("Mixolydian");
+        layout.add(std::make_unique<juce::AudioParameterChoice>("notes", "Notes", notesChoices, 0));
+
         for (size_t i = 0; i < constants::MAX_STEPS; i++) {
             for (size_t j = 0; j < constants::MAX_VOICES; j++)
                 layout.add(

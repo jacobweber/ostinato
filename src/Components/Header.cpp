@@ -82,6 +82,21 @@ Header::Header(State &s, PluginProcessor &p) : state(s), pluginProcessor(p) {
     addAndMakeVisible(rateTypeMenu);
     rateTypeAttachment = std::make_unique<ComboBoxAttachment>(state.parameters, "rateType", rateTypeMenu);
 
+    addAndMakeVisible(notesLabel);
+    notesLabel.setFont(textFont);
+    notesLabel.attachToComponent(&notesMenu, false);
+    notesMenu.addItem("Pressed Keys", 1);
+    notesMenu.addItem("Major", 2);
+    notesMenu.addItem("Minor", 3);
+    notesMenu.addItem("Harmonic Minor", 4);
+    notesMenu.addItem("Locrian", 5);
+    notesMenu.addItem("Dorian", 6);
+    notesMenu.addItem("Phrygian", 7);
+    notesMenu.addItem("Lydian", 8);
+    notesMenu.addItem("Mixolydian", 9);
+    addAndMakeVisible(notesMenu);
+    notesAttachment = std::make_unique<ComboBoxAttachment>(state.parameters, "notes", notesMenu);
+
     addAndMakeVisible(messageLabel);
     messageLabel.setFont(messageFont);
     messageLabel.setColour(juce::Label::ColourIds::textColourId, constants::COLOR_MESSAGE_TEXT);
@@ -112,6 +127,7 @@ void Header::refreshEnabled() {
     voicesMenu.setEnabled(enabled);
     rateMenu.setEnabled(enabled);
     rateTypeMenu.setEnabled(enabled);
+    notesMenu.setEnabled(enabled);
     stretchButton.setEnabled(enabled);
     randomButton.setEnabled(enabled);
 }
@@ -141,6 +157,8 @@ void Header::resized() {
     toolbar.items.add(juce::FlexItem(rateMenu).withAlignSelf(juce::FlexItem::AlignSelf::autoAlign).withHeight(
             MENU_HEIGHT).withWidth(130).withMargin(margin));
     toolbar.items.add(juce::FlexItem(rateTypeMenu).withAlignSelf(juce::FlexItem::AlignSelf::autoAlign).withHeight(
+            MENU_HEIGHT).withWidth(130).withMargin(margin));
+    toolbar.items.add(juce::FlexItem(notesMenu).withAlignSelf(juce::FlexItem::AlignSelf::autoAlign).withHeight(
             MENU_HEIGHT).withWidth(130).withMargin(margin));
     toolbar.items.add(juce::FlexItem(recordButton).withAlignSelf(juce::FlexItem::AlignSelf::autoAlign).withHeight(
             ICON_SIZE + 10).withWidth(
