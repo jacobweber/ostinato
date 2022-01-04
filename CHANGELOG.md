@@ -30,3 +30,7 @@
 ### 0.0.5
 
 * Add record mode.
+
+### 0.0.6 (unreleased)
+
+* Add note source menu with scales.
