@@ -27,8 +27,6 @@ public:
 
     void timerCallback() override;
 
-    void updateSteps(const UpdatedSteps &steps);
-
     void refreshSize();
 
 private:

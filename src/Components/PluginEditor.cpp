@@ -48,8 +48,8 @@ bool PluginEditor::keyPressed(const juce::KeyPress &key, juce::Component *) {
 
 void PluginEditor::paint(juce::Graphics &g) {
     juce::ColourGradient gradient(constants::COLOR_BACKGROUND, 0, 0, (constants::COLOR_BACKGROUND).brighter(.25f),
-                                  getWidth(),
-                                  0, false);
+                                  static_cast<float>(getWidth()),
+                                  0.0f, false);
     g.setGradientFill(gradient);
     g.fillAll();
 }
