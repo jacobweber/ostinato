@@ -99,6 +99,7 @@ Header::Header(State &s, PluginProcessor &p) : state(s), pluginProcessor(p) {
             *(state.voicesParameter) = static_cast<int>(juce::jmax(constants::MAX_VOICES, scale.size() + 1));
             *(state.stretchParameter) = false;
         }
+        refreshMessage();
         refreshEnabled();
     };
 
@@ -126,6 +127,8 @@ void Header::refreshMessage() {
         text = constants::MSG_RECORD;
     } else if (stretchButton.getToggleState()) {
         text = constants::MSG_STRETCH;
+    } else if (notesMenu.getSelectedItemIndex() > 0) {
+        text = constants::MSG_SCALE;
     } else {
         text = "";
     }

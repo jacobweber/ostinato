@@ -42,6 +42,7 @@ namespace constants {
     inline const juce::String TOOLTIP_POWER_OFF = "Disable this step";
     inline const juce::String TOOLTIP_POWER_ON = "Enable this step";
 
+    inline const juce::String MSG_SCALE = "Hold down a key to use as the root, and each voice will be a scale degree in that key.";
     inline const juce::String MSG_RECORD = "Play an arpeggiation to record it. Press the space bar or sustain pedal to enter a rest.";
     inline const juce::String MSG_STRETCH = "The shape of the pattern below will be stretched/shrunk to cover most pressed keys.";
 
