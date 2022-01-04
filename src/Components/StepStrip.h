@@ -13,7 +13,7 @@
 
 class StepStrip : public juce::Component {
 public:
-    constexpr static int ICON_SIZE = 14.0f;
+    constexpr static float ICON_SIZE = 14.0f;
 
     typedef juce::AudioProcessorValueTreeState::ButtonAttachment ButtonAttachment;
     typedef juce::AudioProcessorValueTreeState::SliderAttachment SliderAttachment;

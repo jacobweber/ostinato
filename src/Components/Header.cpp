@@ -168,15 +168,15 @@ void Header::resized() {
     toolbar.justifyContent = juce::FlexBox::JustifyContent::flexStart;
     toolbar.alignItems = juce::FlexBox::AlignItems::center;
     toolbar.items.add(juce::FlexItem(stepsMenu).withAlignSelf(juce::FlexItem::AlignSelf::autoAlign).withHeight(
-            MENU_HEIGHT).withWidth(90).withMargin(margin));
+            MENU_HEIGHT).withWidth(90.0).withMargin(margin));
     toolbar.items.add(juce::FlexItem(voicesMenu).withAlignSelf(juce::FlexItem::AlignSelf::autoAlign).withHeight(
-            MENU_HEIGHT).withWidth(90).withMargin(margin));
+            MENU_HEIGHT).withWidth(90.0).withMargin(margin));
     toolbar.items.add(juce::FlexItem(rateMenu).withAlignSelf(juce::FlexItem::AlignSelf::autoAlign).withHeight(
-            MENU_HEIGHT).withWidth(130).withMargin(margin));
+            MENU_HEIGHT).withWidth(130.0).withMargin(margin));
     toolbar.items.add(juce::FlexItem(rateTypeMenu).withAlignSelf(juce::FlexItem::AlignSelf::autoAlign).withHeight(
-            MENU_HEIGHT).withWidth(130).withMargin(margin));
+            MENU_HEIGHT).withWidth(130.0).withMargin(margin));
     toolbar.items.add(juce::FlexItem(notesMenu).withAlignSelf(juce::FlexItem::AlignSelf::autoAlign).withHeight(
-            MENU_HEIGHT).withWidth(130).withMargin(margin));
+            MENU_HEIGHT).withWidth(130.0).withMargin(margin));
     toolbar.items.add(juce::FlexItem(recordButton).withAlignSelf(juce::FlexItem::AlignSelf::autoAlign).withHeight(
             ICON_SIZE + 10).withWidth(
             static_cast<float>(recordButton.getWidth())).withMargin({0.0, 5.0, 0.0, 5.0}));

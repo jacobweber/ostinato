@@ -10,7 +10,7 @@
 class Header : public juce::Component {
 public:
     constexpr static float ICON_SIZE = 24.0f;
-    constexpr static int MENU_HEIGHT = 24;
+    constexpr static float MENU_HEIGHT = 24.0f;
 
     typedef juce::AudioProcessorValueTreeState::SliderAttachment SliderAttachment;
     typedef juce::AudioProcessorValueTreeState::ComboBoxAttachment ComboBoxAttachment;
