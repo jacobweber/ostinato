@@ -211,12 +211,12 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midiIn, juce::MidiBuffe
             }
 
             if (currentStep.power && !tieActive) {
+                int notesSource = state.notesParameter->getIndex();
                 int transpose = (currentStep.octave - static_cast<int>(constants::MAX_OCTAVES)) * 12;
                 MidiValue noteValue{};
                 for (size_t voiceNum = 0; voiceNum < numVoices; voiceNum++) {
                     if (currentStep.voices[voiceNum]) {
                         int voiceIndex = static_cast<int>(numVoices - 1 - voiceNum); // they're flipped
-                        int notesSource = state.notesParameter->getIndex();
                         noteValue.note = -1;
                         if (notesSource == 0) { // pressed notes
                             if (voiceIndex < pressedNotes.size()) {
