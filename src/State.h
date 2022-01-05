@@ -36,26 +36,34 @@ public:
         }
     }
 
-    void randomizeParams(bool stepsAndVoices) {
+    void randomizeParams(bool stepsAndVoices, bool rate, bool notes) {
         std::random_device rd;
         std::mt19937 mt(rd());
 
-        std::uniform_int_distribution<size_t> randNumSteps(1, constants::MAX_STEPS);
-        std::uniform_int_distribution<size_t> randNumVoices(1, constants::MAX_VOICES);
-        std::uniform_int_distribution<int> randRate(1, rateParameter->getAllValueStrings().size());
-        std::uniform_int_distribution<int> randRateType(1, rateTypeParameter->getAllValueStrings().size());
+        std::uniform_int_distribution<int> randVoiceEnabled(0, 5);
 
-        std::uniform_int_distribution<int> randVoice(0, 3);
-        std::uniform_int_distribution<int> randOctave(0, static_cast<int>(constants::MAX_OCTAVES) * 2);
+        size_t numOctaveChoices = constants::MAX_OCTAVES * 2 + 1;
+        std::discrete_distribution<int> randOctave(numOctaveChoices, 0.0, static_cast<double>(numOctaveChoices),
+                                                   [](double val) { // make central octaves more likely
+                                                       double weight = std::floor(val);
+                                                       if (weight > constants::MAX_OCTAVES) {
+                                                           weight = constants::MAX_OCTAVES * 2 - weight;
+                                                       }
+                                                       return std::pow(weight, 2);
+                                                   });
+
         std::uniform_real_distribution<float> randLength(0.0, 1.0);
         std::uniform_int_distribution<int> randTie(0, 10);
         std::uniform_real_distribution<float> randVolume(0.0, 1.0);
         std::uniform_int_distribution<int> randPower(0, 10);
 
         *(stretchParameter) = false;
+
         size_t numSteps;
         size_t numVoices;
         if (stepsAndVoices) {
+            std::uniform_int_distribution<size_t> randNumSteps(1, constants::MAX_STEPS);
+            std::uniform_int_distribution<size_t> randNumVoices(1, constants::MAX_VOICES);
             numSteps = randNumSteps(mt);
             numVoices = randNumVoices(mt);
             *(stepsParameter) = static_cast<int>(numSteps - 1); // index
@@ -64,12 +72,26 @@ public:
             numSteps = static_cast<size_t>(stepsParameter->getIndex()) + 1;
             numVoices = static_cast<size_t>(voicesParameter->getIndex()) + 1;
         }
-        *(rateParameter) = randRate(mt); // index
-        *(rateTypeParameter) = randRateType(mt); // index
-        *(notesParameter) = 0; // index
+
+        if (rate) {
+            std::uniform_int_distribution<int> randRate(0, rateParameter->getAllValueStrings().size() - 1);
+            std::uniform_int_distribution<int> randRateType(0, rateTypeParameter->getAllValueStrings().size() - 1);
+            *(rateParameter) = randRate(mt); // index
+            *(rateTypeParameter) = randRateType(mt); // index
+        }
+
+        std::uniform_int_distribution<size_t> randMainVoice(0, numVoices - 1);
+
+        if (notes) {
+            std::uniform_int_distribution<int> randNotes(0, notesParameter->getAllValueStrings().size() - 1);
+            *(notesParameter) = randNotes(mt); // index
+        }
+
         for (size_t i = 0; i < numSteps; i++) {
+            size_t mainVoice = randMainVoice(mt);
             for (size_t j = 0; j < numVoices; j++) {
-                *(stepState[i].voiceParameters[j]) = randVoice(mt) == 0;
+                bool enabled = j == mainVoice || randVoiceEnabled(mt) == 0;
+                *(stepState[i].voiceParameters[j]) = enabled;
             }
             *(stepState[i].octaveParameter) = randOctave(mt); // index
             *(stepState[i].lengthParameter) = randLength(mt);

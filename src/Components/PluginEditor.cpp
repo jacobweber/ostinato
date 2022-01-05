@@ -17,7 +17,7 @@ PluginEditor::PluginEditor(PluginProcessor &p, State &s)
         stepStrips.refresh();
     };
     header.onClickRandom = [this] {
-        state.randomizeParams(false);
+        state.randomizeParams(false, false, false);
     };
     addAndMakeVisible(header);
     addAndMakeVisible(stepStrips);
