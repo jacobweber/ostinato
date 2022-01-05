@@ -68,14 +68,12 @@ public:
                 strips.push_back(std::make_unique<StepStrip>(state, i));
                 addAndMakeVisible(*strips[i]);
             }
-            oldNumSteps = newNumSteps;
             resized();
         } else if (newNumSteps < oldNumSteps) {
             for (size_t i = oldNumSteps - 1; i >= newNumSteps; i--) {
                 removeChildComponent(strips[i].get());
                 strips.pop_back();
             }
-            oldNumSteps = newNumSteps;
             resized();
         }
     }

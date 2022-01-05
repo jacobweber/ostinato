@@ -189,7 +189,6 @@ public:
                         "step" + std::to_string(stepNum) + "_voice" + std::to_string(i),
                         *voices[i]));
             }
-            oldNumVoices = newNumVoices;
             resized();
         } else if (newNumVoices < oldNumVoices) {
             for (size_t i = oldNumVoices - 1; i >= newNumVoices; i--) {
@@ -197,7 +196,6 @@ public:
                 voicesAttachments.pop_back();
                 voices.pop_back();
             }
-            oldNumVoices = newNumVoices;
             resized();
         }
     }
@@ -221,11 +219,11 @@ private:
     juce::ImageButton powerButton{};
 
     std::vector<std::unique_ptr<ButtonAttachment>> voicesAttachments;
-    std::unique_ptr<ComboBoxAttachment> octaveAttachment;
-    std::unique_ptr<SliderAttachment> lengthAttachment;
-    std::unique_ptr<ButtonAttachment> tieAttachment;
-    std::unique_ptr<SliderAttachment> volAttachment;
-    std::unique_ptr<ButtonAttachment> powerAttachment;
+    [[maybe_unused]] std::unique_ptr<ComboBoxAttachment> octaveAttachment;
+    [[maybe_unused]] std::unique_ptr<SliderAttachment> lengthAttachment;
+    [[maybe_unused]] std::unique_ptr<ButtonAttachment> tieAttachment;
+    [[maybe_unused]] std::unique_ptr<SliderAttachment> volAttachment;
+    [[maybe_unused]] std::unique_ptr<ButtonAttachment> powerAttachment;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(StepStrip)
 };

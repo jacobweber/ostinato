@@ -35,7 +35,7 @@ private:
 
     LookAndFeel lookAndFeel{};
 
-    juce::TooltipWindow tooltipWindow{nullptr, 500};
+    [[maybe_unused]] juce::TooltipWindow tooltipWindow{nullptr, 500};
 
     Header header{state, pluginProcessor};
     StepStrips stepStrips{state};
