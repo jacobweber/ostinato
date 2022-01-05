@@ -1,17 +1,17 @@
-### 0.0.1
+### 0.0.6 (unreleased)
 
-* Initial release.
-* Add controls for number of steps and voices.
-* Add step length control.
-* Add voice on/off controls.
+* Add note source menu with scales.
+* Improve randomizer.
 
-### 0.0.2
+### 0.0.5
 
-* Add duration and volume controls.
-* Pass through non-note data.
-* Handle looping.
-* Add active step indicator.
-* Add clear-all and set-all buttons.
+* Add record mode.
+
+### 0.0.4
+
+* Add stretch mode.
+* Improve design.
+* Remove timecode display.
 
 ### 0.0.3
 
@@ -21,16 +21,17 @@
 * Add randomizer button.
 * Clean up timing.
 
-### 0.0.4
+### 0.0.2
 
-* Add stretch mode.
-* Improve design.
-* Remove timecode display.
+* Add duration and volume controls.
+* Pass through non-note data.
+* Handle looping.
+* Add active step indicator.
+* Add clear-all and set-all buttons.
 
-### 0.0.5
+### 0.0.1
 
-* Add record mode.
-
-### 0.0.6 (unreleased)
-
-* Add note source menu with scales.
+* Initial release.
+* Add controls for number of steps and voices.
+* Add step length control.
+* Add voice on/off controls.
