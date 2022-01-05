@@ -14,6 +14,13 @@ public:
         if (state.updateStepsFromAudioThread.try_dequeue(updatedSteps)) {
             updateSteps(updatedSteps);
         }
+        if (state.messagesFromAudioThread.try_dequeue(msg)) {
+            switch (msg) {
+                case State::MSG_SCALE_ON:
+                    *(state.stretchParameter) = false;
+                    break;
+            }
+        }
     }
 
     void updateSteps(const UpdatedSteps &steps) {
@@ -35,4 +42,5 @@ public:
 private:
     State &state;
     UpdatedSteps updatedSteps{};
+    int msg = 0;
 };

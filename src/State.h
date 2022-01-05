@@ -8,8 +8,12 @@
 #include "Constants.h"
 #include "Step.h"
 
-class State {
+class State : juce::AudioProcessorParameter::Listener {
 public:
+    inline static constexpr int MSG_SCALE_ON = 0;
+
+    inline static constexpr int PARAM_INDEX_NOTES = 0;
+
     explicit State(juce::AudioProcessorValueTreeState &p) : parameters(p) {
         stretchParameter = dynamic_cast<juce::AudioParameterBool *> (parameters.getParameter("stretch"));
         stepsParameter = dynamic_cast<juce::AudioParameterChoice *> (parameters.getParameter("steps"));
@@ -34,6 +38,18 @@ public:
             stepState[i].powerParameter = dynamic_cast<juce::AudioParameterBool *> (parameters.getParameter(
                     "step" + std::to_string(i) + "_power"));
         }
+
+        notesParameter->addListener(this);
+    }
+
+    void parameterValueChanged(int parameterIndex, float newValue) override {
+        // may be called on audio thread
+        if (parameterIndex == PARAM_INDEX_NOTES && newValue != 0.0) {
+            messagesFromAudioThread.try_enqueue(MSG_SCALE_ON);
+        }
+    }
+
+    void parameterGestureChanged(int, bool) override {
     }
 
     void randomizeParams(bool stepsAndVoices, bool rate, bool notes) {
@@ -117,5 +133,6 @@ public:
     std::atomic<bool> recordButton{false};
     std::atomic<bool> recordedRest{false};
 
-    moodycamel::ReaderWriterQueue<UpdatedSteps> updateStepsFromAudioThread{5};
+    moodycamel::ReaderWriterQueue<UpdatedSteps> updateStepsFromAudioThread{16};
+    moodycamel::ReaderWriterQueue<int> messagesFromAudioThread{16};
 };
