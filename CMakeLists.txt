@@ -149,6 +149,7 @@ set(TestFiles
         test/PluginInfo.cpp
         test/MidiValue.cpp
         test/MidiProcessor.cpp
+        test/Recorder.cpp
         test/Scales.cpp
         test/Stretcher.cpp)
 

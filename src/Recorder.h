@@ -57,8 +57,10 @@ public:
         for (const auto metadata: midiIn) {
             const auto msg = metadata.getMessage();
             if (msg.isNoteOn()) {
-                DBG("note " << msg.getDescription() << "  " << (metadata.samplePosition - lastNoteInBlockSamplePos)
-                            << " since last in block, "
+                DBG("note " << msg.getNoteNumber() << " at "
+                            << metadata.samplePosition << " samples, last note "
+                            << lastNoteInBlockSamplePos
+                            << " samples, "
                             << samplesUntilStepFinalized << " until finalized");
                 if (samplesUntilStepFinalized != -1) {
                     if (metadata.samplePosition - lastNoteInBlockSamplePos > samplesUntilStepFinalized) {
