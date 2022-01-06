@@ -57,8 +57,9 @@ public:
             tempMidiOut.clear();
 
             for (const auto metadata: midiIn) {
-                if (metadata.samplePosition < lastBlockStartSample + blockSize) {
-                    tempMidiIn.addEvent(metadata.getMessage(), lastBlockStartSample + metadata.samplePosition);
+                if (metadata.samplePosition >= lastBlockStartSample &&
+                    metadata.samplePosition < lastBlockStartSample + blockSize) {
+                    tempMidiIn.addEvent(metadata.getMessage(), metadata.samplePosition - lastBlockStartSample);
                 }
             }
 
@@ -89,7 +90,7 @@ public:
     }
 
 public:
-    int blockSize = 200;
+    int blockSize = 100;
     int sampleRate = 1000;
     TestAudioProcessor ap{ParametersFactory::create()};
     State state{ap.state};
