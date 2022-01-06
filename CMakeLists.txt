@@ -149,6 +149,7 @@ set(TestFiles
         test/PluginInfo.cpp
         test/MidiValue.cpp
         test/MidiProcessor.cpp
+        test/Scales.cpp
         test/Stretcher.cpp)
 
 # Download the tagged version of Catch2
