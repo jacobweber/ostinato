@@ -6,6 +6,7 @@
 #include "Step.h"
 #include "Constants.h"
 
+// Only use for things that don't need to happen during bounce.
 class MessageReader : public juce::Timer {
 public:
     explicit MessageReader(State &_state) : state(_state) {

@@ -1,3 +1,7 @@
+### 0.0.7 (unreleased)
+
+* Use JUCE 6.1.2.
+
 ### 0.0.6
 
 * Add note source menu with scales.
