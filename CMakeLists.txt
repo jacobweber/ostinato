@@ -38,7 +38,7 @@ FetchContent_MakeAvailable(JUCE)
 FetchContent_Declare(
         readerwriterqueue
         GIT_REPOSITORY https://github.com/cameron314/readerwriterqueue
-        GIT_TAG master
+        GIT_TAG v1.0.6
 )
 FetchContent_MakeAvailable(readerwriterqueue)
 
