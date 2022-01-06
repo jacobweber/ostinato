@@ -112,7 +112,7 @@ private:
         UpdatedSteps steps{};
         juce::SortedSet<int> voices;
         steps.numSteps = numSteps;
-        for (size_t stepNum = 0; stepNum < steps.numSteps; stepNum++) {
+        for (stepnum_t stepNum = 0; stepNum < steps.numSteps; stepNum++) {
             DBG("step " << stepNum);
             auto const &notesInStep = notesInSteps[stepNum];
             for (auto const &midiValue: notesInStep) {
@@ -122,12 +122,12 @@ private:
         }
 
         // ignore extra notes on top
-        steps.numVoices = juce::jmax(static_cast<size_t>(1),
-                                     juce::jmin(constants::MAX_VOICES, static_cast<size_t>(voices.size())));
+        steps.numVoices = juce::jmax(static_cast<voicenum_t>(1),
+                                     juce::jmin(constants::MAX_VOICES, static_cast<voicenum_t>(voices.size())));
 
-        for (size_t stepNum = 0; stepNum < steps.numSteps; stepNum++) {
+        for (stepnum_t stepNum = 0; stepNum < steps.numSteps; stepNum++) {
             auto const &notesInStep = notesInSteps[stepNum];
-            for (size_t voiceNum = 0; voiceNum < steps.numVoices; voiceNum++) {
+            for (voicenum_t voiceNum = 0; voiceNum < steps.numVoices; voiceNum++) {
                 steps.steps[stepNum].voices[steps.numVoices - 1 - voiceNum] = false;
             }
             int totalVel = 0;
@@ -135,7 +135,7 @@ private:
             for (auto const &midiValue: notesInStep) {
                 int index = voices.indexOf(midiValue.note);
                 if (index != -1 && index < static_cast<int>(steps.numVoices)) {
-                    steps.steps[stepNum].voices[steps.numVoices - 1 - static_cast<size_t>(index)] = true;
+                    steps.steps[stepNum].voices[steps.numVoices - 1 - static_cast<voicenum_t>(index)] = true;
                     totalVel += midiValue.vel;
                     numActualNotes++;
                 }
@@ -147,8 +147,8 @@ private:
 
         /*
         juce::String grid = juce::String();
-        for (size_t j = 0; j < steps.numVoices; j++) {
-            for (size_t i = 0; i < steps.numSteps; i++) {
+        for (voicenum_t j = 0; j < steps.numVoices; j++) {
+            for (stepnum_t i = 0; i < steps.numSteps; i++) {
                 grid += steps.steps[i].voices[j] ? '*' : '-';
             }
             grid += '\n';
@@ -169,7 +169,7 @@ private:
     int samplesUntilStepFinalized = -1;
 
     NotesInSteps notesInSteps;
-    size_t numSteps = 0;
+    stepnum_t numSteps = 0;
 
     std::atomic<bool> refreshUI = false;
 };

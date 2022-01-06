@@ -53,24 +53,24 @@ public:
 
     void refresh() {
         refreshSteps();
-        size_t numSteps = strips.size();
-        for (size_t i = 0; i < numSteps; i++) {
+        stepnum_t numSteps = strips.size();
+        for (stepnum_t i = 0; i < numSteps; i++) {
             strips[i]->refresh();
         }
         setEnabled(!state.recordButton);
     }
 
     void refreshSteps() {
-        size_t oldNumSteps = strips.size();
-        auto newNumSteps = static_cast<size_t>(state.stepsParameter->getIndex()) + 1;
+        stepnum_t oldNumSteps = strips.size();
+        auto newNumSteps = static_cast<stepnum_t>(state.stepsParameter->getIndex()) + 1;
         if (newNumSteps > oldNumSteps) {
-            for (size_t i = oldNumSteps; i < newNumSteps; i++) {
+            for (stepnum_t i = oldNumSteps; i < newNumSteps; i++) {
                 strips.push_back(std::make_unique<StepStrip>(state, i));
                 addAndMakeVisible(*strips[i]);
             }
             resized();
         } else if (newNumSteps < oldNumSteps) {
-            for (size_t i = oldNumSteps - 1; i >= newNumSteps; i--) {
+            for (stepnum_t i = oldNumSteps - 1; i >= newNumSteps; i--) {
                 removeChildComponent(strips[i].get());
                 strips.pop_back();
             }
@@ -81,7 +81,7 @@ public:
 private:
     State &state;
     bool oldPlaying{false};
-    size_t oldStepIndex{0};
+    stepnum_t oldStepIndex{0};
 
     // vectors move items into their own storage, but components can't be copied/moved
     // but unique_ptr can be moved, so the vector assumes ownership

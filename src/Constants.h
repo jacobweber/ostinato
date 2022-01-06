@@ -3,10 +3,13 @@
 #include "juce_gui_basics/juce_gui_basics.h"
 #include <cstddef>
 
+typedef size_t voicenum_t;
+typedef size_t stepnum_t;
+
 namespace constants {
     constexpr size_t MAX_NOTES = 24;
-    constexpr size_t MAX_STEPS = 16;
-    constexpr size_t MAX_VOICES = 8;
+    constexpr stepnum_t MAX_STEPS = 16;
+    constexpr voicenum_t MAX_VOICES = 8;
     constexpr size_t MAX_OCTAVES = 4;
 
     inline const juce::Colour COLOR_STANDARD = juce::Colours::white;

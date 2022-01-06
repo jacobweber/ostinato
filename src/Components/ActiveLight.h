@@ -7,7 +7,7 @@
 
 class ActiveLight : public juce::Component {
 public:
-    ActiveLight(State &s, size_t n) : stepNum(n), state(s) {
+    ActiveLight(State &s, stepnum_t n) : stepNum(n), state(s) {
     }
 
     void enablementChanged() override {
@@ -28,7 +28,7 @@ public:
     }
 
 private:
-    size_t stepNum{0};
+    stepnum_t stepNum{0};
     State &state;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ActiveLight)

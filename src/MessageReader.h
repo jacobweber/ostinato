@@ -4,6 +4,7 @@
 
 #include "State.h"
 #include "Step.h"
+#include "Constants.h"
 
 class MessageReader : public juce::Timer {
 public:
@@ -20,8 +21,8 @@ public:
         DBG("get refresh state with " << steps.numSteps << " steps and " << steps.numVoices << " voices");
         *(state.voicesParameter) = static_cast<int>(steps.numVoices) - 1;
         *(state.stepsParameter) = static_cast<int>(steps.numSteps) - 1;
-        for (size_t stepNum = 0; stepNum < steps.numSteps; stepNum++) {
-            for (size_t voiceNum = 0; voiceNum < steps.numVoices; voiceNum++) {
+        for (stepnum_t stepNum = 0; stepNum < steps.numSteps; stepNum++) {
+            for (voicenum_t voiceNum = 0; voiceNum < steps.numVoices; voiceNum++) {
                 *(state.stepState[stepNum].voiceParameters[voiceNum]) = steps.steps[stepNum].voices[voiceNum];
             }
             *(state.stepState[stepNum].powerParameter) = true;

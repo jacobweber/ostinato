@@ -2,8 +2,9 @@
 
 #include "Constants.h"
 
-constexpr size_t MAX_ACTUAL_VOICES =
-        2 + static_cast<size_t>((constants::MAX_STEPS - 1) * (constants::MAX_NOTES - 1) / (constants::MAX_VOICES - 1));
+constexpr voicenum_t MAX_ACTUAL_VOICES =
+        2 +
+        static_cast<voicenum_t>((constants::MAX_STEPS - 1) * (constants::MAX_NOTES - 1) / (constants::MAX_VOICES - 1));
 
 struct CurrentStep {
     std::array<bool, MAX_ACTUAL_VOICES> voices{};
@@ -21,6 +22,6 @@ struct UpdatedStep {
 };
 struct UpdatedSteps {
     std::array<UpdatedStep, constants::MAX_STEPS> steps;
-    size_t numSteps;
-    size_t numVoices;
+    stepnum_t numSteps;
+    voicenum_t numVoices;
 };

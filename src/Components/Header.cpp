@@ -46,7 +46,7 @@ Header::Header(State &s, PluginProcessor &p) : state(s), pluginProcessor(p) {
     addAndMakeVisible(stepsLabel);
     stepsLabel.setFont(textFont);
     stepsLabel.attachToComponent(&stepsMenu, false);
-    for (size_t i = 1; i <= constants::MAX_STEPS; i++) {
+    for (stepnum_t i = 1; i <= constants::MAX_STEPS; i++) {
         stepsMenu.addItem(std::to_string(i), static_cast<int>(i));
     }
     stepsMenu.onChange = [this] { onUpdateSteps(); };
@@ -56,7 +56,7 @@ Header::Header(State &s, PluginProcessor &p) : state(s), pluginProcessor(p) {
     addAndMakeVisible(voicesLabel);
     voicesLabel.setFont(textFont);
     voicesLabel.attachToComponent(&voicesMenu, false);
-    for (size_t i = 1; i <= constants::MAX_VOICES; i++) {
+    for (voicenum_t i = 1; i <= constants::MAX_VOICES; i++) {
         voicesMenu.addItem(std::to_string(i), static_cast<int>(i));
     }
     voicesMenu.onChange = [this] { onUpdateVoices(); };

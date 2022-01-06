@@ -174,7 +174,7 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midiIn, juce::MidiBuffe
 
         if (playSampleOffsetWithinBlock != -1) {
             // play a step within this block
-            size_t numVoices;
+            voicenum_t numVoices;
 
             if (stretchParam) {
                 if (!stretchActive) {
@@ -191,8 +191,8 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midiIn, juce::MidiBuffe
                     nextStepIndex = stretcher.getNextStepIndex();
                 }
 
-                size_t numSteps = static_cast<size_t>(state.stepsParameter->getIndex()) + 1;
-                numVoices = static_cast<size_t>(state.voicesParameter->getIndex()) + 1;
+                stepnum_t numSteps = static_cast<stepnum_t>(state.stepsParameter->getIndex()) + 1;
+                numVoices = static_cast<voicenum_t>(state.voicesParameter->getIndex()) + 1;
 
                 if (nextStepIndex >= numSteps) {
                     nextStepIndex = 0;
@@ -204,7 +204,7 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midiIn, juce::MidiBuffe
                 currentStep.octave = state.stepState[nextStepIndex].octaveParameter->getIndex();
                 currentStep.length = state.stepState[nextStepIndex].lengthParameter->get();
                 currentStep.tie = state.stepState[nextStepIndex].tieParameter->get();
-                for (size_t voiceNum = 0; voiceNum < numVoices; voiceNum++) {
+                for (voicenum_t voiceNum = 0; voiceNum < numVoices; voiceNum++) {
                     currentStep.voices[voiceNum] = state.stepState[nextStepIndex].voiceParameters[voiceNum]->get();
                 }
 
@@ -217,7 +217,7 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midiIn, juce::MidiBuffe
             if (currentStep.power && !tieActive) {
                 int transpose = (currentStep.octave - static_cast<int>(constants::MAX_OCTAVES)) * 12;
                 MidiValue noteValue{};
-                for (size_t voiceNum = 0; voiceNum < numVoices; voiceNum++) {
+                for (voicenum_t voiceNum = 0; voiceNum < numVoices; voiceNum++) {
                     if (currentStep.voices[voiceNum]) {
                         int voiceIndex = static_cast<int>(numVoices - 1 - voiceNum); // they're flipped
                         noteValue.note = -1;

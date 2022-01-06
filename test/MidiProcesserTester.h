@@ -21,8 +21,8 @@ public:
         *(state.rateParameter) = 2; // index
         *(state.rateTypeParameter) = 0; // index
         *(state.notesParameter) = 0; // index
-        for (size_t i = 0; i < constants::MAX_STEPS; i++) {
-            for (size_t j = 0; j < constants::MAX_VOICES; j++) {
+        for (stepnum_t i = 0; i < constants::MAX_STEPS; i++) {
+            for (voicenum_t j = 0; j < constants::MAX_VOICES; j++) {
                 *(state.stepState[i].voiceParameters[j]) = false;
             }
             *(state.stepState[i].octaveParameter) = constants::MAX_OCTAVES; // index; 0

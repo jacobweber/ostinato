@@ -10,6 +10,7 @@
 #include "Recorder.h"
 #include "Step.h"
 #include "Scales.h"
+#include "Constants.h"
 
 class MidiProcessor {
 public:
@@ -40,7 +41,7 @@ private:
 
     bool cycleOn = false;
     bool transportOn = false;
-    size_t nextStepIndex = 0;
+    stepnum_t nextStepIndex = 0;
     double prevPpqPos = 0.0;
     double nextPpqPos = 0.0; // predicted, in case we jump back in time
     bool tieActive = false;

@@ -19,7 +19,7 @@ public:
     typedef juce::AudioProcessorValueTreeState::SliderAttachment SliderAttachment;
     typedef juce::AudioProcessorValueTreeState::ComboBoxAttachment ComboBoxAttachment;
 
-    StepStrip(State &s, size_t n) : stepNum(n), state(s) {
+    StepStrip(State &s, stepnum_t n) : stepNum(n), state(s) {
         DBG("created strip " << stepNum);
 
         addAndMakeVisible(activeLight);
@@ -33,7 +33,7 @@ public:
         clearButton.setImages(true, false, true, square, 1.0f, {}, {}, 1.0f, {}, {}, 1.0f,
                               constants::COLOR_TOGGLE_INACTIVE);
         clearButton.onClick = [this] {
-            for (size_t i = 0; i < voices.size(); i++)
+            for (voicenum_t i = 0; i < voices.size(); i++)
                 *(state.stepState[stepNum].voiceParameters[i]) = false;
         };
         clearButton.setTooltip(constants::TOOLTIP_VOICES_CLEAR);
@@ -47,7 +47,7 @@ public:
         fillButton.setImages(true, false, true, checkSquare, 1.0f, {}, {}, 1.0f, {}, {}, 1.0f,
                              constants::COLOR_TOGGLE_INACTIVE);
         fillButton.onClick = [this] {
-            for (size_t i = 0; i < voices.size(); i++)
+            for (voicenum_t i = 0; i < voices.size(); i++)
                 *(state.stepState[stepNum].voiceParameters[i]) = true;
         };
         fillButton.setTooltip(constants::TOOLTIP_VOICES_FILL);
@@ -146,7 +146,7 @@ public:
         stepsBox.items.add(juce::FlexItem(fillButton).withMargin(3).withHeight(ICON_SIZE).withWidth(ICON_SIZE));
         stepsBox.performLayout(iconArea.toFloat());
 
-        for (size_t i = 0; i < voices.size(); i++)
+        for (voicenum_t i = 0; i < voices.size(); i++)
             if (voices.size() > i) {
                 voices[i]->setBounds(area.removeFromTop(20).reduced(2));
                 area.removeFromTop(2);
@@ -177,10 +177,10 @@ public:
     }
 
     void refreshVoices() {
-        size_t oldNumVoices = voices.size();
-        size_t newNumVoices = static_cast<size_t>(state.voicesParameter->getIndex()) + 1;
+        voicenum_t oldNumVoices = voices.size();
+        voicenum_t newNumVoices = static_cast<voicenum_t>(state.voicesParameter->getIndex()) + 1;
         if (newNumVoices > oldNumVoices) {
-            for (size_t i = oldNumVoices; i < newNumVoices; i++) {
+            for (voicenum_t i = oldNumVoices; i < newNumVoices; i++) {
                 voices.push_back(std::make_unique<juce::TextButton>());
                 voices[i]->setClickingTogglesState(true);
                 addAndMakeVisible(*voices[i]);
@@ -191,7 +191,7 @@ public:
             }
             resized();
         } else if (newNumVoices < oldNumVoices) {
-            for (size_t i = oldNumVoices - 1; i >= newNumVoices; i--) {
+            for (voicenum_t i = oldNumVoices - 1; i >= newNumVoices; i--) {
                 removeChildComponent(voices[i].get());
                 voicesAttachments.pop_back();
                 voices.pop_back();
@@ -201,7 +201,7 @@ public:
     }
 
 private:
-    size_t stepNum{0};
+    stepnum_t stepNum{0};
     State &state;
 
     juce::Font textFont{12.0f};

@@ -13,13 +13,13 @@ public:
         layout.add(std::make_unique<juce::AudioParameterBool>("stretch", "Stretch", false));
 
         juce::StringArray stepsChoices;
-        for (size_t i = 1; i <= constants::MAX_STEPS; i++) {
+        for (stepnum_t i = 1; i <= constants::MAX_STEPS; i++) {
             stepsChoices.add(std::to_string(i));
         }
         layout.add(std::make_unique<juce::AudioParameterChoice>("steps", "Number of Steps", stepsChoices, 3));
 
         juce::StringArray voicesChoices;
-        for (size_t i = 1; i <= constants::MAX_VOICES; i++) {
+        for (voicenum_t i = 1; i <= constants::MAX_VOICES; i++) {
             voicesChoices.add(std::to_string(i));
         }
         layout.add(std::make_unique<juce::AudioParameterChoice>("voices", "Number of Voices", voicesChoices, 3));
@@ -52,8 +52,8 @@ public:
         notesChoices.add("Mixolydian");
         layout.add(std::make_unique<juce::AudioParameterChoice>("notes", "Notes", notesChoices, 0));
 
-        for (size_t i = 0; i < constants::MAX_STEPS; i++) {
-            for (size_t j = 0; j < constants::MAX_VOICES; j++)
+        for (stepnum_t i = 0; i < constants::MAX_STEPS; i++) {
+            for (voicenum_t j = 0; j < constants::MAX_VOICES; j++)
                 layout.add(
                         std::make_unique<juce::AudioParameterBool>(
                                 "step" + std::to_string(i) + "_voice" + std::to_string(j),
