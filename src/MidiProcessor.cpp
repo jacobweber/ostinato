@@ -27,18 +27,24 @@ void MidiProcessor::stopPlaying(juce::MidiBuffer &midiOut, int offset) {
 void
 MidiProcessor::process(int numSamples, juce::MidiBuffer &midiIn, juce::MidiBuffer &midiOut,
                        const juce::AudioPlayHead::CurrentPositionInfo &posInfo) {
+    Recorder::Status recorderStatus = recorder.getStatus();
     if (state.recordButton) {
-        if (!recorder.isRecording()) {
-            stopPlaying(midiOut, 0);
-            pressedNotes.clear();
-            cycleOn = false;
-            state.playing = false;
-            recorder.handleRecordButtonOn();
+        if (recorderStatus == Recorder::RanOutOfSteps) {
+            state.recordButton = false;
+            recorder.resetStatus();
+        } else {
+            if (recorderStatus == Recorder::Inactive) {
+                stopPlaying(midiOut, 0);
+                pressedNotes.clear();
+                cycleOn = false;
+                state.playing = false;
+                recorder.handleRecordButtonOn();
+            }
+            recorder.process(numSamples, midiIn, midiOut, posInfo);
+            return;
         }
-        recorder.process(numSamples, midiIn, midiOut, posInfo);
-        return;
     } else {
-        if (recorder.isRecording()) { // recorder can also force recording to stop
+        if (recorderStatus == Recorder::Active) {
             recorder.handleRecordButtonOff();
         }
     }

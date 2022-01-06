@@ -9,40 +9,47 @@
 
 class Recorder {
 public:
+    enum Status {
+        Active, RanOutOfSteps, Inactive
+    };
     typedef std::array<juce::SortedSet<MidiValue>, constants::MAX_STEPS> NotesInSteps;
 
-    explicit Recorder(State &_state) : state(_state), recording(false) {
+    explicit Recorder(State &_state) : state(_state), recording(Inactive) {
     }
 
     void prepareToPlay(double _sampleRate, int) {
         DBG("prepareToPlay: stop recording");
         sampleRate = _sampleRate;
         maxSamplesBetweenSteps = static_cast<int>(constants::PLAY_DELAY_SEC * sampleRate);
-        recording = false;
+        recording = Inactive;
     }
 
-    bool isRecording() const {
+    Status getStatus() const {
         return recording;
     }
 
+    void resetStatus() {
+        recording = Inactive;
+    }
+
     void handleRecordButtonOn() {
-        if (recording) return;
+        if (recording == Active) return;
         DBG("start recording");
         notesInCurrentStep.clear();
         samplesUntilStepFinalized = -1;
-        recording = true;
+        recording = Active;
         numSteps = 0;
     }
 
     void handleRecordButtonOff() {
-        if (!recording) return;
+        if (recording != Active) return;
         DBG("stop recording");
-        recording = false;
+        recording = Inactive;
         finalizeStep(false);
     }
 
     void insertRest() {
-        if (!recording) return;
+        if (recording != Active) return;
         DBG("insert rest step " << numSteps);
         finalizeStep(true);
     }
@@ -67,7 +74,7 @@ public:
                         finalizeStep(false);
                     }
                 }
-                if (recording) {
+                if (recording != RanOutOfSteps) {
                     lastNoteInBlockSamplePos = metadata.samplePosition;
                     samplesUntilStepFinalized = maxSamplesBetweenSteps;
                     MidiValue noteValue{msg.getNoteNumber(), msg.getChannel(), msg.getVelocity()};
@@ -90,12 +97,6 @@ public:
     }
 
 private:
-    void forceStopRecording() {
-        DBG("force stop recording");
-        recording = false;
-        state.recordButton = false;
-    }
-
     void finalizeStep(bool allowEmpty) {
         samplesUntilStepFinalized = -1;
         if (!allowEmpty && notesInCurrentStep.isEmpty()) return;
@@ -104,7 +105,8 @@ private:
         numSteps++;
         notesInCurrentStep.clear();
         if (numSteps == constants::MAX_STEPS) {
-            forceStopRecording();
+            DBG("ran out of steps");
+            recording = RanOutOfSteps;
         }
         // should avoid copying
         state.updateStepsFromAudioThread.try_enqueue(getUpdatedSteps());
@@ -165,7 +167,7 @@ private:
     double sampleRate = 0.0;
     int maxSamplesBetweenSteps = 0;
 
-    bool recording = false;
+    Recorder::Status recording = Inactive;
 
     juce::SortedSet<MidiValue> notesInCurrentStep;
     int samplesUntilStepFinalized = -1;
