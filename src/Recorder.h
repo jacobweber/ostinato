@@ -144,7 +144,7 @@ private:
             }
             steps.steps[stepNum].length = .5;
             int avgVel = numActualNotes == 0 ? 64 : totalVel / numActualNotes;
-            steps.steps[stepNum].volume = static_cast<float>(avgVel) / 127.0f;
+            steps.steps[stepNum].volume = static_cast<float>(avgVel + 1) / 128.0f;
         }
 
         /*

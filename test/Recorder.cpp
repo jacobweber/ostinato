@@ -92,7 +92,7 @@ TEST_CASE("Recorder") {
                                                "1875: Note off C3 Velocity 0 Channel 1\n"
                                                "2000: Note on F3 Velocity 109 Channel 1\n"
                                                "2125: Note off F3 Velocity 0 Channel 1\n"
-                                               "2500: Note on E3 Velocity 118 Channel 1\n"
+                                               "2500: Note on E3 Velocity 119 Channel 1\n"
                                                "2625: Note off E3 Velocity 0 Channel 1\n");
     }
 
