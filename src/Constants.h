@@ -25,26 +25,26 @@ namespace constants {
     inline const juce::Colour COLOR_COMBO_BG = COLOR_TOGGLE_INACTIVE;
     inline const juce::Colour COLOR_MESSAGE_TEXT = juce::Colours::white;
 
-    inline const juce::String LABEL_TIE = "Tie";
-    inline const juce::String LABEL_STEPS = "Steps";
-    inline const juce::String LABEL_VOICES = "Voices";
-    inline const juce::String LABEL_RATE = "Step Length";
-    inline const juce::String LABEL_NOTES = "Note Source";
-    inline const juce::String LABEL_LENGTH = "Length";
-    inline const juce::String LABEL_OCTAVE = "Octave";
+    inline const char *LABEL_TIE = "Tie";
+    inline const char *LABEL_STEPS = "Steps";
+    inline const char *LABEL_VOICES = "Voices";
+    inline const char *LABEL_RATE = "Step Length";
+    inline const char *LABEL_NOTES = "Note Source";
+    inline const char *LABEL_LENGTH = "Length";
+    inline const char *LABEL_OCTAVE = "Octave";
 
-    inline const juce::String TOOLTIP_RECORD = "Record pattern";
-    inline const juce::String TOOLTIP_STRETCH = "Stretch pattern to fit pressed keys";
-    inline const juce::String TOOLTIP_RANDOM = "Randomize settings";
-    inline const juce::String TOOLTIP_VOICES_CLEAR = "Turn off all voices for this step";
-    inline const juce::String TOOLTIP_VOICES_FILL = "Turn on all voices for this step";
-    inline const juce::String TOOLTIP_TIE = "Hold this step instead of playing the next step";
-    inline const juce::String TOOLTIP_POWER_OFF = "Disable this step";
-    inline const juce::String TOOLTIP_POWER_ON = "Enable this step";
+    inline const char *TOOLTIP_RECORD = "Record pattern";
+    inline const char *TOOLTIP_STRETCH = "Stretch pattern to fit pressed keys";
+    inline const char *TOOLTIP_RANDOM = "Randomize settings";
+    inline const char *TOOLTIP_VOICES_CLEAR = "Turn off all voices for this step";
+    inline const char *TOOLTIP_VOICES_FILL = "Turn on all voices for this step";
+    inline const char *TOOLTIP_TIE = "Hold this step instead of playing the next step";
+    inline const char *TOOLTIP_POWER_OFF = "Disable this step";
+    inline const char *TOOLTIP_POWER_ON = "Enable this step";
 
-    inline const juce::String MSG_SCALE = "Hold down a key to use as the root, and each voice will be a scale degree in that key.";
-    inline const juce::String MSG_RECORD = "Play an arpeggiation to record it. Press the space bar or sustain pedal to enter a rest.";
-    inline const juce::String MSG_STRETCH = "The shape of the pattern below will be stretched/shrunk to cover most pressed keys.";
+    inline const char *MSG_SCALE = "Hold down a key to use as the root, and each voice will be a scale degree in that key.";
+    inline const char *MSG_RECORD = "Play an arpeggiation to record it. Press the space bar or sustain pedal to enter a rest.";
+    inline const char *MSG_STRETCH = "The shape of the pattern below will be stretched/shrunk to cover most pressed keys.";
 
     constexpr double PLAY_DELAY_SEC = 0.1; // so cycle starts at first note when you press multiple notes at once
     constexpr double START_DELAY_ALLOWANCE = 0.05; // if we start playing before this many ppqs after the beat, round down to the beat. Reaper seems to start a little late.
