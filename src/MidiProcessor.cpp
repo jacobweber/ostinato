@@ -168,11 +168,15 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midiIn, juce::MidiBuffe
             }
         }
 
+        int notesSource = state.notesParameter->getIndex();
+        bool stretchParam =
+                state.stretchParameter->get() && notesSource == 0; // stretch can't be on while using a scale
+
         if (playSampleOffsetWithinBlock != -1) {
             // play a step within this block
             size_t numVoices;
 
-            if (state.stretchParameter->get()) {
+            if (stretchParam) {
                 if (!stretchActive) {
                     stretchActive = true;
                     stretcher.setStepIndex(nextStepIndex);
@@ -211,7 +215,6 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midiIn, juce::MidiBuffe
             }
 
             if (currentStep.power && !tieActive) {
-                int notesSource = state.notesParameter->getIndex();
                 int transpose = (currentStep.octave - static_cast<int>(constants::MAX_OCTAVES)) * 12;
                 MidiValue noteValue{};
                 for (size_t voiceNum = 0; voiceNum < numVoices; voiceNum++) {
