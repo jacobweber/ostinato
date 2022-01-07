@@ -28,26 +28,26 @@ namespace constants {
     const juce::Colour COLOR_COMBO_BG = COLOR_TOGGLE_INACTIVE;
     const juce::Colour COLOR_MESSAGE_TEXT = juce::Colours::white;
 
-    const char *LABEL_TIE = "Tie";
-    const char *LABEL_STEPS = "Steps";
-    const char *LABEL_VOICES = "Voices";
-    const char *LABEL_RATE = "Step Length";
-    const char *LABEL_NOTES = "Note Source";
-    const char *LABEL_LENGTH = "Length";
-    const char *LABEL_OCTAVE = "Octave";
+    const char *const LABEL_TIE = "Tie";
+    const char *const LABEL_STEPS = "Steps";
+    const char *const LABEL_VOICES = "Voices";
+    const char *const LABEL_RATE = "Step Length";
+    const char *const LABEL_NOTES = "Note Source";
+    const char *const LABEL_LENGTH = "Length";
+    const char *const LABEL_OCTAVE = "Octave";
 
-    const char *TOOLTIP_RECORD = "Record pattern";
-    const char *TOOLTIP_STRETCH = "Stretch pattern to fit pressed keys";
-    const char *TOOLTIP_RANDOM = "Randomize settings";
-    const char *TOOLTIP_VOICES_CLEAR = "Turn off all voices for this step";
-    const char *TOOLTIP_VOICES_FILL = "Turn on all voices for this step";
-    const char *TOOLTIP_TIE = "Hold this step instead of playing the next step";
-    const char *TOOLTIP_POWER_OFF = "Disable this step";
-    const char *TOOLTIP_POWER_ON = "Enable this step";
+    const char *const TOOLTIP_RECORD = "Record pattern";
+    const char *const TOOLTIP_STRETCH = "Stretch pattern to fit pressed keys";
+    const char *const TOOLTIP_RANDOM = "Randomize settings";
+    const char *const TOOLTIP_VOICES_CLEAR = "Turn off all voices for this step";
+    const char *const TOOLTIP_VOICES_FILL = "Turn on all voices for this step";
+    const char *const TOOLTIP_TIE = "Hold this step instead of playing the next step";
+    const char *const TOOLTIP_POWER_OFF = "Disable this step";
+    const char *const TOOLTIP_POWER_ON = "Enable this step";
 
-    const char *MSG_SCALE = "Hold down a key to use as the root, and each voice will be a scale degree in that key.";
-    const char *MSG_RECORD = "Play an arpeggiation to record it. Press the space bar or sustain pedal to enter a rest.";
-    const char *MSG_STRETCH = "The shape of the pattern below will be stretched/shrunk to cover most pressed keys.";
+    const char *const MSG_SCALE = "Hold down a key to use as the root, and each voice will be a scale degree in that key.";
+    const char *const MSG_RECORD = "Play an arpeggiation to record it. Press the space bar or sustain pedal to enter a rest.";
+    const char *const MSG_STRETCH = "The shape of the pattern below will be stretched/shrunk to cover most pressed keys.";
 
     constexpr double PLAY_DELAY_SEC = 0.1; // so cycle starts at first note when you press multiple notes at once
     constexpr double START_DELAY_ALLOWANCE = 0.05; // if we start playing before this many ppqs after the beat, round down to the beat. Reaper seems to start a little late.
