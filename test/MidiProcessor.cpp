@@ -63,6 +63,35 @@ TEST_CASE("MidiProcessor without transport") {
                                                "1850: Note on F3 Velocity 103 Channel 4\n"
                                                "1975: Note off F3 Velocity 0 Channel 4\n");
     }
+
+    SECTION("un-stick note") {
+        *(tester.state.stepsParameter) = 1; // 2 steps
+        *(tester.state.voicesParameter) = 1; // 2 voices
+        *(tester.state.rateParameter) = 3; // eighths
+        *(tester.state.stepState[0].voiceParameters[1]) = true;
+        *(tester.state.stepState[1].voiceParameters[0]) = true;
+
+        tester.midiIn.addEvent(juce::MidiMessage::noteOn(1, 60, (juce::uint8) 100), 10);
+        tester.midiIn.addEvent(juce::MidiMessage::noteOn(1, 62, (juce::uint8) 101), 9);
+        tester.processBlocks(2);
+        REQUIRE(tester.midiOutString(false) == "100: Note on C3 Velocity 100 Channel 1\n");
+
+        // you could bypass the plugin and release the notes, so we'd never receive the note-offs.
+        // when you un-bypass, the cycle will continue until you press/release the notes again.
+        tester.processBlocks(2);
+        REQUIRE(tester.midiOutString(false) == "225: Note off C3 Velocity 0 Channel 1\n"
+                                               "350: Note on D3 Velocity 101 Channel 1\n");
+
+        tester.midiIn.addEvent(juce::MidiMessage::noteOn(1, 60, (juce::uint8) 100), 400);
+        tester.midiIn.addEvent(juce::MidiMessage::noteOff(1, 60), 450);
+        tester.midiIn.addEvent(juce::MidiMessage::noteOn(1, 62, (juce::uint8) 100), 410);
+        tester.midiIn.addEvent(juce::MidiMessage::noteOff(1, 62), 460);
+        tester.processBlocks(4);
+        // we end the cycle at the start of the block where we receive the note-offs
+        REQUIRE(tester.midiOutString(false) == "400: Note off D3 Velocity 0 Channel 1\n"
+                                               "450: Note off C3 Velocity 0 Channel 1\n"
+                                               "460: Note off D3 Velocity 0 Channel 1\n");
+    }
 }
 
 TEST_CASE("MidiProcessor with transport") {
