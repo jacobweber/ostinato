@@ -122,4 +122,48 @@ TEST_CASE("Recorder") {
         expectedGrid = "--\n";
         REQUIRE(actualGrid == expectedGrid);
     }
+
+    SECTION("hold notes while recording") {
+        *(tester.state.stepsParameter) = 1; // 2 steps
+        *(tester.state.voicesParameter) = 1; // 2 voices
+        *(tester.state.rateParameter) = 3; // eighths
+        *(tester.state.stepState[0].voiceParameters[1]) = true;
+        *(tester.state.stepState[1].voiceParameters[0]) = true;
+
+        tester.midiIn.addEvent(juce::MidiMessage::noteOn(1, 60, (juce::uint8) 100), 10);
+        tester.processBlocks(2);
+        REQUIRE(tester.midiOutString(false) == "100: Note on C3 Velocity 100 Channel 1\n");
+
+        tester.state.recordButton = true;
+        tester.processBlocks(2);
+        REQUIRE(tester.midiOutString(false) == "200: Note off C3 Velocity 0 Channel 1\n");
+
+        tester.state.recordButton = false;
+        tester.processBlocks(2);
+        REQUIRE(tester.midiOutString(false) == "");
+    }
+
+    SECTION("run out of steps while recording, with held note") {
+        tester.state.recordButton = true;
+        int sampleNum = 0;
+        for (stepnum_t step = 0; step < constants::MAX_STEPS - 1; step++) {
+            tester.midiIn.addEvent(juce::MidiMessage::noteOn(1, 60, (juce::uint8) 100), sampleNum);
+            tester.midiIn.addEvent(juce::MidiMessage::noteOff(1, 60), sampleNum + 150);
+            tester.processBlocks(2);
+            REQUIRE(tester.midiOutString(false) == juce::String(sampleNum) + ": Note on C3 Velocity 100 Channel 1\n"
+                                                   + juce::String(sampleNum + 150) +
+                                                   ": Note off C3 Velocity 0 Channel 1\n");
+            sampleNum += tester.blockSize * 2;
+        }
+
+        tester.midiIn.addEvent(juce::MidiMessage::noteOn(1, 60, (juce::uint8) 100), sampleNum);
+        tester.processBlocks(2);
+        REQUIRE(tester.state.recordButton == false);
+        sampleNum += tester.blockSize * 2;
+
+        tester.state.recordButton = false;
+        tester.midiIn.addEvent(juce::MidiMessage::noteOff(1, 60), sampleNum);
+        tester.processBlocks(2);
+        REQUIRE(tester.midiOutString(false) == juce::String(sampleNum) + ": Note off C3 Velocity 0 Channel 1\n");
+    }
 }
