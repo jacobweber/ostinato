@@ -29,11 +29,11 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midiIn, juce::MidiBuffe
                        const juce::AudioPlayHead::CurrentPositionInfo &posInfo) {
     Recorder::Status recorderStatus = recorder.getStatus();
     if (state.recordButton) {
-        if (recorderStatus == Recorder::RanOutOfSteps) {
+        if (recorderStatus == Recorder::RanOutOfSteps) { // stop recording
             state.recordButton = false;
             recorder.resetStatus();
         } else {
-            if (recorderStatus == Recorder::Inactive) {
+            if (recorderStatus == Recorder::Inactive) { // start recording
                 stopPlaying(midiOut, 0);
                 pressedNotes.clear();
                 cycleOn = false;
@@ -44,7 +44,7 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midiIn, juce::MidiBuffe
             return;
         }
     } else {
-        if (recorderStatus == Recorder::Active) {
+        if (recorderStatus == Recorder::Active) { // stop recording
             recorder.handleRecordButtonOff();
         }
     }
@@ -55,12 +55,10 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midiIn, juce::MidiBuffe
         if (msg.isNoteOn()) {
             pressedNotes.add(noteValue);
         } else if (msg.isNoteOff()) {
-            int index = pressedNotes.indexOf(noteValue);
-            if (index != -1) {
-                pressedNotes.remove(index);
-            } else {
-                midiOut.addEvent(msg, metadata.samplePosition);
-            }
+            pressedNotes.removeValue(noteValue);
+            // need to pass note-offs for when recording ends with a held note,
+            // and when we're bypassed with held notes, then un-bypassed and you need to clear a stuck note.
+            midiOut.addEvent(msg, metadata.samplePosition);
         } else {
             midiOut.addEvent(msg, metadata.samplePosition);
         }
