@@ -93,8 +93,8 @@ public:
         *(stretchParameter) = xml->getBoolAttribute("stretch", false);
         stepnum_t numSteps = std::min(constants::MAX_STEPS, static_cast<stepnum_t>(xml->getIntAttribute("steps", 1)));
         *(stepsParameter) = static_cast<int>(numSteps) - 1; // index
-        voicenum_t numVoices = std::min(constants::MAX_VOICES, static_cast<voicenum_t>(xml->getIntAttribute("voices", 1)));
-        *(voicesParameter) = static_cast<int>(numVoices) - 1; // index
+        int numVoices = std::min(static_cast<int>(constants::MAX_VOICES), xml->getIntAttribute("voices", 1));
+        *(voicesParameter) = numVoices - 1; // index
         *(rateParameter) = std::max(0, rateParameter->getAllValueStrings().indexOf(xml->getStringAttribute("rate")));
         *(rateTypeParameter) = std::max(0, rateTypeParameter->getAllValueStrings().indexOf(xml->getStringAttribute("rateType")));
         *(notesParameter) = std::max(0, notesParameter->getAllValueStrings().indexOf(xml->getStringAttribute("notes")));
@@ -102,8 +102,8 @@ public:
         for (auto* step : xml->getChildIterator()) {
             if (!step->hasTagName("step")) continue;
             juce::String voicesStr = step->getStringAttribute("voices", "0");
-            for (int voice = 0; voice < std::min(voicesStr.length(), static_cast<int>(numVoices)); voice++) {
-                *(stepState[_stepIndex].voiceParameters[numVoices - 1 - voice]) = voicesStr[voice] == '1';
+            for (int voice = std::min(voicesStr.length(), numVoices) - 1; voice >= 0; voice--) {
+                *(stepState[_stepIndex].voiceParameters[static_cast<size_t>(numVoices - 1 - voice)]) = voicesStr[voice] == '1';
             }
             *(stepState[_stepIndex].octaveParameter) = step->getIntAttribute("octave", 0) + static_cast<int>(constants::MAX_OCTAVES); // index
             *(stepState[_stepIndex].lengthParameter) = static_cast<float>(step->getDoubleAttribute("length", 0.0));
