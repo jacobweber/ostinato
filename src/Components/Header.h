@@ -21,6 +21,10 @@ public:
 
     static void fileMenuItemChosenCallback(int result, Header* component);
 
+    void showExportDialog();
+
+    void showImportDialog();
+
     void timerCallback();
 
     void refresh();
@@ -70,6 +74,8 @@ private:
     std::unique_ptr<ComboBoxAttachment> rateAttachment;
     std::unique_ptr<ComboBoxAttachment> rateTypeAttachment;
     std::unique_ptr<ComboBoxAttachment> notesAttachment;
+
+    std::unique_ptr<juce::FileChooser> fc;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Header)
 };

@@ -132,10 +132,39 @@ void Header::fileMenuItemChosenCallback(int result, Header* component) {
             component->state.resetToDefaults();
             break;
         case 2: // export
+            component->showExportDialog();
             break;
         case 3: // import
+            component->showImportDialog();
             break;
     }
+}
+
+void Header::showExportDialog() {
+    fc.reset(new juce::FileChooser("Select filename to export presets to.", juce::File::getCurrentWorkingDirectory(), "*.xml",  true));
+
+    fc->launchAsync(juce::FileBrowserComponent::saveMode | juce::FileBrowserComponent::canSelectFiles,
+        [] (const juce::FileChooser& chooser) {
+            auto result = chooser.getURLResult();
+            if (result.isEmpty()) return;
+            auto name = result.isLocalFile() ? result.getLocalFile().getFullPathName() : result.toString(true);
+            DBG("chosen: " << name);
+        }
+    );
+}
+
+void Header::showImportDialog() {
+    fc.reset(new juce::FileChooser ("Select presets file to import.", juce::File::getCurrentWorkingDirectory(), "*.xml", true));
+
+    fc->launchAsync(juce::FileBrowserComponent::openMode | juce::FileBrowserComponent::canSelectFiles,
+        [] (const juce::FileChooser& chooser) {
+            juce::String chosen;
+            auto result = chooser.getURLResult();
+            if (result.isEmpty()) return;
+            chosen << (result.isLocalFile() ? result.getLocalFile().getFullPathName() : result.toString (false));
+            DBG("chosen: " << chosen);
+        }
+    );
 }
 
 void Header::timerCallback() {
