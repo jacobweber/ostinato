@@ -141,28 +141,31 @@ void Header::fileMenuItemChosenCallback(int result, Header* component) {
 }
 
 void Header::showExportDialog() {
-    fc.reset(new juce::FileChooser("Select filename to export presets to.", juce::File::getCurrentWorkingDirectory(), "*.xml",  true));
-
+    fc.reset(new juce::FileChooser("Select filename to export presets to.", {}, "*.xml",  true));
     fc->launchAsync(juce::FileBrowserComponent::saveMode | juce::FileBrowserComponent::canSelectFiles,
-        [] (const juce::FileChooser& chooser) {
+        [this] (const juce::FileChooser& chooser) {
             auto result = chooser.getURLResult();
             if (result.isEmpty()) return;
-            auto name = result.isLocalFile() ? result.getLocalFile().getFullPathName() : result.toString(true);
-            DBG("chosen: " << name);
+            if (!result.isLocalFile()) return;
+            auto parametersCopy = state.parameters.copyState();
+            std::unique_ptr<juce::XmlElement> xml(parametersCopy.createXml());
+            xml->writeTo(result.getLocalFile(), {});
         }
     );
 }
 
 void Header::showImportDialog() {
-    fc.reset(new juce::FileChooser ("Select presets file to import.", juce::File::getCurrentWorkingDirectory(), "*.xml", true));
-
+    fc.reset(new juce::FileChooser("Select presets file to import.", {}, "*.xml", true));
     fc->launchAsync(juce::FileBrowserComponent::openMode | juce::FileBrowserComponent::canSelectFiles,
-        [] (const juce::FileChooser& chooser) {
+        [this] (const juce::FileChooser& chooser) {
             juce::String chosen;
             auto result = chooser.getURLResult();
             if (result.isEmpty()) return;
-            chosen << (result.isLocalFile() ? result.getLocalFile().getFullPathName() : result.toString (false));
-            DBG("chosen: " << chosen);
+            if (!result.isLocalFile()) return;
+            std::unique_ptr<juce::XmlElement> xml(juce::XmlDocument(result.getLocalFile()).getDocumentElement());
+            if (xml == nullptr) return;
+            if (xml->hasTagName(state.parameters.state.getType()))
+                state.parameters.replaceState(juce::ValueTree::fromXml(*xml));
         }
     );
 }
