@@ -36,6 +36,25 @@ public:
         }
     }
 
+    void resetToDefaults() {
+        *(stretchParameter) = false;
+        *(stepsParameter) = 3; // index
+        *(voicesParameter) = 3; // index
+        *(rateParameter) = 3; // index
+        *(rateTypeParameter) = 0; // index
+        *(notesParameter) = 0; // index
+        for (stepnum_t i = 0; i < constants::MAX_STEPS; i++) {
+            for (voicenum_t j = 0; j < constants::MAX_VOICES; j++) {
+                *(stepState[i].voiceParameters[j]) = i == 3 - j;
+            }
+            *(stepState[i].octaveParameter) = constants::MAX_OCTAVES; // index; 0
+            *(stepState[i].lengthParameter) = .5;
+            *(stepState[i].tieParameter) = false;
+            *(stepState[i].volParameter) = .5;
+            *(stepState[i].powerParameter) = true;
+        }
+    }
+
     void randomizeParams(bool stepsAndVoices, bool rate, bool notes) {
         std::random_device rd;
         std::mt19937 mt(rd());

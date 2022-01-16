@@ -1,6 +1,23 @@
 #include "Header.h"
 
 Header::Header(State &s, PluginProcessor &p) : state(s), pluginProcessor(p) {
+    juce::Image floppyDisk = FontAwesome::getInstance()->getIcon(true,
+                                                           juce::String::fromUTF8(
+                                                                   reinterpret_cast<const char *>(u8"\uf0c7")),
+                                                           ICON_SIZE, constants::COLOR_TOGGLE_ACTIVE,
+                                                           1);
+    fileButton.setImages(true, false, true, floppyDisk, 1.0f, {}, {}, 1.0f, {}, {}, 1.0f, constants::COLOR_TOGGLE_INACTIVE);
+    fileButton.setTooltip(constants::TOOLTIP_RANDOM);
+    fileButton.onClick = [&] {
+        juce::PopupMenu menu;
+        menu.addItem(1, "Reset to Defaults");
+        menu.addItem(2, juce::CharPointer_UTF8("Export Preset\u2026"));
+        menu.addItem(3, juce::CharPointer_UTF8("Import Preset\u2026"));
+        menu.showMenuAsync(juce::PopupMenu::Options{}.withTargetComponent(fileButton),
+            juce::ModalCallbackFunction::forComponent(fileMenuItemChosenCallback, this));
+    };
+    addAndMakeVisible(fileButton);
+
     juce::Image microphone = FontAwesome::getInstance()->getIcon(true,
                                                                  juce::String::fromUTF8(
                                                                          reinterpret_cast<const char *>(u8"\uf130")),
@@ -108,6 +125,19 @@ Header::Header(State &s, PluginProcessor &p) : state(s), pluginProcessor(p) {
     refresh();
 }
 
+void Header::fileMenuItemChosenCallback(int result, Header* component) {
+    if (component == nullptr) return;
+    switch (result) {
+        case 1: // reset
+            component->state.resetToDefaults();
+            break;
+        case 2: // export
+            break;
+        case 3: // import
+            break;
+    }
+}
+
 void Header::timerCallback() {
     if (state.recordButton != recordButton.getToggleState()) {
         recordButton.setToggleState(state.recordButton, juce::NotificationType::sendNotification);
@@ -136,6 +166,7 @@ void Header::refreshMessage() {
 
 void Header::refreshEnabled() {
     const bool notRecording = !state.recordButton;
+    fileButton.setEnabled(notRecording);
     stepsMenu.setEnabled(notRecording);
     voicesMenu.setEnabled(notRecording);
     rateMenu.setEnabled(notRecording);
@@ -165,6 +196,10 @@ void Header::resized() {
     juce::FlexItem::Margin margin{0.0, 5.0, 0.0, 0.0};
     toolbar.justifyContent = juce::FlexBox::JustifyContent::flexStart;
     toolbar.alignItems = juce::FlexBox::AlignItems::center;
+    toolbar.items.add(
+            juce::FlexItem(fileButton).withAlignSelf(juce::FlexItem::AlignSelf::autoAlign).withHeight(
+                    ICON_SIZE + 10).withWidth(
+                    static_cast<float>(fileButton.getWidth())).withMargin(margin));
     toolbar.items.add(juce::FlexItem(stepsMenu).withAlignSelf(juce::FlexItem::AlignSelf::autoAlign).withHeight(
             MENU_HEIGHT).withWidth(90.0).withMargin(margin));
     toolbar.items.add(juce::FlexItem(voicesMenu).withAlignSelf(juce::FlexItem::AlignSelf::autoAlign).withHeight(

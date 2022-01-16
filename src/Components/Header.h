@@ -19,6 +19,8 @@ public:
 
     Header(State &s, PluginProcessor &p);
 
+    static void fileMenuItemChosenCallback(int result, Header* component);
+
     void timerCallback();
 
     void refresh();
@@ -45,6 +47,7 @@ private:
     juce::Font textFont{12.0f};
     juce::Font messageFont{16.0f};
 
+    juce::ImageButton fileButton{};
     juce::ImageButton recordButton{};
     juce::ImageButton stretchButton{};
     juce::ImageButton randomButton{};
