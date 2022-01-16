@@ -11,8 +11,10 @@ Header::Header(State &s, PluginProcessor &p) : state(s), pluginProcessor(p) {
     fileButton.onClick = [&] {
         juce::PopupMenu menu;
         menu.addItem(1, "Reset to Defaults");
-        menu.addItem(2, juce::CharPointer_UTF8("Export Preset\u2026"));
-        menu.addItem(3, juce::CharPointer_UTF8("Import Preset\u2026"));
+        menu.addItem(2, "Open Presets Folder");
+        menu.addItem(3, juce::CharPointer_UTF8("Save Preset\u2026"));
+        menu.addItem(4, juce::CharPointer_UTF8("Export Preset\u2026"));
+        menu.addItem(5, juce::CharPointer_UTF8("Import Preset\u2026"));
         menu.showMenuAsync(juce::PopupMenu::Options{}.withTargetComponent(fileButton),
             juce::ModalCallbackFunction::forComponent(fileMenuItemChosenCallback, this));
     };
@@ -131,13 +133,55 @@ void Header::fileMenuItemChosenCallback(int result, Header* component) {
         case 1: // reset
             component->state.resetToDefaults();
             break;
-        case 2: // export
+        case 2: // show
+            component->showPresetsDir();
+            break;
+        case 3: // save
+            component->showSaveDialog();
+            break;
+        case 4: // export
             component->showExportDialog();
             break;
-        case 3: // import
+        case 5: // import
             component->showImportDialog();
             break;
     }
+}
+
+void Header::saveDialogClosedCallback(int result, Header* component) {
+    if (component == nullptr) return;
+    auto& aw = *(component->asyncAlertWindow);
+    aw.exitModalState(result);
+    aw.setVisible(false);
+    if (result != 1) return;
+    auto presetName = aw.getTextEditorContents("presetName");
+    auto fileName = juce::File::createLegalFileName(presetName + ".xml");
+    auto presetsDir = component->getPresetsDir();
+    if (!presetsDir.exists() && !presetsDir.createDirectory().wasOk()) return;
+    component->state.saveToFile(presetsDir.getChildFile(fileName));
+}
+
+void Header::showPresetsDir() {
+    auto presetsDir = getPresetsDir();
+    if (!presetsDir.exists() && !presetsDir.createDirectory().wasOk()) return;
+    presetsDir.revealToUser();
+}
+
+juce::File Header::getPresetsDir() {
+    return juce::File::getSpecialLocation(juce::File::userApplicationDataDirectory)
+        .getChildFile("Application Support")
+        .getChildFile(juce::JUCEApplication::getInstance()->getApplicationName())
+        .getChildFile("Presets");
+}
+
+void Header::showSaveDialog() {
+    asyncAlertWindow = std::make_unique<juce::AlertWindow>("Save Preset",
+        "Enter the preset name.", juce::MessageBoxIconType::NoIcon);
+    asyncAlertWindow->addTextEditor("presetName", "", "Name:");
+    asyncAlertWindow->addButton("OK", 1, juce::KeyPress(juce::KeyPress::returnKey, 0, 0));
+    asyncAlertWindow->addButton("Cancel", 0, juce::KeyPress(juce::KeyPress::escapeKey, 0, 0));
+    asyncAlertWindow->getTextEditor("presetName")->setExplicitFocusOrder(1);
+    asyncAlertWindow->enterModalState(true, juce::ModalCallbackFunction::forComponent(saveDialogClosedCallback, this));
 }
 
 void Header::showExportDialog() {

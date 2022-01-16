@@ -20,9 +20,11 @@ public:
     Header(State &s, PluginProcessor &p);
 
     static void fileMenuItemChosenCallback(int result, Header* component);
+    static void saveDialogClosedCallback(int result, Header* component);
 
+    void showPresetsDir();
+    void showSaveDialog();
     void showExportDialog();
-
     void showImportDialog();
 
     void timerCallback();
@@ -36,6 +38,9 @@ public:
     void paint(juce::Graphics &) override;
 
     void resized() override;
+
+private:
+    juce::File getPresetsDir();
 
 public:
     std::function<void()> onUpdateSteps = [] {};
@@ -76,6 +81,7 @@ private:
     std::unique_ptr<ComboBoxAttachment> notesAttachment;
 
     std::unique_ptr<juce::FileChooser> fc;
+    std::unique_ptr<juce::AlertWindow> asyncAlertWindow;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Header)
 };
