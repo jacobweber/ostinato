@@ -13,8 +13,8 @@ Header::Header(State &s, PluginProcessor &p) : state(s), pluginProcessor(p) {
         menu.addItem(1, "Reset to Defaults");
         menu.addItem(2, juce::CharPointer_UTF8("Save Preset\u2026"));
         menu.addItem(3, "Open Presets Folder");
-        menu.addItem(4, juce::CharPointer_UTF8("Export Preset\u2026"));
-        menu.addItem(5, juce::CharPointer_UTF8("Import Preset\u2026"));
+        menu.addItem(4, juce::CharPointer_UTF8("Export Settings\u2026"));
+        menu.addItem(5, juce::CharPointer_UTF8("Import Settings\u2026"));
         menu.addSeparator();
         refreshPresetNames();
         int idx = 6;
@@ -204,7 +204,7 @@ void Header::showSaveDialog() {
 }
 
 void Header::showExportDialog() {
-    fc.reset(new juce::FileChooser("Select filename to export presets to.", {}, "*.xml",  true));
+    fc.reset(new juce::FileChooser("Enter file to export settings to.", {}, "*.xml",  true));
     fc->launchAsync(juce::FileBrowserComponent::saveMode | juce::FileBrowserComponent::canSelectFiles,
         [this] (const juce::FileChooser& chooser) {
             auto result = chooser.getURLResult();
@@ -216,7 +216,7 @@ void Header::showExportDialog() {
 }
 
 void Header::showImportDialog() {
-    fc.reset(new juce::FileChooser("Select presets file to import.", {}, "*.xml", true));
+    fc.reset(new juce::FileChooser("Select settings file to import.", {}, "*.xml", true));
     fc->launchAsync(juce::FileBrowserComponent::openMode | juce::FileBrowserComponent::canSelectFiles,
         [this] (const juce::FileChooser& chooser) {
             juce::String chosen;
