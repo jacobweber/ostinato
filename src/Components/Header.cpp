@@ -10,13 +10,13 @@ Header::Header(State &s, PluginProcessor &p) : state(s), pluginProcessor(p) {
     fileButton.setTooltip(constants::TOOLTIP_RANDOM);
     fileButton.onClick = [&] {
         juce::PopupMenu menu;
-        menu.addItem(1, "Reset to Defaults");
-        menu.addItem(2, juce::CharPointer_UTF8("Save Preset\u2026"));
-        menu.addItem(3, "Open Presets Folder");
-        menu.addItem(4, juce::CharPointer_UTF8("Export Settings\u2026"));
-        menu.addItem(5, juce::CharPointer_UTF8("Import Settings\u2026"));
+        menu.addItem(1, juce::CharPointer_UTF8("Save Preset\u2026"));
+        menu.addItem(2, "Open Presets Folder");
+        menu.addItem(3, juce::CharPointer_UTF8("Export Settings\u2026"));
+        menu.addItem(4, juce::CharPointer_UTF8("Import Settings\u2026"));
         menu.addSeparator();
         refreshPresetNames();
+        menu.addItem(5, "<defaults>");
         int idx = 6;
         for (juce::File &preset : presetNames) {
             menu.addItem(idx++, preset.getFileNameWithoutExtension());
@@ -136,20 +136,20 @@ Header::Header(State &s, PluginProcessor &p) : state(s), pluginProcessor(p) {
 void Header::fileMenuItemChosenCallback(int result, Header* component) {
     if (component == nullptr) return;
     switch (result) {
-        case 1: // reset
-            component->state.resetToDefaults();
-            break;
-        case 2: // save
+        case 1: // save
             component->showSaveDialog();
             break;
-        case 3: // show
+        case 2: // show
             component->showPresetsDir();
             break;
-        case 4: // export
+        case 3: // export
             component->showExportDialog();
             break;
-        case 5: // import
+        case 4: // import
             component->showImportDialog();
+            break;
+        case 5: // reset
+            component->state.resetToDefaults();
             break;
         default: // preset name
             component->state.loadFromFile(component->presetNames[result - 6]);
