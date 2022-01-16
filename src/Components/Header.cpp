@@ -147,9 +147,7 @@ void Header::showExportDialog() {
             auto result = chooser.getURLResult();
             if (result.isEmpty()) return;
             if (!result.isLocalFile()) return;
-            auto parametersCopy = state.parameters.copyState();
-            std::unique_ptr<juce::XmlElement> xml(parametersCopy.createXml());
-            xml->writeTo(result.getLocalFile(), {});
+            state.saveToFile(result.getLocalFile());
         }
     );
 }
@@ -162,10 +160,7 @@ void Header::showImportDialog() {
             auto result = chooser.getURLResult();
             if (result.isEmpty()) return;
             if (!result.isLocalFile()) return;
-            std::unique_ptr<juce::XmlElement> xml(juce::XmlDocument(result.getLocalFile()).getDocumentElement());
-            if (xml == nullptr) return;
-            if (xml->hasTagName(state.parameters.state.getType()))
-                state.parameters.replaceState(juce::ValueTree::fromXml(*xml));
+            state.loadFromFile(result.getLocalFile());
         }
     );
 }
