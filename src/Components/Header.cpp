@@ -11,10 +11,16 @@ Header::Header(State &s, PluginProcessor &p) : state(s), pluginProcessor(p) {
     fileButton.onClick = [&] {
         juce::PopupMenu menu;
         menu.addItem(1, "Reset to Defaults");
-        menu.addItem(2, "Open Presets Folder");
-        menu.addItem(3, juce::CharPointer_UTF8("Save Preset\u2026"));
+        menu.addItem(2, juce::CharPointer_UTF8("Save Preset\u2026"));
+        menu.addItem(3, "Open Presets Folder");
         menu.addItem(4, juce::CharPointer_UTF8("Export Preset\u2026"));
         menu.addItem(5, juce::CharPointer_UTF8("Import Preset\u2026"));
+        menu.addSeparator();
+        refreshPresetNames();
+        int idx = 6;
+        for (juce::File &preset : presetNames) {
+            menu.addItem(idx++, preset.getFileNameWithoutExtension());
+        }
         menu.showMenuAsync(juce::PopupMenu::Options{}.withTargetComponent(fileButton),
             juce::ModalCallbackFunction::forComponent(fileMenuItemChosenCallback, this));
     };
@@ -133,17 +139,20 @@ void Header::fileMenuItemChosenCallback(int result, Header* component) {
         case 1: // reset
             component->state.resetToDefaults();
             break;
-        case 2: // show
-            component->showPresetsDir();
-            break;
-        case 3: // save
+        case 2: // save
             component->showSaveDialog();
+            break;
+        case 3: // show
+            component->showPresetsDir();
             break;
         case 4: // export
             component->showExportDialog();
             break;
         case 5: // import
             component->showImportDialog();
+            break;
+        default: // preset name
+            component->state.loadFromFile(component->presetNames[result - 6]);
             break;
     }
 }
@@ -172,6 +181,16 @@ juce::File Header::getPresetsDir() {
         .getChildFile("Application Support")
         .getChildFile(juce::JUCEApplication::getInstance()->getApplicationName())
         .getChildFile("Presets");
+}
+
+void Header::refreshPresetNames() {
+    auto presetsDir = getPresetsDir();
+    if (!presetsDir.exists() && !presetsDir.createDirectory().wasOk()) {
+        presetNames.clear();
+        return;
+    }
+    presetNames = presetsDir.findChildFiles(juce::File::findFiles | juce::File::ignoreHiddenFiles, true, "*.xml");
+    presetNames.sort();
 }
 
 void Header::showSaveDialog() {

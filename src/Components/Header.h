@@ -41,6 +41,7 @@ public:
 
 private:
     juce::File getPresetsDir();
+    void refreshPresetNames();
 
 public:
     std::function<void()> onUpdateSteps = [] {};
@@ -52,6 +53,8 @@ private:
     State &state;
     PluginProcessor &pluginProcessor;
     Scales scales{};
+
+    juce::Array<juce::File> presetNames{};
 
     juce::Font textFont{12.0f};
     juce::Font messageFont{16.0f};
