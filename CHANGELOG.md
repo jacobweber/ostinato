@@ -1,3 +1,7 @@
+### 0.0.8
+
+* Add preset menu.
+
 ### 0.0.7
 
 * Use JUCE 6.1.2.
