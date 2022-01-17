@@ -1,3 +1,9 @@
+### 0.0.9 (unreleased)
+
+* Use sustain for holding cycle.
+* Reverse order of octave menu.
+* Add new voices to top instead of bottom.
+
 ### 0.0.8
 
 * Add preset menu.
