@@ -10,6 +10,7 @@ void MidiProcessor::prepareToPlay(double _sampleRate, int _maximumExpectedSample
 
     cycleOn = false;
     transportOn = false;
+    sustainOn = false;
     prevPpqPos = 0;
     nextPpqPos = 0;
     nextStepIndex = 0;
@@ -37,6 +38,7 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midiIn, juce::MidiBuffe
                 stopPlaying(midiOut, 0);
                 pressedNotes.clear();
                 cycleOn = false;
+                sustainOn = false;
                 state.playing = false;
                 recorder.handleRecordButtonOn();
             }
@@ -55,10 +57,17 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midiIn, juce::MidiBuffe
         if (msg.isNoteOn()) {
             pressedNotes.add(noteValue);
         } else if (msg.isNoteOff()) {
-            pressedNotes.removeValue(noteValue);
-            // need to pass note-offs for when recording ends with a held note,
-            // and when we're bypassed with held notes, then un-bypassed and you need to clear a stuck note.
-            midiOut.addEvent(msg, metadata.samplePosition);
+            if (!sustainOn) {
+                pressedNotes.removeValue(noteValue);
+                // need to pass note-offs for when recording ends with a held note,
+                // and when we're bypassed with held notes, then un-bypassed and you need to clear a stuck note.
+                midiOut.addEvent(msg, metadata.samplePosition);
+            }
+        } else if (msg.isSustainPedalOn()) {
+            sustainOn = true;
+        } else if (msg.isSustainPedalOff()) {
+            sustainOn = false;
+            pressedNotes.clear();
         } else {
             midiOut.addEvent(msg, metadata.samplePosition);
         }
@@ -68,12 +77,14 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midiIn, juce::MidiBuffe
         if (!transportOn) { // started transport
             DBG("started transport");
             cycleOn = false;
+            sustainOn = false;
             transportOn = true;
         }
     } else if (transportOn) { // stopped transport
         DBG("stopped transport");
         stopPlaying(midiOut, 0);
         cycleOn = false;
+        sustainOn = false;
         stretchActive = false;
         state.playing = false;
         transportOn = false;

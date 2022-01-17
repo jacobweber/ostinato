@@ -81,7 +81,9 @@ public:
                     notesInCurrentStep.add(noteValue);
                 }
             }
-            midiOut.addEvent(msg, metadata.samplePosition);
+            if (!msg.isSustainPedalOn() && !msg.isSustainPedalOff()) {
+                midiOut.addEvent(msg, metadata.samplePosition);
+            }
         }
         if (samplesUntilStepFinalized != -1) {
             samplesUntilStepFinalized = juce::jmax(0,

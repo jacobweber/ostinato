@@ -64,6 +64,41 @@ TEST_CASE("MidiProcessor without transport") {
                                                "1975: Note off F3 Velocity 0 Channel 4\n");
     }
 
+    SECTION("with sustain pedal") {
+        *(tester.state.stepsParameter) = 1; // 2 steps
+        *(tester.state.voicesParameter) = 1; // 2 voices
+        *(tester.state.rateParameter) = 3; // eighths
+        *(tester.state.stepState[0].voiceParameters[0]) = true;
+        *(tester.state.stepState[1].voiceParameters[1]) = true;
+
+        tester.midiIn.addEvent(juce::MidiMessage::noteOn(1, 60, (juce::uint8) 100), 10);
+        tester.midiIn.addEvent(juce::MidiMessage::noteOn(2, 62, (juce::uint8) 101), 9);
+
+        tester.midiIn.addEvent(juce::MidiMessage::controllerEvent(1, 0x40, (juce::uint8) 120), 200); // sustain on
+
+        tester.midiIn.addEvent(juce::MidiMessage::noteOff(1, 60), 800);
+        tester.midiIn.addEvent(juce::MidiMessage::noteOff(2, 62), 800);
+
+        tester.midiIn.addEvent(juce::MidiMessage::controllerEvent(1, 0x40, (juce::uint8) 0), 1800); // sustain off
+
+        tester.processBlocks(20);
+        // 250 samples/step
+        REQUIRE(tester.midiOutString(false) == "100: Note on C3 Velocity 100 Channel 1\n"
+                                               "225: Note off C3 Velocity 0 Channel 1\n"
+                                               "350: Note on D3 Velocity 101 Channel 2\n"
+                                               "475: Note off D3 Velocity 0 Channel 2\n"
+                                               "600: Note on C3 Velocity 100 Channel 1\n"
+                                               "725: Note off C3 Velocity 0 Channel 1\n"
+                                               "850: Note on D3 Velocity 101 Channel 2\n"
+                                               "975: Note off D3 Velocity 0 Channel 2\n"
+                                               "1100: Note on C3 Velocity 100 Channel 1\n"
+                                               "1225: Note off C3 Velocity 0 Channel 1\n"
+                                               "1350: Note on D3 Velocity 101 Channel 2\n"
+                                               "1475: Note off D3 Velocity 0 Channel 2\n"
+                                               "1600: Note on C3 Velocity 100 Channel 1\n"
+                                               "1725: Note off C3 Velocity 0 Channel 1\n");
+    }
+
     SECTION("un-stick note") {
         *(tester.state.stepsParameter) = 1; // 2 steps
         *(tester.state.voicesParameter) = 1; // 2 voices

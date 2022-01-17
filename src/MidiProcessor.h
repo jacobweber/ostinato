@@ -41,6 +41,7 @@ private:
 
     bool cycleOn = false;
     bool transportOn = false;
+    bool sustainOn = false;
     stepnum_t nextStepIndex = 0;
     double prevPpqPos = 0.0;
     double nextPpqPos = 0.0; // predicted, in case we jump back in time
