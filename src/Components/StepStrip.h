@@ -59,7 +59,7 @@ public:
             octaveLabel.attachToComponent(&octaveMenu, false);
         }
         int itemId = 1;
-        for (int i = -static_cast<int>(constants::MAX_OCTAVES); i <= static_cast<int>(constants::MAX_OCTAVES); i++)
+        for (int i = static_cast<int>(constants::MAX_OCTAVES); i >= -static_cast<int>(constants::MAX_OCTAVES); i--)
             octaveMenu.addItem(std::to_string(i), itemId++);
         addAndMakeVisible(octaveMenu);
         octaveAttachment = std::make_unique<ComboBoxAttachment>(

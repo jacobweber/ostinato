@@ -219,7 +219,7 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midiIn, juce::MidiBuffe
             }
 
             if (currentStep.power && !tieActive) {
-                int transpose = (currentStep.octave - static_cast<int>(constants::MAX_OCTAVES)) * 12;
+                int transpose = (-currentStep.octave + static_cast<int>(constants::MAX_OCTAVES)) * 12;
                 MidiValue noteValue{};
                 for (int voiceNum = 0; voiceNum < static_cast<int>(numVoices); voiceNum++) {
                     if (currentStep.voices[static_cast<size_t>(voiceNum)]) {
