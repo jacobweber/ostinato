@@ -77,7 +77,9 @@ private:
 
     juce::File getPresetsDir() {
         return juce::File::getSpecialLocation(juce::File::userApplicationDataDirectory)
+            #if JUCE_MAC
             .getChildFile("Application Support")
+            #endif
             .getChildFile(juce::JUCEApplication::getInstance()->getApplicationName())
             .getChildFile("Presets");
     }
