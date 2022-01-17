@@ -56,62 +56,22 @@ public:
     }
 
     void saveToFile(juce::File file) {
-        juce::XmlElement xml("ostinato");
-        xml.setAttribute("stretch", stretchParameter->get() ? "true" : "false");
-        stepnum_t numSteps = static_cast<stepnum_t>(stepsParameter->getIndex()) + 1;
-        xml.setAttribute("steps", static_cast<int>(numSteps));
-        voicenum_t numVoices = static_cast<voicenum_t>(voicesParameter->getIndex()) + 1;
-        xml.setAttribute("voices", static_cast<int>(numVoices));
-        xml.setAttribute("rate", rateParameter->getCurrentValueAsText());
-        xml.setAttribute("rateType", rateTypeParameter->getCurrentValueAsText());
-        xml.setAttribute("notes", notesParameter->getCurrentValueAsText());
-        for (stepnum_t i = 0; i < numSteps; i++) {
-            juce::XmlElement* step = new juce::XmlElement("step");
-            juce::String voices = "";
-            for (int j = 0; j < static_cast<int>(numVoices); j++) {
-                voices += stepState[i].voiceParameters[j]->get() ? "1" : "0";
-            }
-            step->setAttribute("voices", voices);
-            step->setAttribute("octave", juce::String(-(stepState[i].octaveParameter->getIndex()) + static_cast<int>(constants::MAX_OCTAVES)));
-            step->setAttribute("length", stepState[i].lengthParameter->get());
-            step->setAttribute("tie", stepState[i].tieParameter->get() ? "true" : "false");
-            step->setAttribute("vol", stepState[i].volParameter->get());
-            step->setAttribute("power", stepState[i].powerParameter->get() ? "true" : "false");
-            xml.addChildElement(step);
-        }
+        exportSettingsToXml()->writeTo(file, {});
+    }
 
-        std::unique_ptr<juce::XmlElement> xmlPtr = std::make_unique<juce::XmlElement>(xml);
-        xmlPtr->writeTo(file, {});
+    juce::String saveToString() {
+        juce::XmlElement::TextFormat format{};
+        format.lineWrapLength = 999;
+        format.newLineChars = "\n";
+        return exportSettingsToXml()->toString(format);
+    }
+
+    void loadFromString(juce::String str) {
+        importSettingsFromXml(juce::XmlDocument(str));
     }
 
     void loadFromFile(juce::File file) {
-        resetToDefaults();
-        std::unique_ptr<juce::XmlElement> xml(juce::XmlDocument(file).getDocumentElement());
-        if (xml == nullptr) return;
-        if (!xml->hasTagName("ostinato")) return;
-
-        *(stretchParameter) = xml->getBoolAttribute("stretch", false);
-        stepnum_t numSteps = std::min(constants::MAX_STEPS, static_cast<stepnum_t>(xml->getIntAttribute("steps", 1)));
-        *(stepsParameter) = static_cast<int>(numSteps) - 1; // index
-        int numVoices = std::min(static_cast<int>(constants::MAX_VOICES), xml->getIntAttribute("voices", 1));
-        *(voicesParameter) = numVoices - 1; // index
-        *(rateParameter) = std::max(0, rateParameter->getAllValueStrings().indexOf(xml->getStringAttribute("rate")));
-        *(rateTypeParameter) = std::max(0, rateTypeParameter->getAllValueStrings().indexOf(xml->getStringAttribute("rateType")));
-        *(notesParameter) = std::max(0, notesParameter->getAllValueStrings().indexOf(xml->getStringAttribute("notes")));
-        stepnum_t _stepIndex = 0;
-        for (auto* step : xml->getChildIterator()) {
-            if (!step->hasTagName("step")) continue;
-            juce::String voicesStr = step->getStringAttribute("voices", "0");
-            for (int voice = 0; voice < std::min(voicesStr.length(), numVoices); voice++) {
-                *(stepState[_stepIndex].voiceParameters[static_cast<size_t>(voice)]) = voicesStr[voice] == '1';
-            }
-            *(stepState[_stepIndex].octaveParameter) = -(step->getIntAttribute("octave", 0)) + static_cast<int>(constants::MAX_OCTAVES); // index
-            *(stepState[_stepIndex].lengthParameter) = static_cast<float>(step->getDoubleAttribute("length", 0.0));
-            *(stepState[_stepIndex].tieParameter) = step->getBoolAttribute("tie", false);
-            *(stepState[_stepIndex].volParameter) = static_cast<float>(step->getDoubleAttribute("vol", 0.0));
-            *(stepState[_stepIndex].powerParameter) = step->getBoolAttribute("power", true);
-            _stepIndex++;
-        }
+        importSettingsFromXml(juce::XmlDocument(file));
     }
 
     void randomizeParams(bool stepsAndVoices, bool rate, bool notes) {
@@ -176,6 +136,65 @@ public:
             *(stepState[i].tieParameter) = randTie(mt) == 0;
             *(stepState[i].volParameter) = randVolume(mt);
             *(stepState[i].powerParameter) = randPower(mt) != 0;
+        }
+    }
+
+private:
+    std::unique_ptr<juce::XmlElement> exportSettingsToXml() {
+        juce::XmlElement xml("ostinato");
+        xml.setAttribute("stretch", stretchParameter->get() ? "true" : "false");
+        stepnum_t numSteps = static_cast<stepnum_t>(stepsParameter->getIndex()) + 1;
+        xml.setAttribute("steps", static_cast<int>(numSteps));
+        voicenum_t numVoices = static_cast<voicenum_t>(voicesParameter->getIndex()) + 1;
+        xml.setAttribute("voices", static_cast<int>(numVoices));
+        xml.setAttribute("rate", rateParameter->getCurrentValueAsText());
+        xml.setAttribute("rateType", rateTypeParameter->getCurrentValueAsText());
+        xml.setAttribute("notes", notesParameter->getCurrentValueAsText());
+        for (stepnum_t i = 0; i < numSteps; i++) {
+            juce::XmlElement* step = new juce::XmlElement("step");
+            juce::String voices = "";
+            for (int j = 0; j < static_cast<int>(numVoices); j++) {
+                voices += stepState[i].voiceParameters[j]->get() ? "1" : "0";
+            }
+            step->setAttribute("voices", voices);
+            step->setAttribute("octave", juce::String(-(stepState[i].octaveParameter->getIndex()) + static_cast<int>(constants::MAX_OCTAVES)));
+            step->setAttribute("length", stepState[i].lengthParameter->get());
+            step->setAttribute("tie", stepState[i].tieParameter->get() ? "true" : "false");
+            step->setAttribute("vol", stepState[i].volParameter->get());
+            step->setAttribute("power", stepState[i].powerParameter->get() ? "true" : "false");
+            xml.addChildElement(step);
+        }
+        return std::make_unique<juce::XmlElement>(xml);
+    }
+
+    void importSettingsFromXml(juce::XmlDocument xmlDoc) {
+        resetToDefaults();
+
+        std::unique_ptr<juce::XmlElement> xml(xmlDoc.getDocumentElement());
+        if (xml == nullptr) return;
+        if (!xml->hasTagName("ostinato")) return;
+
+        *(stretchParameter) = xml->getBoolAttribute("stretch", false);
+        int numSteps = std::min(static_cast<int>(constants::MAX_STEPS), xml->getIntAttribute("steps", 1));
+        *(stepsParameter) = numSteps - 1; // index
+        int numVoices = std::min(static_cast<int>(constants::MAX_VOICES), xml->getIntAttribute("voices", 1));
+        *(voicesParameter) = numVoices - 1; // index
+        *(rateParameter) = std::max(0, rateParameter->getAllValueStrings().indexOf(xml->getStringAttribute("rate")));
+        *(rateTypeParameter) = std::max(0, rateTypeParameter->getAllValueStrings().indexOf(xml->getStringAttribute("rateType")));
+        *(notesParameter) = std::max(0, notesParameter->getAllValueStrings().indexOf(xml->getStringAttribute("notes")));
+        stepnum_t _stepIndex = 0;
+        for (auto* step : xml->getChildIterator()) {
+            if (!step->hasTagName("step")) continue;
+            juce::String voicesStr = step->getStringAttribute("voices", "0");
+            for (int voice = 0; voice < std::min(voicesStr.length(), numVoices); voice++) {
+                *(stepState[_stepIndex].voiceParameters[static_cast<size_t>(voice)]) = voicesStr[voice] == '1';
+            }
+            *(stepState[_stepIndex].octaveParameter) = -(step->getIntAttribute("octave", 0)) + static_cast<int>(constants::MAX_OCTAVES); // index
+            *(stepState[_stepIndex].lengthParameter) = static_cast<float>(step->getDoubleAttribute("length", 0.0));
+            *(stepState[_stepIndex].tieParameter) = step->getBoolAttribute("tie", false);
+            *(stepState[_stepIndex].volParameter) = static_cast<float>(step->getDoubleAttribute("vol", 0.0));
+            *(stepState[_stepIndex].powerParameter) = step->getBoolAttribute("power", true);
+            _stepIndex++;
         }
     }
 
