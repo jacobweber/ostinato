@@ -28,6 +28,8 @@ namespace constants {
     const juce::Colour COLOR_COMBO_BG = COLOR_TOGGLE_INACTIVE;
     const juce::Colour COLOR_MESSAGE_TEXT = juce::Colours::white;
 
+    const char *const APP_NAME = "Ostinato";
+
     const char *const LABEL_TIE = "Tie";
     const char *const LABEL_STEPS = "Steps";
     const char *const LABEL_VOICES = "Voices";

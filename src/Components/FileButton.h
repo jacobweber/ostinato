@@ -82,7 +82,7 @@ private:
             #if JUCE_MAC
             .getChildFile("Application Support")
             #endif
-            .getChildFile("Ostinato")
+            .getChildFile(constants::APP_NAME)
             .getChildFile("Presets");
     }
 
