@@ -1,4 +1,4 @@
-### 0.0.9 (unreleased)
+### 0.0.9
 
 * Use sustain for holding cycle.
 * Reverse order of octave menu.
