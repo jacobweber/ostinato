@@ -13,6 +13,7 @@ public:
 
     void showFileMenu() {
         juce::PopupMenu menu;
+        menu.setLookAndFeel(&getLookAndFeel());
         menu.addItem(1, juce::CharPointer_UTF8("Save Preset\u2026"));
         menu.addItem(2, "Open Presets Folder");
         menu.addItem(3, juce::CharPointer_UTF8("Export Settings\u2026"));
