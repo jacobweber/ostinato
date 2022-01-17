@@ -45,6 +45,7 @@ private:
                 component->showImportDialog();
                 break;
             case 5: // reset
+                component->lastPresetName = "";
                 component->state.resetToDefaults();
                 break;
             default: // preset name
