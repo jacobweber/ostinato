@@ -9,10 +9,10 @@ TEST_CASE("MidiProcessor without transport") {
         *(tester.state.stepsParameter) = 3; // 4 steps
         *(tester.state.voicesParameter) = 3; // 4 voices
         *(tester.state.rateParameter) = 3; // eighths
-        *(tester.state.stepState[0].voiceParameters[3]) = true;
-        *(tester.state.stepState[1].voiceParameters[2]) = true;
-        *(tester.state.stepState[2].voiceParameters[1]) = true;
-        *(tester.state.stepState[3].voiceParameters[0]) = true;
+        *(tester.state.stepState[0].voiceParameters[0]) = true;
+        *(tester.state.stepState[1].voiceParameters[1]) = true;
+        *(tester.state.stepState[2].voiceParameters[2]) = true;
+        *(tester.state.stepState[3].voiceParameters[3]) = true;
 
         tester.midiIn.addEvent(juce::MidiMessage::noteOn(1, 60, (juce::uint8) 100), 10);
         tester.midiIn.addEvent(juce::MidiMessage::noteOn(2, 62, (juce::uint8) 101), 9);
@@ -35,8 +35,8 @@ TEST_CASE("MidiProcessor without transport") {
         *(tester.state.stepsParameter) = 1; // 2 steps
         *(tester.state.voicesParameter) = 1; // 2 voices
         *(tester.state.rateParameter) = 3; // eighths
-        *(tester.state.stepState[0].voiceParameters[1]) = true;
-        *(tester.state.stepState[1].voiceParameters[0]) = true;
+        *(tester.state.stepState[0].voiceParameters[0]) = true;
+        *(tester.state.stepState[1].voiceParameters[1]) = true;
         *(tester.state.stretchParameter) = true;
 
         tester.midiIn.addEvent(juce::MidiMessage::noteOn(1, 60, (juce::uint8) 100), 10);
@@ -68,8 +68,8 @@ TEST_CASE("MidiProcessor without transport") {
         *(tester.state.stepsParameter) = 1; // 2 steps
         *(tester.state.voicesParameter) = 1; // 2 voices
         *(tester.state.rateParameter) = 3; // eighths
-        *(tester.state.stepState[0].voiceParameters[1]) = true;
-        *(tester.state.stepState[1].voiceParameters[0]) = true;
+        *(tester.state.stepState[0].voiceParameters[0]) = true;
+        *(tester.state.stepState[1].voiceParameters[1]) = true;
 
         tester.midiIn.addEvent(juce::MidiMessage::noteOn(1, 60, (juce::uint8) 100), 10);
         tester.midiIn.addEvent(juce::MidiMessage::noteOn(1, 62, (juce::uint8) 101), 9);
@@ -101,10 +101,10 @@ TEST_CASE("MidiProcessor with transport") {
         *(tester.state.stepsParameter) = 3; // 4 steps
         *(tester.state.voicesParameter) = 3; // 4 voices
         *(tester.state.rateParameter) = 3; // eighths
-        *(tester.state.stepState[0].voiceParameters[3]) = true;
-        *(tester.state.stepState[1].voiceParameters[2]) = true;
-        *(tester.state.stepState[2].voiceParameters[1]) = true;
-        *(tester.state.stepState[3].voiceParameters[0]) = true;
+        *(tester.state.stepState[0].voiceParameters[0]) = true;
+        *(tester.state.stepState[1].voiceParameters[1]) = true;
+        *(tester.state.stepState[2].voiceParameters[2]) = true;
+        *(tester.state.stepState[3].voiceParameters[3]) = true;
 
         tester.midiIn.addEvent(juce::MidiMessage::noteOn(1, 60, (juce::uint8) 100), 10);
         tester.midiIn.addEvent(juce::MidiMessage::noteOn(2, 62, (juce::uint8) 101), 9);
@@ -128,10 +128,10 @@ TEST_CASE("MidiProcessor with transport") {
         *(tester.state.stepsParameter) = 3; // 4 steps
         *(tester.state.voicesParameter) = 3; // 4 voices
         *(tester.state.rateParameter) = 3; // eighths
-        *(tester.state.stepState[0].voiceParameters[3]) = true;
-        *(tester.state.stepState[1].voiceParameters[2]) = true;
-        *(tester.state.stepState[2].voiceParameters[1]) = true;
-        *(tester.state.stepState[3].voiceParameters[0]) = true;
+        *(tester.state.stepState[0].voiceParameters[0]) = true;
+        *(tester.state.stepState[1].voiceParameters[1]) = true;
+        *(tester.state.stepState[2].voiceParameters[2]) = true;
+        *(tester.state.stepState[3].voiceParameters[3]) = true;
 
         // currently we only care about the start block, not the exact start time
         tester.midiIn.addEvent(juce::MidiMessage::noteOn(1, 60, (juce::uint8) 100), 150);
@@ -157,10 +157,10 @@ TEST_CASE("MidiProcessor with transport") {
         *(tester.state.voicesParameter) = 3; // 4 voices
         *(tester.state.rateParameter) = 3; // eighths
         *(tester.state.rateTypeParameter) = 1; // triplet
-        *(tester.state.stepState[0].voiceParameters[3]) = true;
-        *(tester.state.stepState[1].voiceParameters[2]) = true;
-        *(tester.state.stepState[2].voiceParameters[1]) = true;
-        *(tester.state.stepState[3].voiceParameters[0]) = true;
+        *(tester.state.stepState[0].voiceParameters[0]) = true;
+        *(tester.state.stepState[1].voiceParameters[1]) = true;
+        *(tester.state.stepState[2].voiceParameters[2]) = true;
+        *(tester.state.stepState[3].voiceParameters[3]) = true;
 
         tester.midiIn.addEvent(juce::MidiMessage::noteOn(1, 60, (juce::uint8) 100), 10);
         tester.midiIn.addEvent(juce::MidiMessage::noteOn(2, 62, (juce::uint8) 101), 9);
@@ -185,10 +185,10 @@ TEST_CASE("MidiProcessor with transport") {
         *(tester.state.voicesParameter) = 3; // 4 voices
         *(tester.state.rateParameter) = 3; // eighths
         *(tester.state.rateTypeParameter) = 1; // triplet
-        *(tester.state.stepState[0].voiceParameters[3]) = true;
-        *(tester.state.stepState[1].voiceParameters[2]) = true;
-        *(tester.state.stepState[2].voiceParameters[1]) = true;
-        *(tester.state.stepState[3].voiceParameters[0]) = true;
+        *(tester.state.stepState[0].voiceParameters[0]) = true;
+        *(tester.state.stepState[1].voiceParameters[1]) = true;
+        *(tester.state.stepState[2].voiceParameters[2]) = true;
+        *(tester.state.stepState[3].voiceParameters[3]) = true;
 
         tester.midiIn.addEvent(juce::MidiMessage::noteOn(1, 60, (juce::uint8) 100), 10);
         tester.midiIn.addEvent(juce::MidiMessage::noteOn(2, 62, (juce::uint8) 101), 9);
@@ -218,10 +218,10 @@ TEST_CASE("MidiProcessor with transport") {
         *(tester.state.stepsParameter) = 3; // 4 steps
         *(tester.state.voicesParameter) = 3; // 4 voices
         *(tester.state.rateParameter) = 3; // eighths
-        *(tester.state.stepState[0].voiceParameters[3]) = true;
-        *(tester.state.stepState[1].voiceParameters[2]) = true;
-        *(tester.state.stepState[2].voiceParameters[1]) = true;
-        *(tester.state.stepState[3].voiceParameters[0]) = true;
+        *(tester.state.stepState[0].voiceParameters[0]) = true;
+        *(tester.state.stepState[1].voiceParameters[1]) = true;
+        *(tester.state.stepState[2].voiceParameters[2]) = true;
+        *(tester.state.stepState[3].voiceParameters[3]) = true;
 
         tester.midiIn.addEvent(juce::MidiMessage::noteOn(1, 60, (juce::uint8) 100), 10);
         tester.midiIn.addEvent(juce::MidiMessage::noteOn(2, 62, (juce::uint8) 101), 9);
@@ -241,11 +241,11 @@ TEST_CASE("MidiProcessor with transport") {
                                                "875: Note off F3 Velocity 0 Channel 4\n");
 
         *(tester.state.rateParameter) = 2; // quarters
-        *(tester.state.stepState[0].voiceParameters[0]) = true;
+        *(tester.state.stepState[0].voiceParameters[3]) = true;
         tester.processBlocks(9);
         // 500 samples/step
-        REQUIRE(tester.midiOutString(false) == "1000: Note on F3 Velocity 103 Channel 4\n"
-                                               "1000: Note on C3 Velocity 100 Channel 1\n"
+        REQUIRE(tester.midiOutString(false) == "1000: Note on C3 Velocity 100 Channel 1\n"
+                                               "1000: Note on F3 Velocity 103 Channel 4\n"
                                                "1250: Note off C3 Velocity 0 Channel 1\n"
                                                "1250: Note off F3 Velocity 0 Channel 4\n"
                                                "1499: Note on D3 Velocity 101 Channel 2\n"

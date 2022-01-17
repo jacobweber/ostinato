@@ -146,9 +146,9 @@ public:
         stepsBox.items.add(juce::FlexItem(fillButton).withMargin(3).withHeight(ICON_SIZE).withWidth(ICON_SIZE));
         stepsBox.performLayout(iconArea.toFloat());
 
-        for (voicenum_t i = 0; i < voices.size(); i++)
-            if (voices.size() > i) {
-                voices[i]->setBounds(area.removeFromTop(20).reduced(2));
+        for (int i = static_cast<int>(voices.size()) - 1; i >= 0; i--)
+            if (static_cast<int>(voices.size()) > i) {
+                voices[static_cast<size_t>(i)]->setBounds(area.removeFromTop(20).reduced(2));
                 area.removeFromTop(2);
             }
 

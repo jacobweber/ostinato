@@ -210,8 +210,7 @@ private:
             double slope = (nextVoiceY - prevVoiceY) / (next.x - prev.x);
             double curVoiceY = prevVoiceY + slope * (curStepX - prev.x);
             DBG("  voice " << curVoiceY << " (orig: " << prevVoiceY << "-" << nextVoiceY << ")");
-            voicenum_t voiceNum =
-                    numVoices - 1 - std::min(static_cast<voicenum_t>(std::round(curVoiceY)), numVoices - 1);
+            voicenum_t voiceNum = std::min(static_cast<voicenum_t>(std::round(curVoiceY)), numVoices - 1);
             outStep.voices[voiceNum] = true;
         }
 
@@ -232,7 +231,7 @@ private:
             for (voicenum_t origVoiceNum = 0; origVoiceNum < origNumVoices; origVoiceNum++) {
                 if (_state.stepState[stepNum].voiceParameters[origVoiceNum]->get()) {
                     outStep.activeVoicesY[outStep.numActiveVoices++] =
-                            origVoiceSizeY * static_cast<double>(origNumVoices - 1 - origVoiceNum);
+                            origVoiceSizeY * static_cast<double>(origVoiceNum);
                 }
             }
         }

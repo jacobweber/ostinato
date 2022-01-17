@@ -132,14 +132,14 @@ private:
         for (stepnum_t stepNum = 0; stepNum < steps.numSteps; stepNum++) {
             auto const &notesInStep = notesInSteps[stepNum];
             for (voicenum_t voiceNum = 0; voiceNum < steps.numVoices; voiceNum++) {
-                steps.steps[stepNum].voices[steps.numVoices - 1 - voiceNum] = false;
+                steps.steps[stepNum].voices[voiceNum] = false;
             }
             int totalVel = 0;
             int numActualNotes = 0;
             for (auto const &midiValue: notesInStep) {
                 int index = voices.indexOf(midiValue.note);
                 if (index != -1 && index < static_cast<int>(steps.numVoices)) {
-                    steps.steps[stepNum].voices[steps.numVoices - 1 - static_cast<voicenum_t>(index)] = true;
+                    steps.steps[stepNum].voices[static_cast<voicenum_t>(index)] = true;
                     totalVel += midiValue.vel;
                     numActualNotes++;
                 }

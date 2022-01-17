@@ -13,7 +13,7 @@ public:
         *(state.voicesParameter) = static_cast<int>(numVoices - 1); // index
         for (stepnum_t i = 0; i < numSteps; i++) {
             for (voicenum_t j = 0; j < numVoices; j++) {
-                *(state.stepState[i].voiceParameters[j]) = grid[static_cast<int>(j * (numSteps + 1) + i)] == '*';
+                *(state.stepState[i].voiceParameters[j]) = grid[static_cast<int>((numVoices - 1 - j) * (numSteps + 1) + i)] == '*';
             }
             *(state.stepState[i].powerParameter) = true;
         }
@@ -23,7 +23,7 @@ public:
         auto numSteps = static_cast<stepnum_t>(state.stepsParameter->getIndex()) + 1; // index
         auto numVoices = static_cast<voicenum_t>(state.voicesParameter->getIndex()) + 1; // index
         juce::String grid = juce::String();
-        for (voicenum_t j = 0; j < numVoices; j++) {
+        for (int j = static_cast<int>(numVoices) - 1; j >= 0; j--) {
             for (stepnum_t i = 0; i < numSteps; i++) {
                 grid += state.stepState[i].voiceParameters[j]->get() ? '*' : '-';
             }
@@ -34,9 +34,9 @@ public:
 
     static juce::String getGrid(Stretcher::StretchedResult &state) {
         juce::String grid = juce::String();
-        for (voicenum_t j = 0; j < state.numVoices; j++) {
+        for (int j = static_cast<int>(state.numVoices) - 1; j >= 0; j--) {
             for (stepnum_t i = 0; i < state.steps.size(); i++) {
-                grid += state.steps[i].voices[j] ? '*' : '-';
+                grid += state.steps[i].voices[static_cast<size_t>(j)] ? '*' : '-';
             }
             grid += '\n';
         }

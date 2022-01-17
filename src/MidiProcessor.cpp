@@ -221,20 +221,19 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midiIn, juce::MidiBuffe
             if (currentStep.power && !tieActive) {
                 int transpose = (currentStep.octave - static_cast<int>(constants::MAX_OCTAVES)) * 12;
                 MidiValue noteValue{};
-                for (voicenum_t voiceNum = 0; voiceNum < numVoices; voiceNum++) {
-                    if (currentStep.voices[voiceNum]) {
-                        int voiceIndex = static_cast<int>(numVoices - 1 - voiceNum); // they're flipped
+                for (int voiceNum = 0; voiceNum < static_cast<int>(numVoices); voiceNum++) {
+                    if (currentStep.voices[static_cast<size_t>(voiceNum)]) {
                         noteValue.note = -1;
                         if (notesSource == 0) { // pressed notes
-                            if (voiceIndex < pressedNotes.size()) {
-                                noteValue = pressedNotes[static_cast<int>(voiceIndex)];
+                            if (voiceNum < pressedNotes.size()) {
+                                noteValue = pressedNotes[voiceNum];
                             }
                         } else { // scale
                             noteValue = pressedNotes[0];
                             const std::vector<int> &scale = scales.allScales[static_cast<size_t>(notesSource) - 1];
                             int notesPerOctave = static_cast<int>(scale.size());
-                            int octave = voiceIndex / notesPerOctave;
-                            int scaleIndex = voiceIndex % notesPerOctave;
+                            int octave = voiceNum / notesPerOctave;
+                            int scaleIndex = voiceNum % notesPerOctave;
                             DBG("scale degree " << scaleIndex << " octave " << octave);
                             noteValue.note +=
                                     scale[static_cast<size_t>(scaleIndex)] + static_cast<int>(12 * octave);

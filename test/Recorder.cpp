@@ -13,10 +13,10 @@ TEST_CASE("Recorder") {
         *(tester.state.voicesParameter) = 3; // 4 voices
         *(tester.state.rateParameter) = 3; // eighths
         *(tester.state.notesParameter) = 1; // major
-        *(tester.state.stepState[0].voiceParameters[3]) = true;
-        *(tester.state.stepState[1].voiceParameters[2]) = true;
-        *(tester.state.stepState[2].voiceParameters[1]) = true;
-        *(tester.state.stepState[3].voiceParameters[0]) = true;
+        *(tester.state.stepState[0].voiceParameters[0]) = true;
+        *(tester.state.stepState[1].voiceParameters[1]) = true;
+        *(tester.state.stepState[2].voiceParameters[2]) = true;
+        *(tester.state.stepState[3].voiceParameters[3]) = true;
         tester.state.recordButton = true;
 
         // notes don't matter; only their relative position
@@ -84,8 +84,8 @@ TEST_CASE("Recorder") {
 
         tester.processBlocks(13);
         // should make volume more predictable
-        REQUIRE(tester.midiOutString(false) == "1500: Note on D3 Velocity 89 Channel 1\n"
-                                               "1500: Note on C3 Velocity 89 Channel 1\n"
+        REQUIRE(tester.midiOutString(false) == "1500: Note on C3 Velocity 89 Channel 1\n"
+                                               "1500: Note on D3 Velocity 89 Channel 1\n"
                                                "1625: Note off C3 Velocity 0 Channel 1\n"
                                                "1625: Note off D3 Velocity 0 Channel 1\n"
                                                "1750: Note on C3 Velocity 99 Channel 1\n"
@@ -127,8 +127,8 @@ TEST_CASE("Recorder") {
         *(tester.state.stepsParameter) = 1; // 2 steps
         *(tester.state.voicesParameter) = 1; // 2 voices
         *(tester.state.rateParameter) = 3; // eighths
-        *(tester.state.stepState[0].voiceParameters[1]) = true;
-        *(tester.state.stepState[1].voiceParameters[0]) = true;
+        *(tester.state.stepState[0].voiceParameters[0]) = true;
+        *(tester.state.stepState[1].voiceParameters[1]) = true;
 
         tester.midiIn.addEvent(juce::MidiMessage::noteOn(1, 60, (juce::uint8) 100), 10);
         tester.processBlocks(2);

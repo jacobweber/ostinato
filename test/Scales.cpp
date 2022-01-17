@@ -10,10 +10,10 @@ TEST_CASE("Scales") {
         *(tester.state.voicesParameter) = 3; // 4 voices
         *(tester.state.rateParameter) = 3; // eighths
         *(tester.state.notesParameter) = 1; // major
-        *(tester.state.stepState[0].voiceParameters[3]) = true;
-        *(tester.state.stepState[1].voiceParameters[2]) = true;
-        *(tester.state.stepState[2].voiceParameters[1]) = true;
-        *(tester.state.stepState[3].voiceParameters[0]) = true;
+        *(tester.state.stepState[0].voiceParameters[0]) = true;
+        *(tester.state.stepState[1].voiceParameters[1]) = true;
+        *(tester.state.stepState[2].voiceParameters[2]) = true;
+        *(tester.state.stepState[3].voiceParameters[3]) = true;
 
         tester.midiIn.addEvent(juce::MidiMessage::noteOn(1, 60, (juce::uint8) 100), 10);
 
@@ -34,10 +34,10 @@ TEST_CASE("Scales") {
         *(tester.state.voicesParameter) = 3; // 4 voices
         *(tester.state.rateParameter) = 3; // eighths
         *(tester.state.notesParameter) = 0; // as played
-        *(tester.state.stepState[0].voiceParameters[3]) = true;
-        *(tester.state.stepState[1].voiceParameters[2]) = true;
-        *(tester.state.stepState[2].voiceParameters[1]) = true;
-        *(tester.state.stepState[3].voiceParameters[0]) = true;
+        *(tester.state.stepState[0].voiceParameters[0]) = true;
+        *(tester.state.stepState[1].voiceParameters[1]) = true;
+        *(tester.state.stepState[2].voiceParameters[2]) = true;
+        *(tester.state.stepState[3].voiceParameters[3]) = true;
 
         tester.midiIn.addEvent(juce::MidiMessage::noteOn(1, 60, (juce::uint8) 100), 10);
         tester.midiIn.addEvent(juce::MidiMessage::noteOn(2, 62, (juce::uint8) 101), 9);
@@ -73,8 +73,8 @@ TEST_CASE("Scales") {
         *(tester.state.voicesParameter) = 1; // 2 voices
         *(tester.state.rateParameter) = 3; // eighths
         *(tester.state.notesParameter) = 0; // as played
-        *(tester.state.stepState[0].voiceParameters[1]) = true;
-        *(tester.state.stepState[1].voiceParameters[0]) = true;
+        *(tester.state.stepState[0].voiceParameters[0]) = true;
+        *(tester.state.stepState[1].voiceParameters[1]) = true;
         *(tester.state.stretchParameter) = true;
 
         tester.midiIn.addEvent(juce::MidiMessage::noteOn(1, 60, (juce::uint8) 100), 10);

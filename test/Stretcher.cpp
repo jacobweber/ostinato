@@ -115,8 +115,8 @@ TEST_CASE("Stretcher")
                                     "*---\n";
         REQUIRE(actualGrid == expectedGrid);
 
-        *(state.stepState[2].voiceParameters[0]) = true;
-        *(state.stepState[2].voiceParameters[1]) = false;
+        *(state.stepState[2].voiceParameters[0]) = false;
+        *(state.stepState[2].voiceParameters[1]) = true;
 
         result = str.stretch(5, 10);
         REQUIRE(result.numSteps == 9);

@@ -58,7 +58,7 @@ public:
                         std::make_unique<juce::AudioParameterBool>(
                                 "step" + std::to_string(i) + "_voice" + std::to_string(j),
                                 "Step " + std::to_string(i + 1) + " Voice " +
-                                std::to_string(j + 1) + " On", i == 3 - j));
+                                std::to_string(j + 1) + " On", i == j && j < 4));
 
             juce::StringArray octaveChoices;
             for (int o = -static_cast<int>(constants::MAX_OCTAVES); o <= static_cast<int>(constants::MAX_OCTAVES); o++)
