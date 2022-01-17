@@ -36,6 +36,7 @@ namespace constants {
     const char *const LABEL_LENGTH = "Length";
     const char *const LABEL_OCTAVE = "Octave";
 
+    const char *const TOOLTIP_FILE = "Save and load presets";
     const char *const TOOLTIP_RECORD = "Record pattern";
     const char *const TOOLTIP_STRETCH = "Stretch pattern to fit pressed keys";
     const char *const TOOLTIP_RANDOM = "Randomize settings";

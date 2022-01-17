@@ -7,7 +7,7 @@ Header::Header(State &s, PluginProcessor &p) : state(s), pluginProcessor(p) {
                                                            ICON_SIZE, constants::COLOR_TOGGLE_ACTIVE,
                                                            1);
     fileButton.setImages(true, false, true, floppyDisk, 1.0f, {}, {}, 1.0f, {}, {}, 1.0f, constants::COLOR_TOGGLE_INACTIVE);
-    fileButton.setTooltip(constants::TOOLTIP_RANDOM);
+    fileButton.setTooltip(constants::TOOLTIP_FILE);
     fileButton.onClick = [this] { fileButton.showFileMenu(); };
     addAndMakeVisible(fileButton);
 
