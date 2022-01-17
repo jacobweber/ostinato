@@ -8,22 +8,7 @@ Header::Header(State &s, PluginProcessor &p) : state(s), pluginProcessor(p) {
                                                            1);
     fileButton.setImages(true, false, true, floppyDisk, 1.0f, {}, {}, 1.0f, {}, {}, 1.0f, constants::COLOR_TOGGLE_INACTIVE);
     fileButton.setTooltip(constants::TOOLTIP_RANDOM);
-    fileButton.onClick = [&] {
-        juce::PopupMenu menu;
-        menu.addItem(1, juce::CharPointer_UTF8("Save Preset\u2026"));
-        menu.addItem(2, "Open Presets Folder");
-        menu.addItem(3, juce::CharPointer_UTF8("Export Settings\u2026"));
-        menu.addItem(4, juce::CharPointer_UTF8("Import Settings\u2026"));
-        menu.addSeparator();
-        refreshPresetNames();
-        menu.addItem(5, "<defaults>");
-        int idx = 6;
-        for (juce::File &preset : presetNames) {
-            menu.addItem(idx++, preset.getFileNameWithoutExtension());
-        }
-        menu.showMenuAsync(juce::PopupMenu::Options{}.withTargetComponent(fileButton),
-            juce::ModalCallbackFunction::forComponent(fileMenuItemChosenCallback, this));
-    };
+    fileButton.onClick = [this] { fileButton.showFileMenu(); };
     addAndMakeVisible(fileButton);
 
     juce::Image microphone = FontAwesome::getInstance()->getIcon(true,
@@ -133,100 +118,6 @@ Header::Header(State &s, PluginProcessor &p) : state(s), pluginProcessor(p) {
     refresh();
 }
 
-void Header::fileMenuItemChosenCallback(int result, Header* component) {
-    if (component == nullptr) return;
-    switch (result) {
-        case 1: // save
-            component->showSaveDialog();
-            break;
-        case 2: // show
-            component->showPresetsDir();
-            break;
-        case 3: // export
-            component->showExportDialog();
-            break;
-        case 4: // import
-            component->showImportDialog();
-            break;
-        case 5: // reset
-            component->state.resetToDefaults();
-            break;
-        default: // preset name
-            component->state.loadFromFile(component->presetNames[result - 6]);
-            break;
-    }
-}
-
-void Header::saveDialogClosedCallback(int result, Header* component) {
-    if (component == nullptr) return;
-    auto& aw = *(component->asyncAlertWindow);
-    aw.exitModalState(result);
-    aw.setVisible(false);
-    if (result != 1) return;
-    auto presetName = aw.getTextEditorContents("presetName");
-    auto fileName = juce::File::createLegalFileName(presetName + ".xml");
-    auto presetsDir = component->getPresetsDir();
-    if (!presetsDir.exists() && !presetsDir.createDirectory().wasOk()) return;
-    component->state.saveToFile(presetsDir.getChildFile(fileName));
-}
-
-void Header::showPresetsDir() {
-    auto presetsDir = getPresetsDir();
-    if (!presetsDir.exists() && !presetsDir.createDirectory().wasOk()) return;
-    presetsDir.revealToUser();
-}
-
-juce::File Header::getPresetsDir() {
-    return juce::File::getSpecialLocation(juce::File::userApplicationDataDirectory)
-        .getChildFile("Application Support")
-        .getChildFile(juce::JUCEApplication::getInstance()->getApplicationName())
-        .getChildFile("Presets");
-}
-
-void Header::refreshPresetNames() {
-    auto presetsDir = getPresetsDir();
-    if (!presetsDir.exists() && !presetsDir.createDirectory().wasOk()) {
-        presetNames.clear();
-        return;
-    }
-    presetNames = presetsDir.findChildFiles(juce::File::findFiles | juce::File::ignoreHiddenFiles, true, "*.xml");
-    presetNames.sort();
-}
-
-void Header::showSaveDialog() {
-    asyncAlertWindow = std::make_unique<juce::AlertWindow>("Save Preset",
-        "Enter the preset name.", juce::MessageBoxIconType::NoIcon);
-    asyncAlertWindow->addTextEditor("presetName", "", "Name:");
-    asyncAlertWindow->addButton("OK", 1, juce::KeyPress(juce::KeyPress::returnKey, 0, 0));
-    asyncAlertWindow->addButton("Cancel", 0, juce::KeyPress(juce::KeyPress::escapeKey, 0, 0));
-    asyncAlertWindow->getTextEditor("presetName")->setExplicitFocusOrder(1);
-    asyncAlertWindow->enterModalState(true, juce::ModalCallbackFunction::forComponent(saveDialogClosedCallback, this));
-}
-
-void Header::showExportDialog() {
-    fc.reset(new juce::FileChooser("Enter file to export settings to.", {}, "*.xml",  true));
-    fc->launchAsync(juce::FileBrowserComponent::saveMode | juce::FileBrowserComponent::canSelectFiles,
-        [this] (const juce::FileChooser& chooser) {
-            auto result = chooser.getURLResult();
-            if (result.isEmpty()) return;
-            if (!result.isLocalFile()) return;
-            state.saveToFile(result.getLocalFile());
-        }
-    );
-}
-
-void Header::showImportDialog() {
-    fc.reset(new juce::FileChooser("Select settings file to import.", {}, "*.xml", true));
-    fc->launchAsync(juce::FileBrowserComponent::openMode | juce::FileBrowserComponent::canSelectFiles,
-        [this] (const juce::FileChooser& chooser) {
-            juce::String chosen;
-            auto result = chooser.getURLResult();
-            if (result.isEmpty()) return;
-            if (!result.isLocalFile()) return;
-            state.loadFromFile(result.getLocalFile());
-        }
-    );
-}
 
 void Header::timerCallback() {
     if (state.recordButton != recordButton.getToggleState()) {

@@ -7,6 +7,7 @@
 #include "../State.h"
 #include "../Scales.h"
 #include "../Constants.h"
+#include "FileButton.h"
 
 class Header : public juce::Component {
 public:
@@ -18,14 +19,6 @@ public:
     typedef juce::AudioProcessorValueTreeState::ButtonAttachment ButtonAttachment;
 
     Header(State &s, PluginProcessor &p);
-
-    static void fileMenuItemChosenCallback(int result, Header* component);
-    static void saveDialogClosedCallback(int result, Header* component);
-
-    void showPresetsDir();
-    void showSaveDialog();
-    void showExportDialog();
-    void showImportDialog();
 
     void timerCallback();
 
@@ -39,10 +32,6 @@ public:
 
     void resized() override;
 
-private:
-    juce::File getPresetsDir();
-    void refreshPresetNames();
-
 public:
     std::function<void()> onUpdateSteps = [] {};
     std::function<void()> onUpdateVoices = [] {};
@@ -54,12 +43,10 @@ private:
     PluginProcessor &pluginProcessor;
     Scales scales{};
 
-    juce::Array<juce::File> presetNames{};
-
     juce::Font textFont{12.0f};
     juce::Font messageFont{16.0f};
 
-    juce::ImageButton fileButton{};
+    FileButton fileButton{state};
     juce::ImageButton recordButton{};
     juce::ImageButton stretchButton{};
     juce::ImageButton randomButton{};
@@ -82,9 +69,6 @@ private:
     std::unique_ptr<ComboBoxAttachment> rateAttachment;
     std::unique_ptr<ComboBoxAttachment> rateTypeAttachment;
     std::unique_ptr<ComboBoxAttachment> notesAttachment;
-
-    std::unique_ptr<juce::FileChooser> fc;
-    std::unique_ptr<juce::AlertWindow> asyncAlertWindow;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Header)
 };
