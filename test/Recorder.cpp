@@ -53,8 +53,7 @@ TEST_CASE("Recorder") {
                        "**-\n";
         REQUIRE(actualGrid == expectedGrid);
 
-        tester.midiIn.addEvent(juce::MidiMessage::controllerEvent(1, 0x40, (juce::uint8) 120), 900);
-        tester.midiIn.addEvent(juce::MidiMessage::controllerEvent(1, 0x40, (juce::uint8) 0), 1050);
+        tester.state.recordedRest = true;
         tester.processBlocks(3);
         reader.timerCallback();
 
@@ -103,8 +102,7 @@ TEST_CASE("Recorder") {
         *(tester.state.notesParameter) = 1; // major
         tester.state.recordButton = true;
 
-        tester.midiIn.addEvent(juce::MidiMessage::controllerEvent(1, 0x40, (juce::uint8) 120), 50);
-        tester.midiIn.addEvent(juce::MidiMessage::controllerEvent(1, 0x40, (juce::uint8) 0), 150);
+        tester.state.recordedRest = true;
         tester.processBlocks(2);
         reader.timerCallback();
 
@@ -112,8 +110,7 @@ TEST_CASE("Recorder") {
         juce::String expectedGrid = "-\n";
         REQUIRE(actualGrid == expectedGrid);
 
-        tester.midiIn.addEvent(juce::MidiMessage::controllerEvent(1, 0x40, (juce::uint8) 120), 300);
-        tester.midiIn.addEvent(juce::MidiMessage::controllerEvent(1, 0x40, (juce::uint8) 0), 450);
+        tester.state.recordedRest = true;
         tester.processBlocks(3);
         reader.timerCallback();
         tester.state.recordButton = false;
