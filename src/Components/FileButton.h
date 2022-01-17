@@ -48,7 +48,10 @@ private:
                 component->state.resetToDefaults();
                 break;
             default: // preset name
-                component->state.loadFromFile(component->presetNames[result - 6]);
+                // relies on order not changing after creating menu
+                juce::File presetName = component->presetNames[result - 6];
+                component->lastPresetName = presetName.getFileNameWithoutExtension();
+                component->state.loadFromFile(presetName);
                 break;
         }
     }
@@ -59,8 +62,8 @@ private:
         aw.exitModalState(result);
         aw.setVisible(false);
         if (result != 1) return;
-        auto presetName = aw.getTextEditorContents("presetName");
-        auto fileName = juce::File::createLegalFileName(presetName + ".xml");
+        component->lastPresetName = aw.getTextEditorContents("presetName");
+        auto fileName = juce::File::createLegalFileName(component->lastPresetName + ".xml");
         auto presetsDir = component->getPresetsDir();
         if (!presetsDir.exists() && !presetsDir.createDirectory().wasOk()) return;
         component->state.saveToFile(presetsDir.getChildFile(fileName));
@@ -92,7 +95,7 @@ private:
     void showSaveDialog() {
         asyncAlertWindow = std::make_unique<juce::AlertWindow>("Save Preset",
             "Enter the preset name.", juce::MessageBoxIconType::NoIcon);
-        asyncAlertWindow->addTextEditor("presetName", "", "Name:");
+        asyncAlertWindow->addTextEditor("presetName", lastPresetName, "Name:");
         asyncAlertWindow->addButton("OK", 1, juce::KeyPress(juce::KeyPress::returnKey, 0, 0));
         asyncAlertWindow->addButton("Cancel", 0, juce::KeyPress(juce::KeyPress::escapeKey, 0, 0));
         asyncAlertWindow->getTextEditor("presetName")->setExplicitFocusOrder(1);
@@ -126,6 +129,7 @@ private:
 
 private:
     State &state;
+    juce::String lastPresetName{""};
     juce::Array<juce::File> presetNames{};
 
     std::unique_ptr<juce::FileChooser> fc;
