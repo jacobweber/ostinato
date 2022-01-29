@@ -33,6 +33,8 @@ private:
     static void fileMenuItemChosenCallback(int result, FileButton* component) {
         if (component == nullptr) return;
         switch (result) {
+            case 0: // nothing
+                break;
             case 1: // save
                 component->showSaveDialog();
                 break;
