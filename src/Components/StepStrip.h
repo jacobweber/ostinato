@@ -21,9 +21,9 @@ public:
 
     StepStrip(State &s, stepnum_t n) : stepNum(n), state(s) {
         DBG("created strip " << stepNum);
+        setInterceptsMouseClicks(false, true);
 
         addAndMakeVisible(activeLight);
-
 
         juce::Image square = FontAwesome::getInstance()->getIcon(false,
                                                                  juce::String::fromUTF8(
@@ -183,6 +183,7 @@ public:
             for (voicenum_t i = oldNumVoices; i < newNumVoices; i++) {
                 voices.push_back(std::make_unique<juce::TextButton>());
                 voices[i]->setClickingTogglesState(true);
+                voices[i]->setInterceptsMouseClicks(false, false);
                 addAndMakeVisible(*voices[i]);
                 voicesAttachments.push_back(std::make_unique<ButtonAttachment>(
                         state.parameters,
@@ -198,6 +199,18 @@ public:
             }
             resized();
         }
+    }
+
+    int getVoiceForPoint(int x, int y) {
+        int size = static_cast<int>(voices.size());
+        for (int i = 0; i < size; i++) {
+            if (voices[static_cast<size_t>(i)]->getBounds().contains(x, y)) return i;
+        }
+        return -1;
+    }
+
+    void hoverVoice(voicenum_t voiceNum, bool over) {
+        voices[voiceNum]->setState(over ? juce::Button::buttonOver : juce::Button::buttonNormal);
     }
 
 private:
