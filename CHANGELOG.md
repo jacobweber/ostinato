@@ -1,3 +1,7 @@
+### 0.0.10
+
+* Drag to select voices.
+
 ### 0.0.9
 
 * Use sustain for holding cycle.
