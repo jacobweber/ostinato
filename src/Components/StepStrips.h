@@ -37,6 +37,10 @@ public:
         }
     }
 
+    void mouseExit(const juce::MouseEvent& event) override {
+        if (curMouseStep != -1) strips[static_cast<size_t>(curMouseStep)]->hoverVoice(static_cast<voicenum_t>(curMouseVoice), false);
+    }
+
     void mouseDrag(const juce::MouseEvent& event) override {
         // while pressed
         if (!isDraggingVoices) return;
