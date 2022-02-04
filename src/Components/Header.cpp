@@ -111,6 +111,16 @@ Header::Header(State &s, PluginProcessor &p) : state(s), pluginProcessor(p) {
         refreshEnabled();
     };
 
+    juce::Image gear = FontAwesome::getInstance()->getIcon(true,
+                                                           juce::String::fromUTF8(
+                                                                   reinterpret_cast<const char *>(u8"\uf013")),
+                                                           ICON_SIZE, constants::COLOR_TOGGLE_ACTIVE,
+                                                           1);
+    settingsButton.setImages(true, false, true, gear, 1.0f, {}, {}, 1.0f, {}, {}, 1.0f, constants::COLOR_TOGGLE_INACTIVE);
+    settingsButton.setTooltip(constants::TOOLTIP_SETTINGS);
+    settingsButton.onClick = [this] { showSettingsMenu(); };
+    addAndMakeVisible(settingsButton);
+
     addAndMakeVisible(messageLabel);
     messageLabel.setFont(messageFont);
     messageLabel.setColour(juce::Label::ColourIds::textColourId, constants::COLOR_MESSAGE_TEXT);
@@ -118,6 +128,52 @@ Header::Header(State &s, PluginProcessor &p) : state(s), pluginProcessor(p) {
     refresh();
 }
 
+void Header::showSettingsMenu() {
+    juce::PopupMenu menu;
+    menu.setLookAndFeel(&getLookAndFeel());
+    int index = 1;
+
+    menu.addItem(index++, "More pressed notes than voices:", false);
+    auto current = state.extraNotesParameter->getCurrentValueAsText();
+    for (const juce::String &value: state.extraNotesParameter->getAllValueStrings()) {
+        menu.addItem(index++, value, true, value == current);
+    }
+    menu.addSeparator();
+
+    menu.addItem(index++, "More voices than pressed notes:", false);
+    current = state.extraVoicesParameter->getCurrentValueAsText();
+    for (const juce::String &value: state.extraVoicesParameter->getAllValueStrings()) {
+        menu.addItem(index++, value, true, value == current);
+    }
+
+    menu.showMenuAsync(juce::PopupMenu::Options{}.withTargetComponent(settingsButton),
+        juce::ModalCallbackFunction::forComponent(settingsMenuItemChosenCallback, this));
+}
+
+void Header::settingsMenuItemChosenCallback(int result, Header* component) {
+    if (component == nullptr) return;
+    if (result == 0) return;
+
+    auto extraNotesParameter = component->state.extraNotesParameter;
+    int firstExtraNotes = 2;
+    int lastExtraNotes = firstExtraNotes + extraNotesParameter->getAllValueStrings().size() - 1;
+    if (result >= firstExtraNotes && result <= lastExtraNotes) {
+        component->state.extraNotesParameter->beginChangeGesture();
+        *(component->state.extraNotesParameter) = result - firstExtraNotes;
+        component->state.extraNotesParameter->endChangeGesture();
+        return;
+    }
+
+    auto extraVoicesParameter = component->state.extraVoicesParameter;
+    int firstExtraVoices = lastExtraNotes + 2;
+    int lastExtraVoices = firstExtraVoices + extraVoicesParameter->getAllValueStrings().size() - 1;
+    if (result >= firstExtraVoices && result <= lastExtraVoices) {
+        component->state.extraVoicesParameter->beginChangeGesture();
+        *(component->state.extraVoicesParameter) = result - firstExtraVoices;
+        component->state.extraVoicesParameter->endChangeGesture();
+        return;
+    }
+}
 
 void Header::timerCallback() {
     if (state.recordButton != recordButton.getToggleState()) {
@@ -153,6 +209,7 @@ void Header::refreshEnabled() {
     rateMenu.setEnabled(notRecording);
     rateTypeMenu.setEnabled(notRecording);
     notesMenu.setEnabled(notRecording);
+    settingsButton.setEnabled(notRecording);
     stretchButton.setEnabled(notRecording);
     int notesSource = state.notesParameter->getIndex();
     stretchButton.setEnabled(notRecording && notesSource == 0);
@@ -191,6 +248,9 @@ void Header::resized() {
             MENU_HEIGHT).withWidth(130.0).withMargin(margin));
     toolbar.items.add(juce::FlexItem(notesMenu).withAlignSelf(juce::FlexItem::AlignSelf::autoAlign).withHeight(
             MENU_HEIGHT).withWidth(130.0).withMargin(margin));
+    toolbar.items.add(juce::FlexItem(settingsButton).withAlignSelf(juce::FlexItem::AlignSelf::autoAlign).withHeight(
+            ICON_SIZE + 10).withWidth(
+            static_cast<float>(settingsButton.getWidth())).withMargin({0.0, 5.0, 0.0, 5.0}));
     toolbar.items.add(juce::FlexItem(recordButton).withAlignSelf(juce::FlexItem::AlignSelf::autoAlign).withHeight(
             ICON_SIZE + 10).withWidth(
             static_cast<float>(recordButton.getWidth())).withMargin({0.0, 5.0, 0.0, 5.0}));

@@ -47,6 +47,7 @@ namespace constants {
     const char *const TOOLTIP_TIE = "Hold this step instead of playing the next step";
     const char *const TOOLTIP_POWER_OFF = "Disable this step";
     const char *const TOOLTIP_POWER_ON = "Enable this step";
+    const char *const TOOLTIP_SETTINGS = "Additional settings";
 
     const char *const MSG_SCALE = "Hold down a key to use as the root, and each voice will be a scale degree in that key.";
     const char *const MSG_RECORD = "Play an arpeggiation to record it. Press the space bar to enter a rest.";

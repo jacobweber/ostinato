@@ -20,6 +20,10 @@ public:
 
     Header(State &s, PluginProcessor &p);
 
+    void showSettingsMenu();
+
+    static void settingsMenuItemChosenCallback(int result, Header* component);
+
     void timerCallback();
 
     void refresh();
@@ -59,6 +63,7 @@ private:
     juce::ComboBox rateTypeMenu;
     juce::Label notesLabel{{}, constants::LABEL_NOTES};
     juce::ComboBox notesMenu;
+    juce::ImageButton settingsButton{};
     juce::Label messageLabel{{}};
 
     // use unique_ptr so it can be destroyed when UI is
