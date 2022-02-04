@@ -10,8 +10,6 @@ public:
     static juce::AudioProcessorValueTreeState::ParameterLayout create() {
         juce::AudioProcessorValueTreeState::ParameterLayout layout;
 
-        layout.add(std::make_unique<juce::AudioParameterBool>("stretch", "Stretch", false));
-
         juce::StringArray stepsChoices;
         for (stepnum_t i = 1; i <= constants::MAX_STEPS; i++) {
             stepsChoices.add(std::to_string(i));
@@ -55,14 +53,14 @@ public:
         juce::StringArray extraNotesChoices;
         extraNotesChoices.add("Use lower notes");
         extraNotesChoices.add("Stretch voice pattern");
-        extraNotesChoices.add("Stretch voice pattern and number of steps");
+        extraNotesChoices.add("Stretch voice pattern and number of steps"); // update constants::STRETCH_INDEX with index
         layout.add(std::make_unique<juce::AudioParameterChoice>("extraNotes", "Extra Notes", extraNotesChoices, 0));
 
         juce::StringArray extraVoicesChoices;
         extraVoicesChoices.add("Repeat higher notes");
         extraVoicesChoices.add("Use higher octaves");
         extraVoicesChoices.add("Shrink voice pattern");
-        extraVoicesChoices.add("Shrink voice pattern and number of steps");
+        extraVoicesChoices.add("Shrink voice pattern and number of steps"); // update constants::SHRINK_INDEX with index
         layout.add(std::make_unique<juce::AudioParameterChoice>("extraVoices", "Extra Voices", extraVoicesChoices, 0));
 
         for (stepnum_t i = 0; i < constants::MAX_STEPS; i++) {

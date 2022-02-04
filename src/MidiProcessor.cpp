@@ -184,8 +184,9 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midiIn, juce::MidiBuffe
         }
 
         int notesSource = state.notesParameter->getIndex();
-        bool stretchParam =
-                state.stretchParameter->get() && notesSource == 0; // stretch can't be on while using a scale
+        bool stretchParam = notesSource == 0 // stretch can't be on while using a scale
+            && state.extraNotesParameter->getIndex() == constants::STRETCH_INDEX
+            && state.extraVoicesParameter->getIndex() == constants::SHRINK_INDEX;
 
         if (playSampleOffsetWithinBlock != -1) {
             // play a step within this block

@@ -28,21 +28,6 @@ Header::Header(State &s, PluginProcessor &p) : state(s), pluginProcessor(p) {
         onClickRecord();
     };
 
-    juce::Image arrowsLeftRight = FontAwesome::getInstance()->getIcon(true,
-                                                                      juce::String::fromUTF8(
-                                                                              reinterpret_cast<const char *>(u8"\uf07e")),
-                                                                      ICON_SIZE, constants::COLOR_TOGGLE_ACTIVE,
-                                                                      1);
-    stretchButton.setImages(true, false, true, arrowsLeftRight, 1.0f, {}, {}, 1.0f, {}, {}, 1.0f,
-                            constants::COLOR_TOGGLE_INACTIVE);
-    stretchButton.setClickingTogglesState(true);
-    stretchButton.setTooltip(constants::TOOLTIP_STRETCH);
-    addAndMakeVisible(stretchButton);
-    stretchButton.onClick = [this] {
-        refreshMessage();
-    };
-    stretchAttachment = std::make_unique<ButtonAttachment>(state.parameters, "stretch", stretchButton);
-
     juce::Image dice = FontAwesome::getInstance()->getIcon(true,
                                                            juce::String::fromUTF8(
                                                                    reinterpret_cast<const char *>(u8"\uf522")),
@@ -105,7 +90,7 @@ Header::Header(State &s, PluginProcessor &p) : state(s), pluginProcessor(p) {
         if (notesSource != 0) {
             const std::vector<int> &scale = scales.allScales[static_cast<size_t>(notesSource) - 1];
             *(state.voicesParameter) = static_cast<int>(juce::jmax(constants::MAX_VOICES, scale.size() + 1));
-            *(state.stretchParameter) = false;
+            // TODO: disable stretch params
         }
         refreshMessage();
         refreshEnabled();
@@ -190,8 +175,6 @@ void Header::refreshMessage() {
     juce::String text;
     if (recordButton.getToggleState()) {
         text = constants::MSG_RECORD;
-    } else if (stretchButton.getToggleState()) {
-        text = constants::MSG_STRETCH;
     } else if (notesMenu.getSelectedItemIndex() > 0) {
         text = constants::MSG_SCALE;
     } else {
@@ -210,9 +193,7 @@ void Header::refreshEnabled() {
     rateTypeMenu.setEnabled(notRecording);
     notesMenu.setEnabled(notRecording);
     settingsButton.setEnabled(notRecording);
-    stretchButton.setEnabled(notRecording);
-    int notesSource = state.notesParameter->getIndex();
-    stretchButton.setEnabled(notRecording && notesSource == 0);
+    // TODO: disable stretch menu items if notesSource == 0?
     randomButton.setEnabled(notRecording);
 }
 
@@ -254,9 +235,6 @@ void Header::resized() {
     toolbar.items.add(juce::FlexItem(recordButton).withAlignSelf(juce::FlexItem::AlignSelf::autoAlign).withHeight(
             ICON_SIZE + 10).withWidth(
             static_cast<float>(recordButton.getWidth())).withMargin({0.0, 5.0, 0.0, 5.0}));
-    toolbar.items.add(juce::FlexItem(stretchButton).withAlignSelf(juce::FlexItem::AlignSelf::autoAlign).withHeight(
-            ICON_SIZE + 10).withWidth(
-            static_cast<float>(stretchButton.getWidth())).withMargin({0.0, 5.0, 0.0, 5.0}));
     toolbar.items.add(
             juce::FlexItem(randomButton).withAlignSelf(juce::FlexItem::AlignSelf::autoAlign).withHeight(
                     ICON_SIZE + 10).withWidth(

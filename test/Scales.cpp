@@ -75,7 +75,8 @@ TEST_CASE("Scales") {
         *(tester.state.notesParameter) = 0; // as played
         *(tester.state.stepState[0].voiceParameters[0]) = true;
         *(tester.state.stepState[1].voiceParameters[1]) = true;
-        *(tester.state.stretchParameter) = true;
+        *(tester.state.extraNotesParameter) = constants::STRETCH_INDEX;
+        *(tester.state.extraVoicesParameter) = constants::SHRINK_INDEX;
 
         tester.midiIn.addEvent(juce::MidiMessage::noteOn(1, 60, (juce::uint8) 100), 10);
         tester.midiIn.addEvent(juce::MidiMessage::noteOn(2, 62, (juce::uint8) 101), 9);

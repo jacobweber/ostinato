@@ -52,7 +52,6 @@ private:
 
     FileButton fileButton{state};
     juce::ImageButton recordButton{};
-    juce::ImageButton stretchButton{};
     juce::ImageButton randomButton{};
     juce::Label stepsLabel{{}, constants::LABEL_STEPS};
     juce::ComboBox stepsMenu;
@@ -68,7 +67,6 @@ private:
 
     // use unique_ptr so it can be destroyed when UI is
     // declare after components so it's destroyed before them
-    std::unique_ptr<ButtonAttachment> stretchAttachment;
     std::unique_ptr<ComboBoxAttachment> stepsAttachment;
     std::unique_ptr<ComboBoxAttachment> voicesAttachment;
     std::unique_ptr<ComboBoxAttachment> rateAttachment;

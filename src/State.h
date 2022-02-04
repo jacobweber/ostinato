@@ -11,7 +11,6 @@
 class State {
 public:
     explicit State(juce::AudioProcessorValueTreeState &p) : parameters(p) {
-        stretchParameter = dynamic_cast<juce::AudioParameterBool *> (parameters.getParameter("stretch"));
         stepsParameter = dynamic_cast<juce::AudioParameterChoice *> (parameters.getParameter("steps"));
         voicesParameter = dynamic_cast<juce::AudioParameterChoice *> (parameters.getParameter("voices"));
         rateParameter = dynamic_cast<juce::AudioParameterChoice *> (parameters.getParameter("rate"));
@@ -39,7 +38,6 @@ public:
     }
 
     void resetToDefaults() {
-        *(stretchParameter) = false;
         *(stepsParameter) = 3; // index
         *(voicesParameter) = 3; // index
         *(rateParameter) = 3; // index
@@ -99,8 +97,6 @@ public:
         std::uniform_real_distribution<float> randVolume(0.0, 1.0);
         std::uniform_int_distribution<int> randPower(0, 10);
 
-        *(stretchParameter) = false;
-
         stepnum_t numSteps;
         voicenum_t numVoices;
         if (stepsAndVoices) {
@@ -146,7 +142,6 @@ public:
 private:
     std::unique_ptr<juce::XmlElement> exportSettingsToXml() {
         juce::XmlElement xml("ostinato");
-        xml.setAttribute("stretch", stretchParameter->get() ? "true" : "false");
         stepnum_t numSteps = static_cast<stepnum_t>(stepsParameter->getIndex()) + 1;
         xml.setAttribute("steps", static_cast<int>(numSteps));
         voicenum_t numVoices = static_cast<voicenum_t>(voicesParameter->getIndex()) + 1;
@@ -180,7 +175,6 @@ private:
         if (xml == nullptr) return;
         if (!xml->hasTagName("ostinato")) return;
 
-        *(stretchParameter) = xml->getBoolAttribute("stretch", false);
         int numSteps = std::min(static_cast<int>(constants::MAX_STEPS), xml->getIntAttribute("steps", 1));
         *(stepsParameter) = numSteps - 1; // index
         int numVoices = std::min(static_cast<int>(constants::MAX_VOICES), xml->getIntAttribute("voices", 1));
@@ -209,7 +203,6 @@ private:
 public:
     juce::AudioProcessorValueTreeState &parameters;
 
-    juce::AudioParameterBool *stretchParameter = nullptr;
     juce::AudioParameterChoice *stepsParameter = nullptr;
     juce::AudioParameterChoice *voicesParameter = nullptr;
     juce::AudioParameterChoice *rateParameter = nullptr;

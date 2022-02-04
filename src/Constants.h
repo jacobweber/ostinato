@@ -12,6 +12,9 @@ namespace constants {
     constexpr voicenum_t MAX_VOICES = 8;
     constexpr size_t MAX_OCTAVES = 4;
 
+    constexpr int STRETCH_INDEX = 2;
+    constexpr int SHRINK_INDEX = 3;
+
     const juce::Colour COLOR_STANDARD = juce::Colours::white;
     const juce::Colour COLOR_SLIDER = juce::Colours::white;
     const juce::Colour COLOR_HIGHLIGHT = juce::Colours::white;
@@ -40,7 +43,6 @@ namespace constants {
 
     const char *const TOOLTIP_FILE = "Save and load presets";
     const char *const TOOLTIP_RECORD = "Record pattern";
-    const char *const TOOLTIP_STRETCH = "Stretch pattern to fit pressed keys";
     const char *const TOOLTIP_RANDOM = "Randomize settings";
     const char *const TOOLTIP_VOICES_CLEAR = "Turn off all voices for this step";
     const char *const TOOLTIP_VOICES_FILL = "Turn on all voices for this step";
@@ -51,7 +53,6 @@ namespace constants {
 
     const char *const MSG_SCALE = "Hold down a key to use as the root, and each voice will be a scale degree in that key.";
     const char *const MSG_RECORD = "Play an arpeggiation to record it. Press the space bar to enter a rest.";
-    const char *const MSG_STRETCH = "The shape of the pattern below will be stretched/shrunk to cover most pressed keys.";
 
     constexpr double PLAY_DELAY_SEC = 0.1; // so cycle starts at first note when you press multiple notes at once
     constexpr double START_DELAY_ALLOWANCE = 0.05; // if we start playing before this many ppqs after the beat, round down to the beat. Reaper seems to start a little late.
