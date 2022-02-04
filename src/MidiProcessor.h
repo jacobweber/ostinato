@@ -26,6 +26,8 @@ public:
 private:
     void stopPlaying(juce::MidiBuffer &midiOut, int offset);
 
+    void getCurrentStep(voicenum_t &outNumVoices);
+
     static double getPpqPosPerStep(State &state);
 
     static double roundStartPpqPos(double scheduledPpqPos, double ppqPosPerStep);

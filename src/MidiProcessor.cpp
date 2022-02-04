@@ -184,51 +184,11 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midiIn, juce::MidiBuffe
         }
 
         int notesSource = state.notesParameter->getIndex();
-        bool stretchParam = notesSource == 0 // stretch can't be on while using a scale
-            && state.extraNotesParameter->getIndex() == constants::STRETCH_INDEX
-            && state.extraVoicesParameter->getIndex() == constants::SHRINK_INDEX;
 
         if (playSampleOffsetWithinBlock != -1) {
             // play a step within this block
             voicenum_t numVoices;
-
-            if (stretchParam) {
-                if (!stretchActive) {
-                    stretchActive = true;
-                    stretcher.setStepIndex(nextStepIndex);
-                }
-                stretcher.getNextStretchedStep(static_cast<size_t>(pressedNotes.size()), currentStep);
-                numVoices = stretcher.getNumVoices();
-
-                state.stepIndex = stretcher.getOrigStepIndex();
-            } else {
-                if (stretchActive) {
-                    stretchActive = false;
-                    nextStepIndex = stretcher.getNextStepIndex();
-                }
-
-                stepnum_t numSteps = static_cast<stepnum_t>(state.stepsParameter->getIndex()) + 1;
-                numVoices = static_cast<voicenum_t>(state.voicesParameter->getIndex()) + 1;
-
-                if (nextStepIndex >= numSteps) {
-                    nextStepIndex = 0;
-                }
-                state.stepIndex = nextStepIndex;
-
-                currentStep.power = state.stepState[nextStepIndex].powerParameter->get();
-                currentStep.volume = state.stepState[nextStepIndex].volParameter->get();
-                currentStep.octave = state.stepState[nextStepIndex].octaveParameter->getIndex();
-                currentStep.length = state.stepState[nextStepIndex].lengthParameter->get();
-                currentStep.tie = state.stepState[nextStepIndex].tieParameter->get();
-                for (voicenum_t voiceNum = 0; voiceNum < numVoices; voiceNum++) {
-                    currentStep.voices[voiceNum] = state.stepState[nextStepIndex].voiceParameters[voiceNum]->get();
-                }
-
-                nextStepIndex++;
-                if (nextStepIndex >= numSteps) {
-                    nextStepIndex = 0;
-                }
-            }
+            getCurrentStep(numVoices);
 
             if (currentStep.power && !tieActive) {
                 int transpose = (-currentStep.octave + static_cast<int>(constants::MAX_OCTAVES)) * 12;
@@ -304,6 +264,52 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midiIn, juce::MidiBuffe
             }
         } else {
             break;
+        }
+    }
+}
+
+void MidiProcessor::getCurrentStep(voicenum_t &outNumVoices) {
+    int notesSource = state.notesParameter->getIndex();
+    bool stretchParam = notesSource == 0 // stretch can't be on while using a scale
+        && state.extraNotesParameter->getIndex() == constants::STRETCH_INDEX
+        && state.extraVoicesParameter->getIndex() == constants::SHRINK_INDEX;
+    size_t numHeldNotes = static_cast<size_t>(pressedNotes.size());
+
+    if (stretchParam) {
+        if (!stretchActive) {
+            stretchActive = true;
+            stretcher.setStepIndex(nextStepIndex);
+        }
+        stretcher.getNextStretchedStep(numHeldNotes, currentStep);
+        outNumVoices = stretcher.getNumVoices();
+
+        state.stepIndex = stretcher.getOrigStepIndex();
+    } else {
+        if (stretchActive) {
+            stretchActive = false;
+            nextStepIndex = stretcher.getNextStepIndex();
+        }
+
+        stepnum_t numSteps = static_cast<stepnum_t>(state.stepsParameter->getIndex()) + 1;
+        outNumVoices = static_cast<voicenum_t>(state.voicesParameter->getIndex()) + 1;
+
+        if (nextStepIndex >= numSteps) {
+            nextStepIndex = 0;
+        }
+        state.stepIndex = nextStepIndex;
+
+        currentStep.power = state.stepState[nextStepIndex].powerParameter->get();
+        currentStep.volume = state.stepState[nextStepIndex].volParameter->get();
+        currentStep.octave = state.stepState[nextStepIndex].octaveParameter->getIndex();
+        currentStep.length = state.stepState[nextStepIndex].lengthParameter->get();
+        currentStep.tie = state.stepState[nextStepIndex].tieParameter->get();
+        for (voicenum_t voiceNum = 0; voiceNum < outNumVoices; voiceNum++) {
+            currentStep.voices[voiceNum] = state.stepState[nextStepIndex].voiceParameters[voiceNum]->get();
+        }
+
+        nextStepIndex++;
+        if (nextStepIndex >= numSteps) {
+            nextStepIndex = 0;
         }
     }
 }
