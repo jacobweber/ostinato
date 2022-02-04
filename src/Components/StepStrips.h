@@ -37,7 +37,7 @@ public:
         }
     }
 
-    void mouseExit(const juce::MouseEvent& event) override {
+    void mouseExit(const juce::MouseEvent&) override {
         if (curMouseStep != -1) strips[static_cast<size_t>(curMouseStep)]->hoverVoice(static_cast<voicenum_t>(curMouseVoice), false);
     }
 
