@@ -281,6 +281,9 @@ void MidiProcessor::getCurrentStep(voicenum_t &outNumVoices) {
 }
 
 void MidiProcessor::playCurrentStep(voicenum_t numVoices, juce::MidiBuffer &midiOut, int playSampleOffsetWithinBlock) {
+    int voiceMatching = state.voiceMatchingParameter->getIndex();
+    int octaveRange = (pressedNotes[pressedNotes.size() - 1].note - pressedNotes[0].note) / 12 + 1;
+
     int notesSource = state.notesParameter->getIndex();
     int transpose = (-currentStep.octave + static_cast<int>(constants::MAX_OCTAVES)) * 12;
     MidiValue noteValue{};
@@ -288,8 +291,13 @@ void MidiProcessor::playCurrentStep(voicenum_t numVoices, juce::MidiBuffer &midi
         if (currentStep.voices[static_cast<size_t>(voiceNum)]) {
             noteValue.note = -1;
             if (notesSource == 0) { // pressed notes
-                if (voiceNum < pressedNotes.size()) {
-                    noteValue = pressedNotes[voiceNum];
+                if (voiceMatching == constants::voiceMatchingChoices::UseHigherOctaves) {
+		            noteValue = pressedNotes[voiceNum % pressedNotes.size()];
+			        transpose += voiceNum / pressedNotes.size() * 12 * octaveRange;
+                } else {
+                    if (voiceNum < pressedNotes.size()) {
+                        noteValue = pressedNotes[voiceNum];
+                    }
                 }
             } else { // scale
                 noteValue = pressedNotes[0];
