@@ -17,6 +17,7 @@ public:
         rateTypeParameter = dynamic_cast<juce::AudioParameterChoice *> (parameters.getParameter("rateType"));
         modeParameter = dynamic_cast<juce::AudioParameterChoice *> (parameters.getParameter("mode"));
         scaleParameter = dynamic_cast<juce::AudioParameterChoice *> (parameters.getParameter("scale"));
+        keyParameter = dynamic_cast<juce::AudioParameterChoice *> (parameters.getParameter("key"));
         voiceMatchingParameter = dynamic_cast<juce::AudioParameterChoice *> (parameters.getParameter("voiceMatching"));
         for (stepnum_t i = 0; i < constants::MAX_STEPS; i++) {
             for (voicenum_t j = 0; j < constants::MAX_VOICES; j++) {
@@ -44,6 +45,7 @@ public:
         *(rateTypeParameter) = 0; // index
         *(modeParameter) = constants::modeChoices::Poly; // index
         *(scaleParameter) = 0; // index
+        *(keyParameter) = 0; // index
         *(voiceMatchingParameter) = constants::voiceMatchingChoices::StartFromBottom; // index
         for (stepnum_t i = 0; i < constants::MAX_STEPS; i++) {
             for (voicenum_t j = 0; j < constants::MAX_VOICES; j++) {
@@ -150,6 +152,7 @@ private:
         xml.setAttribute("rateType", rateTypeParameter->getCurrentValueAsText());
         xml.setAttribute("mode", modeParameter->getCurrentValueAsText());
         xml.setAttribute("scale", scaleParameter->getCurrentValueAsText());
+        xml.setAttribute("key", keyParameter->getCurrentValueAsText());
         xml.setAttribute("voiceMatching", voiceMatchingParameter->getCurrentValueAsText());
         for (stepnum_t i = 0; i < numSteps; i++) {
             juce::XmlElement* step = new juce::XmlElement("step");
@@ -183,6 +186,7 @@ private:
         *(rateTypeParameter) = std::max(0, rateTypeParameter->getAllValueStrings().indexOf(xml->getStringAttribute("rateType")));
         *(modeParameter) = std::max(0, modeParameter->getAllValueStrings().indexOf(xml->getStringAttribute("mode")));
         *(scaleParameter) = std::max(0, scaleParameter->getAllValueStrings().indexOf(xml->getStringAttribute("scale")));
+        *(keyParameter) = std::max(0, keyParameter->getAllValueStrings().indexOf(xml->getStringAttribute("key")));
         *(voiceMatchingParameter) = std::max(0, voiceMatchingParameter->getAllValueStrings().indexOf(xml->getStringAttribute("voiceMatching")));
         stepnum_t _stepIndex = 0;
         for (auto* step : xml->getChildIterator()) {
@@ -209,6 +213,7 @@ public:
     juce::AudioParameterChoice *rateTypeParameter = nullptr;
     juce::AudioParameterChoice *modeParameter = nullptr;
     juce::AudioParameterChoice *scaleParameter = nullptr;
+    juce::AudioParameterChoice *keyParameter = nullptr;
     juce::AudioParameterChoice *voiceMatchingParameter = nullptr;
     std::array<StepState, constants::MAX_STEPS> stepState;
 

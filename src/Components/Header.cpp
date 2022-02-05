@@ -107,6 +107,16 @@ Header::Header(State &s, PluginProcessor &p) : state(s), pluginProcessor(p) {
     addAndMakeVisible(scaleMenu);
     scaleAttachment = std::make_unique<ComboBoxAttachment>(state.parameters, "scale", scaleMenu);
 
+    addAndMakeVisible(keyLabel);
+    keyLabel.setFont(textFont);
+    keyLabel.attachToComponent(&keyMenu, false);
+    int keyIndex = 1;
+    for (const juce::String &value: state.keyParameter->getAllValueStrings()) {
+        keyMenu.addItem(value, keyIndex++);
+    }
+    addAndMakeVisible(keyMenu);
+    keyAttachment = std::make_unique<ComboBoxAttachment>(state.parameters, "key", keyMenu);
+
     juce::Image gear = FontAwesome::getInstance()->getIcon(true,
                                                            juce::String::fromUTF8(
                                                                    reinterpret_cast<const char *>(u8"\uf013")),
@@ -182,6 +192,7 @@ void Header::refreshEnabled() {
     const bool notRecording = !state.recordButton;
     const int mode = state.modeParameter->getIndex();
     const bool hasScale = mode == constants::modeChoices::Scale;
+    const bool hasKey = mode == constants::modeChoices::Scale;
     fileButton.setEnabled(notRecording);
     stepsMenu.setEnabled(notRecording);
     voicesMenu.setEnabled(notRecording);
@@ -189,6 +200,7 @@ void Header::refreshEnabled() {
     rateTypeMenu.setEnabled(notRecording);
     modeMenu.setEnabled(notRecording);
     scaleMenu.setEnabled(notRecording && hasScale);
+    keyMenu.setEnabled(notRecording && hasKey);
     settingsButton.setEnabled(notRecording);
     // TODO: disable stretch if mode is Chord/Scale?
     randomButton.setEnabled(notRecording);
@@ -216,6 +228,8 @@ void Header::resized() {
     toolbar2.items.add(juce::FlexItem(modeMenu).withAlignSelf(juce::FlexItem::AlignSelf::autoAlign).withHeight(
             MENU_HEIGHT).withWidth(130.0).withMargin(margin));
     toolbar2.items.add(juce::FlexItem(scaleMenu).withAlignSelf(juce::FlexItem::AlignSelf::autoAlign).withHeight(
+            MENU_HEIGHT).withWidth(130.0).withMargin(margin));
+    toolbar2.items.add(juce::FlexItem(keyMenu).withAlignSelf(juce::FlexItem::AlignSelf::autoAlign).withHeight(
             MENU_HEIGHT).withWidth(130.0).withMargin(margin));
     toolbar2.performLayout(toolbar2Rect);
 

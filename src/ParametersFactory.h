@@ -56,6 +56,21 @@ public:
         scaleChoices.add("Mixolydian");
         layout.add(std::make_unique<juce::AudioParameterChoice>("scale", "Scale", scaleChoices, 0));
 
+        juce::StringArray keyChoices;
+        keyChoices.add("C");
+        keyChoices.add("C#");
+        keyChoices.add("D");
+        keyChoices.add("D#");
+        keyChoices.add("E");
+        keyChoices.add("F");
+        keyChoices.add("F#");
+        keyChoices.add("G");
+        keyChoices.add("G#");
+        keyChoices.add("A");
+        keyChoices.add("A#");
+        keyChoices.add("B");
+        layout.add(std::make_unique<juce::AudioParameterChoice>("key", "Key", keyChoices, 0));
+
         juce::StringArray voiceMatchingChoices; // update constants::voiceMatchingChoices
         voiceMatchingChoices.add("Start from bottom");
         voiceMatchingChoices.add("Use higher octaves if necessary");

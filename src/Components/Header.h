@@ -64,6 +64,8 @@ private:
     juce::ComboBox modeMenu;
     juce::Label scaleLabel{{}, constants::LABEL_SCALE};
     juce::ComboBox scaleMenu;
+    juce::Label keyLabel{{}, constants::LABEL_KEY};
+    juce::ComboBox keyMenu;
     juce::ImageButton settingsButton{};
     juce::Label messageLabel{{}};
 
@@ -75,6 +77,7 @@ private:
     std::unique_ptr<ComboBoxAttachment> rateTypeAttachment;
     std::unique_ptr<ComboBoxAttachment> modeAttachment;
     std::unique_ptr<ComboBoxAttachment> scaleAttachment;
+    std::unique_ptr<ComboBoxAttachment> keyAttachment;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Header)
 };
