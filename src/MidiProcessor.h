@@ -59,7 +59,7 @@ private:
 
     CurrentStep currentStep{};
 
-    bool stretchActive = false;
+    bool stretchStepsActive = false;
     Stretcher stretcher{state};
 
     Recorder recorder{state};

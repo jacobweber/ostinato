@@ -15,7 +15,7 @@ void MidiProcessor::prepareToPlay(double _sampleRate, int _maximumExpectedSample
     nextPpqPos = 0;
     nextStepIndex = 0;
     tieActive = false;
-    stretchActive = false;
+    stretchStepsActive = false;
 }
 
 void MidiProcessor::stopPlaying(juce::MidiBuffer &midiOut, int offset) {
@@ -85,7 +85,7 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midiIn, juce::MidiBuffe
         stopPlaying(midiOut, 0);
         cycleOn = false;
         sustainOn = false;
-        stretchActive = false;
+        stretchStepsActive = false;
         state.playing = false;
         transportOn = false;
     }
@@ -132,7 +132,7 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midiIn, juce::MidiBuffe
             DBG("stop cycle");
             stopPlaying(midiOut, 0);
             cycleOn = false;
-            stretchActive = false;
+            stretchStepsActive = false;
             state.playing = false;
         }
     }
@@ -237,13 +237,13 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midiIn, juce::MidiBuffe
 
 void MidiProcessor::getCurrentStep(voicenum_t &outNumVoices) {
     int notesSource = state.notesParameter->getIndex();
-    bool stretchParam = notesSource == 0 // stretch can't be on while using a scale
+    bool stretchStepsParam = notesSource == 0 // stretch can't be on while using a scale
         && state.voiceMatchingParameter->getIndex() == constants::voiceMatchingChoices::StretchVoiceStepsPattern;
     size_t numHeldNotes = static_cast<size_t>(pressedNotes.size());
 
-    if (stretchParam) {
-        if (!stretchActive) {
-            stretchActive = true;
+    if (stretchStepsParam) {
+        if (!stretchStepsActive) {
+            stretchStepsActive = true;
             stretcher.setStepIndex(nextStepIndex);
         }
         stretcher.getNextStretchedStep(numHeldNotes, currentStep);
@@ -251,8 +251,8 @@ void MidiProcessor::getCurrentStep(voicenum_t &outNumVoices) {
 
         state.stepIndex = stretcher.getOrigStepIndex();
     } else {
-        if (stretchActive) {
-            stretchActive = false;
+        if (stretchStepsActive) {
+            stretchStepsActive = false;
             nextStepIndex = stretcher.getNextStepIndex();
         }
 
