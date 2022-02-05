@@ -235,9 +235,9 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midiIn, juce::MidiBuffe
 }
 
 void MidiProcessor::getCurrentStep() {
-    int notesSource = state.notesParameter->getIndex();
+    int mode = state.modeParameter->getIndex();
     int voiceMatching = state.voiceMatchingParameter->getIndex();
-    bool stretchStepsParam = notesSource == 0 // stretch can't be on while using a scale
+    bool stretchStepsParam = mode != constants::modeChoices::Scale // stretch can't be on while using a scale
         && voiceMatching == constants::voiceMatchingChoices::StretchVoiceStepsPattern;
     size_t numHeldNotes = static_cast<size_t>(pressedNotes.size());
 
@@ -290,14 +290,15 @@ void MidiProcessor::playCurrentStep(juce::MidiBuffer &midiOut, int playSampleOff
     int octaveRange = (pressedNotes[pressedNotes.size() - 1].note - pressedNotes[0].note) / 12 + 1;
     DBG("octave range: " << octaveRange);
 
-    int notesSource = state.notesParameter->getIndex();
+    int mode = state.modeParameter->getIndex();
+    int scaleIndex = state.scaleParameter->getIndex();
     int transpose = (-currentStep.octave + static_cast<int>(constants::MAX_OCTAVES)) * 12;
     MidiValue noteValue{};
     int numVoices = static_cast<int>(currentStep.numVoices);
     for (int voiceNum = 0; voiceNum < numVoices; voiceNum++) {
         if (currentStep.voices[static_cast<size_t>(voiceNum)]) {
             noteValue.note = -1;
-            if (notesSource == 0) { // pressed notes
+            if (mode != constants::modeChoices::Scale) { // pressed notes
                 if (voiceMatching == constants::voiceMatchingChoices::UseHigherOctaves) {
 		            noteValue = pressedNotes[voiceNum % pressedNotes.size()];
 			        noteValue.note += voiceNum / pressedNotes.size() * 12 * octaveRange;
@@ -308,13 +309,13 @@ void MidiProcessor::playCurrentStep(juce::MidiBuffer &midiOut, int playSampleOff
                 }
             } else { // scale
                 noteValue = pressedNotes[0];
-                const std::vector<int> &scale = scales.allScales[static_cast<size_t>(notesSource) - 1];
+                const std::vector<int> &scale = scales.allScales[static_cast<size_t>(scaleIndex)];
                 int notesPerOctave = static_cast<int>(scale.size());
                 int octave = voiceNum / notesPerOctave;
-                int scaleIndex = voiceNum % notesPerOctave;
-                DBG("scale degree " << scaleIndex << " octave " << octave);
+                int scaleDegree = voiceNum % notesPerOctave;
+                DBG("scale degree " << scaleDegree << " octave " << octave);
                 noteValue.note +=
-                        scale[static_cast<size_t>(scaleIndex)] + static_cast<int>(12 * octave);
+                        scale[static_cast<size_t>(scaleDegree)] + static_cast<int>(12 * octave);
             }
             if (noteValue.note != -1) {
                 noteValue.note += transpose;

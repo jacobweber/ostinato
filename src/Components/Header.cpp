@@ -75,27 +75,6 @@ Header::Header(State &s, PluginProcessor &p) : state(s), pluginProcessor(p) {
     addAndMakeVisible(rateTypeMenu);
     rateTypeAttachment = std::make_unique<ComboBoxAttachment>(state.parameters, "rateType", rateTypeMenu);
 
-    addAndMakeVisible(notesLabel);
-    notesLabel.setFont(textFont);
-    notesLabel.attachToComponent(&notesMenu, false);
-    int notesIndex = 1;
-    for (const juce::String &value: state.notesParameter->getAllValueStrings()) {
-        notesMenu.addItem(value, notesIndex++);
-    }
-    addAndMakeVisible(notesMenu);
-    notesAttachment = std::make_unique<ComboBoxAttachment>(state.parameters, "notes", notesMenu);
-    notesMenu.onChange = [this] {
-        // shouldn't do this in UI
-        int notesSource = state.notesParameter->getIndex();
-        if (notesSource != 0) {
-            const std::vector<int> &scale = scales.allScales[static_cast<size_t>(notesSource) - 1];
-            *(state.voicesParameter) = static_cast<int>(juce::jmax(constants::MAX_VOICES, scale.size() + 1));
-            // TODO: disable stretch params
-        }
-        refreshMessage();
-        refreshEnabled();
-    };
-
     addAndMakeVisible(modeLabel);
     modeLabel.setFont(textFont);
     modeLabel.attachToComponent(&modeMenu, false);
@@ -105,6 +84,28 @@ Header::Header(State &s, PluginProcessor &p) : state(s), pluginProcessor(p) {
     }
     addAndMakeVisible(modeMenu);
     modeAttachment = std::make_unique<ComboBoxAttachment>(state.parameters, "mode", modeMenu);
+    modeMenu.onChange = [this] {
+        // shouldn't do this in UI
+        int mode = state.modeParameter->getIndex();
+        if (mode == constants::modeChoices::Scale) {
+            int scaleIndex = state.scaleParameter->getIndex();
+            const std::vector<int> &scale = scales.allScales[static_cast<size_t>(scaleIndex)];
+            *(state.voicesParameter) = static_cast<int>(juce::jmax(constants::MAX_VOICES, scale.size() + 1));
+            // TODO: disable stretch params
+        }
+        refreshMessage();
+        refreshEnabled();
+    };
+
+    addAndMakeVisible(scaleLabel);
+    scaleLabel.setFont(textFont);
+    scaleLabel.attachToComponent(&scaleMenu, false);
+    int scaleIndex = 1;
+    for (const juce::String &value: state.scaleParameter->getAllValueStrings()) {
+        scaleMenu.addItem(value, scaleIndex++);
+    }
+    addAndMakeVisible(scaleMenu);
+    scaleAttachment = std::make_unique<ComboBoxAttachment>(state.parameters, "scale", scaleMenu);
 
     juce::Image gear = FontAwesome::getInstance()->getIcon(true,
                                                            juce::String::fromUTF8(
@@ -168,7 +169,7 @@ void Header::refreshMessage() {
     juce::String text;
     if (recordButton.getToggleState()) {
         text = constants::MSG_RECORD;
-    } else if (notesMenu.getSelectedItemIndex() > 0) {
+    } else if (modeMenu.getSelectedItemIndex() == constants::modeChoices::Scale) {
         text = constants::MSG_SCALE;
     } else {
         text = "";
@@ -179,15 +180,17 @@ void Header::refreshMessage() {
 
 void Header::refreshEnabled() {
     const bool notRecording = !state.recordButton;
+    const int mode = state.modeParameter->getIndex();
+    const bool hasScale = mode == constants::modeChoices::Scale;
     fileButton.setEnabled(notRecording);
     stepsMenu.setEnabled(notRecording);
     voicesMenu.setEnabled(notRecording);
     rateMenu.setEnabled(notRecording);
     rateTypeMenu.setEnabled(notRecording);
-    notesMenu.setEnabled(notRecording);
     modeMenu.setEnabled(notRecording);
+    scaleMenu.setEnabled(notRecording && hasScale);
     settingsButton.setEnabled(notRecording);
-    // TODO: disable stretch menu items if notesSource == 0?
+    // TODO: disable stretch if mode is Chord/Scale?
     randomButton.setEnabled(notRecording);
 }
 
@@ -210,9 +213,9 @@ void Header::resized() {
     juce::FlexBox toolbar2;
     toolbar2.justifyContent = juce::FlexBox::JustifyContent::flexStart;
     toolbar2.alignItems = juce::FlexBox::AlignItems::center;
-    toolbar2.items.add(juce::FlexItem(notesMenu).withAlignSelf(juce::FlexItem::AlignSelf::autoAlign).withHeight(
-            MENU_HEIGHT).withWidth(130.0).withMargin(margin));
     toolbar2.items.add(juce::FlexItem(modeMenu).withAlignSelf(juce::FlexItem::AlignSelf::autoAlign).withHeight(
+            MENU_HEIGHT).withWidth(130.0).withMargin(margin));
+    toolbar2.items.add(juce::FlexItem(scaleMenu).withAlignSelf(juce::FlexItem::AlignSelf::autoAlign).withHeight(
             MENU_HEIGHT).withWidth(130.0).withMargin(margin));
     toolbar2.performLayout(toolbar2Rect);
 

@@ -9,7 +9,8 @@ TEST_CASE("Scales") {
         *(tester.state.stepsParameter) = 3; // 4 steps
         *(tester.state.voicesParameter) = 3; // 4 voices
         *(tester.state.rateParameter) = 3; // eighths
-        *(tester.state.notesParameter) = 1; // major
+        *(tester.state.modeParameter) = constants::modeChoices::Scale;
+        *(tester.state.scaleParameter) = 0; // major
         *(tester.state.stepState[0].voiceParameters[0]) = true;
         *(tester.state.stepState[1].voiceParameters[1]) = true;
         *(tester.state.stepState[2].voiceParameters[2]) = true;
@@ -33,7 +34,6 @@ TEST_CASE("Scales") {
         *(tester.state.stepsParameter) = 3; // 4 steps
         *(tester.state.voicesParameter) = 3; // 4 voices
         *(tester.state.rateParameter) = 3; // eighths
-        *(tester.state.notesParameter) = 0; // as played
         *(tester.state.stepState[0].voiceParameters[0]) = true;
         *(tester.state.stepState[1].voiceParameters[1]) = true;
         *(tester.state.stepState[2].voiceParameters[2]) = true;
@@ -53,7 +53,8 @@ TEST_CASE("Scales") {
                                                "600: Note on E3 Velocity 102 Channel 3\n"
                                                "725: Note off E3 Velocity 0 Channel 3\n");
 
-        *(tester.state.notesParameter) = 2; // minor
+        *(tester.state.modeParameter) = constants::modeChoices::Scale;
+        *(tester.state.scaleParameter) = 1; // minor
         tester.processBlocks(12);
         // 250 samples/step
         REQUIRE(tester.midiOutString(false) == "850: Note on F3 Velocity 100 Channel 1\n"
@@ -72,7 +73,6 @@ TEST_CASE("Scales") {
         *(tester.state.stepsParameter) = 1; // 2 steps
         *(tester.state.voicesParameter) = 1; // 2 voices
         *(tester.state.rateParameter) = 3; // eighths
-        *(tester.state.notesParameter) = 0; // as played
         *(tester.state.stepState[0].voiceParameters[0]) = true;
         *(tester.state.stepState[1].voiceParameters[1]) = true;
         *(tester.state.voiceMatchingParameter) = constants::voiceMatchingChoices::StretchVoiceStepsPattern;
@@ -93,7 +93,8 @@ TEST_CASE("Scales") {
                                                "850: Note on F3 Velocity 103 Channel 4\n"
                                                "975: Note off F3 Velocity 0 Channel 4\n");
 
-        *(tester.state.notesParameter) = 1; // major
+        *(tester.state.modeParameter) = constants::modeChoices::Scale;
+        *(tester.state.scaleParameter) = 0; // major
         tester.processBlocks(10);
         // 250 samples/step
         REQUIRE(tester.midiOutString(false) == "1100: Note on C3 Velocity 100 Channel 1\n"

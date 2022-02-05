@@ -38,24 +38,23 @@ public:
         rateTypeChoices.add("Dotted");
         layout.add(std::make_unique<juce::AudioParameterChoice>("rateType", "Step Length Type", rateTypeChoices, 0));
 
-        juce::StringArray notesChoices;
-        notesChoices.add("Pressed Keys");
-        notesChoices.add("Major");
-        notesChoices.add("Minor");
-        notesChoices.add("Harmonic Minor");
-        notesChoices.add("Locrian");
-        notesChoices.add("Dorian");
-        notesChoices.add("Phrygian");
-        notesChoices.add("Lydian");
-        notesChoices.add("Mixolydian");
-        layout.add(std::make_unique<juce::AudioParameterChoice>("notes", "Notes", notesChoices, 0));
-
         juce::StringArray modeChoices; // update constants::modeChoices
         modeChoices.add("Poly");
         modeChoices.add("Mono");
         modeChoices.add("Scale");
         modeChoices.add("Chord");
         layout.add(std::make_unique<juce::AudioParameterChoice>("mode", "Mode", modeChoices, 0));
+
+        juce::StringArray scaleChoices;
+        scaleChoices.add("Major");
+        scaleChoices.add("Minor");
+        scaleChoices.add("Harmonic Minor");
+        scaleChoices.add("Locrian");
+        scaleChoices.add("Dorian");
+        scaleChoices.add("Phrygian");
+        scaleChoices.add("Lydian");
+        scaleChoices.add("Mixolydian");
+        layout.add(std::make_unique<juce::AudioParameterChoice>("scale", "Scale", scaleChoices, 0));
 
         juce::StringArray voiceMatchingChoices; // update constants::voiceMatchingChoices
         voiceMatchingChoices.add("Start from bottom");

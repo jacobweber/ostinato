@@ -15,8 +15,8 @@ public:
         voicesParameter = dynamic_cast<juce::AudioParameterChoice *> (parameters.getParameter("voices"));
         rateParameter = dynamic_cast<juce::AudioParameterChoice *> (parameters.getParameter("rate"));
         rateTypeParameter = dynamic_cast<juce::AudioParameterChoice *> (parameters.getParameter("rateType"));
-        notesParameter = dynamic_cast<juce::AudioParameterChoice *> (parameters.getParameter("notes"));
         modeParameter = dynamic_cast<juce::AudioParameterChoice *> (parameters.getParameter("mode"));
+        scaleParameter = dynamic_cast<juce::AudioParameterChoice *> (parameters.getParameter("scale"));
         voiceMatchingParameter = dynamic_cast<juce::AudioParameterChoice *> (parameters.getParameter("voiceMatching"));
         for (stepnum_t i = 0; i < constants::MAX_STEPS; i++) {
             for (voicenum_t j = 0; j < constants::MAX_VOICES; j++) {
@@ -42,8 +42,8 @@ public:
         *(voicesParameter) = 3; // index
         *(rateParameter) = 3; // index
         *(rateTypeParameter) = 0; // index
-        *(notesParameter) = 0; // index
         *(modeParameter) = constants::modeChoices::Poly; // index
+        *(scaleParameter) = 0; // index
         *(voiceMatchingParameter) = constants::voiceMatchingChoices::StartFromBottom; // index
         for (stepnum_t i = 0; i < constants::MAX_STEPS; i++) {
             for (voicenum_t j = 0; j < constants::MAX_VOICES; j++) {
@@ -76,7 +76,7 @@ public:
         importSettingsFromXml(juce::XmlDocument(file));
     }
 
-    void randomizeParams(bool stepsAndVoices, bool rate, bool notes) {
+    void randomizeParams(bool stepsAndVoices, bool rate, bool scale) {
         std::random_device rd;
         std::mt19937 mt(rd());
 
@@ -120,9 +120,9 @@ public:
 
         std::uniform_int_distribution<voicenum_t> randMainVoice(0, numVoices - 1);
 
-        if (notes) {
-            std::uniform_int_distribution<int> randNotes(0, notesParameter->getAllValueStrings().size() - 1);
-            *(notesParameter) = randNotes(mt); // index
+        if (scale) {
+            std::uniform_int_distribution<int> randScale(0, scaleParameter->getAllValueStrings().size() - 1);
+            *(scaleParameter) = randScale(mt); // index
         }
 
         for (stepnum_t i = 0; i < numSteps; i++) {
@@ -148,8 +148,8 @@ private:
         xml.setAttribute("voices", static_cast<int>(numVoices));
         xml.setAttribute("rate", rateParameter->getCurrentValueAsText());
         xml.setAttribute("rateType", rateTypeParameter->getCurrentValueAsText());
-        xml.setAttribute("notes", notesParameter->getCurrentValueAsText());
         xml.setAttribute("mode", modeParameter->getCurrentValueAsText());
+        xml.setAttribute("scale", scaleParameter->getCurrentValueAsText());
         xml.setAttribute("voiceMatching", voiceMatchingParameter->getCurrentValueAsText());
         for (stepnum_t i = 0; i < numSteps; i++) {
             juce::XmlElement* step = new juce::XmlElement("step");
@@ -181,8 +181,8 @@ private:
         *(voicesParameter) = numVoices - 1; // index
         *(rateParameter) = std::max(0, rateParameter->getAllValueStrings().indexOf(xml->getStringAttribute("rate")));
         *(rateTypeParameter) = std::max(0, rateTypeParameter->getAllValueStrings().indexOf(xml->getStringAttribute("rateType")));
-        *(notesParameter) = std::max(0, notesParameter->getAllValueStrings().indexOf(xml->getStringAttribute("notes")));
         *(modeParameter) = std::max(0, modeParameter->getAllValueStrings().indexOf(xml->getStringAttribute("mode")));
+        *(scaleParameter) = std::max(0, scaleParameter->getAllValueStrings().indexOf(xml->getStringAttribute("scale")));
         *(voiceMatchingParameter) = std::max(0, voiceMatchingParameter->getAllValueStrings().indexOf(xml->getStringAttribute("voiceMatching")));
         stepnum_t _stepIndex = 0;
         for (auto* step : xml->getChildIterator()) {
@@ -207,8 +207,8 @@ public:
     juce::AudioParameterChoice *voicesParameter = nullptr;
     juce::AudioParameterChoice *rateParameter = nullptr;
     juce::AudioParameterChoice *rateTypeParameter = nullptr;
-    juce::AudioParameterChoice *notesParameter = nullptr;
     juce::AudioParameterChoice *modeParameter = nullptr;
+    juce::AudioParameterChoice *scaleParameter = nullptr;
     juce::AudioParameterChoice *voiceMatchingParameter = nullptr;
     std::array<StepState, constants::MAX_STEPS> stepState;
 

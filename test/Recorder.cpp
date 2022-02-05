@@ -12,7 +12,6 @@ TEST_CASE("Recorder") {
         *(tester.state.stepsParameter) = 3; // 4 steps
         *(tester.state.voicesParameter) = 3; // 4 voices
         *(tester.state.rateParameter) = 3; // eighths
-        *(tester.state.notesParameter) = 1; // major
         *(tester.state.stepState[0].voiceParameters[0]) = true;
         *(tester.state.stepState[1].voiceParameters[1]) = true;
         *(tester.state.stepState[2].voiceParameters[2]) = true;
@@ -84,22 +83,21 @@ TEST_CASE("Recorder") {
         tester.processBlocks(13);
         // should make volume more predictable
         REQUIRE(tester.midiOutString(false) == "1500: Note on C3 Velocity 89 Channel 1\n"
-                                               "1500: Note on D3 Velocity 89 Channel 1\n"
+                                               "1500: Note on D3 Velocity 89 Channel 2\n"
                                                "1625: Note off C3 Velocity 0 Channel 1\n"
-                                               "1625: Note off D3 Velocity 0 Channel 1\n"
+                                               "1625: Note off D3 Velocity 0 Channel 2\n"
                                                "1750: Note on C3 Velocity 99 Channel 1\n"
                                                "1875: Note off C3 Velocity 0 Channel 1\n"
-                                               "2000: Note on F3 Velocity 109 Channel 1\n"
-                                               "2125: Note off F3 Velocity 0 Channel 1\n"
-                                               "2500: Note on E3 Velocity 119 Channel 1\n"
-                                               "2625: Note off E3 Velocity 0 Channel 1\n");
+                                               "2000: Note on F3 Velocity 109 Channel 4\n"
+                                               "2125: Note off F3 Velocity 0 Channel 4\n"
+                                               "2500: Note on E3 Velocity 119 Channel 3\n"
+                                               "2625: Note off E3 Velocity 0 Channel 3\n");
     }
 
     SECTION("record rests only") {
         *(tester.state.stepsParameter) = 3; // 4 steps
         *(tester.state.voicesParameter) = 3; // 4 voices
         *(tester.state.rateParameter) = 3; // eighths
-        *(tester.state.notesParameter) = 1; // major
         tester.state.recordButton = true;
 
         tester.state.recordedRest = true;

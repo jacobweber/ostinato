@@ -47,7 +47,7 @@ namespace constants {
     const char *const LABEL_STEPS = "Steps";
     const char *const LABEL_VOICES = "Voices";
     const char *const LABEL_RATE = "Step Length";
-    const char *const LABEL_NOTES = "Note Source";
+    const char *const LABEL_SCALE = "Scale";
     const char *const LABEL_MODE = "Mode";
     const char *const LABEL_LENGTH = "Length";
     const char *const LABEL_OCTAVE = "Octave";

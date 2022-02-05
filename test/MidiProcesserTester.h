@@ -19,8 +19,8 @@ public:
         *(state.voicesParameter) = 3; // index
         *(state.rateParameter) = 2; // index
         *(state.rateTypeParameter) = 0; // index
-        *(state.notesParameter) = 0; // index
         *(state.modeParameter) = constants::modeChoices::Poly; // index
+        *(state.scaleParameter) = 0; // index
         *(state.voiceMatchingParameter) = constants::voiceMatchingChoices::StartFromBottom; // index
         for (stepnum_t i = 0; i < constants::MAX_STEPS; i++) {
             for (voicenum_t j = 0; j < constants::MAX_VOICES; j++) {
