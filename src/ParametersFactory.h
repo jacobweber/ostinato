@@ -50,6 +50,13 @@ public:
         notesChoices.add("Mixolydian");
         layout.add(std::make_unique<juce::AudioParameterChoice>("notes", "Notes", notesChoices, 0));
 
+        juce::StringArray modeChoices; // update constants::modeChoices
+        modeChoices.add("Poly");
+        modeChoices.add("Mono");
+        modeChoices.add("Scale");
+        modeChoices.add("Chord");
+        layout.add(std::make_unique<juce::AudioParameterChoice>("mode", "Mode", modeChoices, 0));
+
         juce::StringArray voiceMatchingChoices; // update constants::voiceMatchingChoices
         voiceMatchingChoices.add("Start from bottom");
         voiceMatchingChoices.add("Use higher octaves if necessary");

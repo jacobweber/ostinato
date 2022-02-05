@@ -96,6 +96,16 @@ Header::Header(State &s, PluginProcessor &p) : state(s), pluginProcessor(p) {
         refreshEnabled();
     };
 
+    addAndMakeVisible(modeLabel);
+    modeLabel.setFont(textFont);
+    modeLabel.attachToComponent(&modeMenu, false);
+    int modeIndex = 1;
+    for (const juce::String &value: state.modeParameter->getAllValueStrings()) {
+        modeMenu.addItem(value, modeIndex++);
+    }
+    addAndMakeVisible(modeMenu);
+    modeAttachment = std::make_unique<ComboBoxAttachment>(state.parameters, "mode", modeMenu);
+
     juce::Image gear = FontAwesome::getInstance()->getIcon(true,
                                                            juce::String::fromUTF8(
                                                                    reinterpret_cast<const char *>(u8"\uf013")),
@@ -175,6 +185,7 @@ void Header::refreshEnabled() {
     rateMenu.setEnabled(notRecording);
     rateTypeMenu.setEnabled(notRecording);
     notesMenu.setEnabled(notRecording);
+    modeMenu.setEnabled(notRecording);
     settingsButton.setEnabled(notRecording);
     // TODO: disable stretch menu items if notesSource == 0?
     randomButton.setEnabled(notRecording);
@@ -211,6 +222,8 @@ void Header::resized() {
     toolbar.items.add(juce::FlexItem(rateTypeMenu).withAlignSelf(juce::FlexItem::AlignSelf::autoAlign).withHeight(
             MENU_HEIGHT).withWidth(130.0).withMargin(margin));
     toolbar.items.add(juce::FlexItem(notesMenu).withAlignSelf(juce::FlexItem::AlignSelf::autoAlign).withHeight(
+            MENU_HEIGHT).withWidth(130.0).withMargin(margin));
+    toolbar.items.add(juce::FlexItem(modeMenu).withAlignSelf(juce::FlexItem::AlignSelf::autoAlign).withHeight(
             MENU_HEIGHT).withWidth(130.0).withMargin(margin));
     toolbar.items.add(juce::FlexItem(settingsButton).withAlignSelf(juce::FlexItem::AlignSelf::autoAlign).withHeight(
             ICON_SIZE + 10).withWidth(

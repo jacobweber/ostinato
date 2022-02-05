@@ -7,6 +7,12 @@ typedef size_t voicenum_t;
 typedef size_t stepnum_t;
 
 namespace constants {
+    enum modeChoices {
+        Poly,
+        Mono,
+        Scale,
+        Chord
+    };
     enum voiceMatchingChoices {
         StartFromBottom,
         UseHigherOctaves,
@@ -42,6 +48,7 @@ namespace constants {
     const char *const LABEL_VOICES = "Voices";
     const char *const LABEL_RATE = "Step Length";
     const char *const LABEL_NOTES = "Note Source";
+    const char *const LABEL_MODE = "Mode";
     const char *const LABEL_LENGTH = "Length";
     const char *const LABEL_OCTAVE = "Octave";
 
