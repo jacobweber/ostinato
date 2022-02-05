@@ -58,7 +58,7 @@ public:
 
         juce::StringArray extraVoicesChoices;
         extraVoicesChoices.add("Ignore higher notes");
-        extraVoicesChoices.add("Repeat higher notes");
+        extraVoicesChoices.add("Repeat highest note");
         extraVoicesChoices.add("Use higher octaves");
         extraVoicesChoices.add("Shrink voice pattern");
         extraVoicesChoices.add("Shrink voice pattern and number of steps"); // update constants::SHRINK_INDEX with index
