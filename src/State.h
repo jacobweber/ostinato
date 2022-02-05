@@ -42,9 +42,9 @@ public:
         *(voicesParameter) = 3; // index
         *(rateParameter) = 3; // index
         *(rateTypeParameter) = 0; // index
-        *(notesParameter) = constants::voiceMatchingChoices::StartFromBottom; // index
+        *(notesParameter) = 0; // index
         *(modeParameter) = constants::modeChoices::Poly; // index
-        *(voiceMatchingParameter) = 0; // index
+        *(voiceMatchingParameter) = constants::voiceMatchingChoices::StartFromBottom; // index
         for (stepnum_t i = 0; i < constants::MAX_STEPS; i++) {
             for (voicenum_t j = 0; j < constants::MAX_VOICES; j++) {
                 *(stepState[i].voiceParameters[j]) = i == j && j < 4;
