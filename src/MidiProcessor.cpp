@@ -237,8 +237,9 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midiIn, juce::MidiBuffe
 
 void MidiProcessor::getCurrentStep(voicenum_t &outNumVoices) {
     int notesSource = state.notesParameter->getIndex();
+    int voiceMatching = state.voiceMatchingParameter->getIndex();
     bool stretchStepsParam = notesSource == 0 // stretch can't be on while using a scale
-        && state.voiceMatchingParameter->getIndex() == constants::voiceMatchingChoices::StretchVoiceStepsPattern;
+        && voiceMatching == constants::voiceMatchingChoices::StretchVoiceStepsPattern;
     size_t numHeldNotes = static_cast<size_t>(pressedNotes.size());
 
     if (stretchStepsParam) {
@@ -269,8 +270,12 @@ void MidiProcessor::getCurrentStep(voicenum_t &outNumVoices) {
         currentStep.octave = state.stepState[nextStepIndex].octaveParameter->getIndex();
         currentStep.length = state.stepState[nextStepIndex].lengthParameter->get();
         currentStep.tie = state.stepState[nextStepIndex].tieParameter->get();
-        for (voicenum_t voiceNum = 0; voiceNum < outNumVoices; voiceNum++) {
-            currentStep.voices[voiceNum] = state.stepState[nextStepIndex].voiceParameters[voiceNum]->get();
+        if (voiceMatching == constants::voiceMatchingChoices::StretchVoicePattern) {
+            Stretcher::getStretchedVoices(state, nextStepIndex, numHeldNotes, currentStep.voices, outNumVoices);
+        } else {
+            for (voicenum_t voiceNum = 0; voiceNum < outNumVoices; voiceNum++) {
+                currentStep.voices[voiceNum] = state.stepState[nextStepIndex].voiceParameters[voiceNum]->get();
+            }
         }
 
         nextStepIndex++;

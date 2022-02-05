@@ -51,6 +51,26 @@ public:
         skipLastStepIfMatchesFirst = skip;
     }
 
+    static void getStretchedVoices(State &state, stepnum_t stepNum, size_t numHeldNotes, std::array<bool, MAX_ACTUAL_VOICES> &outVoices, voicenum_t &outNumVoices) {
+        voicenum_t origNumVoices = static_cast<voicenum_t>(state.voicesParameter->getIndex()) + 1;
+        outNumVoices = std::min(numHeldNotes, MAX_ACTUAL_VOICES);
+        double origVoiceSizeY =
+                numHeldNotes == 1 ? 1 : static_cast<double>(outNumVoices - 1) / static_cast<double>(origNumVoices - 1);
+
+        for (voicenum_t voiceNum = 0; voiceNum < outNumVoices; voiceNum++) {
+            outVoices[voiceNum] = false;
+        }
+
+        voicenum_t newVoiceNum = 0;
+        for (voicenum_t origVoiceNum = 0; origVoiceNum < origNumVoices; origVoiceNum++) {
+            if (state.stepState[stepNum].voiceParameters[origVoiceNum]->get()) {
+                double curVoiceY = origVoiceSizeY * static_cast<double>(origVoiceNum);
+                newVoiceNum = std::min(static_cast<voicenum_t>(std::round(curVoiceY)), outNumVoices - 1);
+                outVoices[newVoiceNum] = true;
+            }
+        }
+    }
+
     void getNextStretchedStep(size_t numHeldNotes, CurrentStep &outStep) {
         // with origNumSteps = 3 and numSteps = 5:
         // origStepSizeX = 2
