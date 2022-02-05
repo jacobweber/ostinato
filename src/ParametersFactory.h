@@ -4,7 +4,7 @@
 
 #include "Constants.h"
 
-// Also update State, MidiProcessorTester, PluginEditor
+// Also update State, PluginEditor/Header, test/MidiProcessorTester, test/Presets
 class ParametersFactory {
 public:
     static juce::AudioProcessorValueTreeState::ParameterLayout create() {
