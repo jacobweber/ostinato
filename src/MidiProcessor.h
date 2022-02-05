@@ -28,6 +28,8 @@ private:
 
     void getCurrentStep(voicenum_t &outNumVoices);
 
+    void playCurrentStep(voicenum_t numVoices, juce::MidiBuffer &midiOut, int playSampleOffsetWithinBlock);
+
     static double getPpqPosPerStep(State &state);
 
     static double roundStartPpqPos(double scheduledPpqPos, double ppqPosPerStep);

@@ -183,46 +183,13 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midiIn, juce::MidiBuffe
             }
         }
 
-        int notesSource = state.notesParameter->getIndex();
-
         if (playSampleOffsetWithinBlock != -1) {
             // play a step within this block
             voicenum_t numVoices;
             getCurrentStep(numVoices);
 
             if (currentStep.power && !tieActive) {
-                int transpose = (-currentStep.octave + static_cast<int>(constants::MAX_OCTAVES)) * 12;
-                MidiValue noteValue{};
-                for (int voiceNum = 0; voiceNum < static_cast<int>(numVoices); voiceNum++) {
-                    if (currentStep.voices[static_cast<size_t>(voiceNum)]) {
-                        noteValue.note = -1;
-                        if (notesSource == 0) { // pressed notes
-                            if (voiceNum < pressedNotes.size()) {
-                                noteValue = pressedNotes[voiceNum];
-                            }
-                        } else { // scale
-                            noteValue = pressedNotes[0];
-                            const std::vector<int> &scale = scales.allScales[static_cast<size_t>(notesSource) - 1];
-                            int notesPerOctave = static_cast<int>(scale.size());
-                            int octave = voiceNum / notesPerOctave;
-                            int scaleIndex = voiceNum % notesPerOctave;
-                            DBG("scale degree " << scaleIndex << " octave " << octave);
-                            noteValue.note +=
-                                    scale[static_cast<size_t>(scaleIndex)] + static_cast<int>(12 * octave);
-                        }
-                        if (noteValue.note != -1) {
-                            noteValue.note += transpose;
-                            if (noteValue.note >= 0 && noteValue.note <= 127) {
-                                double vel = juce::jmin(currentStep.volume * 2 * noteValue.vel, 127.0);
-                                midiOut.addEvent(
-                                        juce::MidiMessage::noteOn(noteValue.channel, noteValue.note,
-                                                                  (juce::uint8) vel),
-                                        playSampleOffsetWithinBlock);
-                                playingNotes.add(noteValue);
-                            }
-                        }
-                    }
-                }
+                playCurrentStep(numVoices, midiOut, playSampleOffsetWithinBlock);
                 DBG("play step at " << playSampleOffsetWithinBlock << " samples into block, vol "
                                     << currentStep.volume);
             } else {
@@ -310,6 +277,42 @@ void MidiProcessor::getCurrentStep(voicenum_t &outNumVoices) {
         nextStepIndex++;
         if (nextStepIndex >= numSteps) {
             nextStepIndex = 0;
+        }
+    }
+}
+
+void MidiProcessor::playCurrentStep(voicenum_t numVoices, juce::MidiBuffer &midiOut, int playSampleOffsetWithinBlock) {
+    int notesSource = state.notesParameter->getIndex();
+    int transpose = (-currentStep.octave + static_cast<int>(constants::MAX_OCTAVES)) * 12;
+    MidiValue noteValue{};
+    for (int voiceNum = 0; voiceNum < static_cast<int>(numVoices); voiceNum++) {
+        if (currentStep.voices[static_cast<size_t>(voiceNum)]) {
+            noteValue.note = -1;
+            if (notesSource == 0) { // pressed notes
+                if (voiceNum < pressedNotes.size()) {
+                    noteValue = pressedNotes[voiceNum];
+                }
+            } else { // scale
+                noteValue = pressedNotes[0];
+                const std::vector<int> &scale = scales.allScales[static_cast<size_t>(notesSource) - 1];
+                int notesPerOctave = static_cast<int>(scale.size());
+                int octave = voiceNum / notesPerOctave;
+                int scaleIndex = voiceNum % notesPerOctave;
+                DBG("scale degree " << scaleIndex << " octave " << octave);
+                noteValue.note +=
+                        scale[static_cast<size_t>(scaleIndex)] + static_cast<int>(12 * octave);
+            }
+            if (noteValue.note != -1) {
+                noteValue.note += transpose;
+                if (noteValue.note >= 0 && noteValue.note <= 127) {
+                    double vel = juce::jmin(currentStep.volume * 2 * noteValue.vel, 127.0);
+                    midiOut.addEvent(
+                            juce::MidiMessage::noteOn(noteValue.channel, noteValue.note,
+                                                        (juce::uint8) vel),
+                            playSampleOffsetWithinBlock);
+                    playingNotes.add(noteValue);
+                }
+            }
         }
     }
 }
