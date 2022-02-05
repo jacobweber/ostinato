@@ -7,13 +7,23 @@ typedef size_t voicenum_t;
 typedef size_t stepnum_t;
 
 namespace constants {
+    enum extraNotesChoices {
+        UseLowerNotes,
+        StretchVoicePattern,
+        StretchVoicePatternAndNumberSteps
+    };
+    enum extraVoicesChoices {
+        IgnoreHigherNotes,
+        RepeatHighestNote,
+        UseHigherOctaves,
+        ShrinkVoicePattern,
+        ShrinkVoicePatternAndNumberSteps
+    };
+
     constexpr size_t MAX_NOTES = 24;
     constexpr stepnum_t MAX_STEPS = 16;
     constexpr voicenum_t MAX_VOICES = 8;
     constexpr size_t MAX_OCTAVES = 4;
-
-    constexpr int STRETCH_INDEX = 2;
-    constexpr int SHRINK_INDEX = 4;
 
     const juce::Colour COLOR_STANDARD = juce::Colours::white;
     const juce::Colour COLOR_SLIDER = juce::Colours::white;

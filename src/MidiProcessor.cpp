@@ -238,8 +238,8 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midiIn, juce::MidiBuffe
 void MidiProcessor::getCurrentStep(voicenum_t &outNumVoices) {
     int notesSource = state.notesParameter->getIndex();
     bool stretchParam = notesSource == 0 // stretch can't be on while using a scale
-        && state.extraNotesParameter->getIndex() == constants::STRETCH_INDEX
-        && state.extraVoicesParameter->getIndex() == constants::SHRINK_INDEX;
+        && state.extraNotesParameter->getIndex() == constants::extraNotesChoices::StretchVoicePatternAndNumberSteps
+        && state.extraVoicesParameter->getIndex() == constants::extraVoicesChoices::ShrinkVoicePatternAndNumberSteps;
     size_t numHeldNotes = static_cast<size_t>(pressedNotes.size());
 
     if (stretchParam) {
