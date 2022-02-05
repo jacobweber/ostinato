@@ -57,6 +57,7 @@ public:
         layout.add(std::make_unique<juce::AudioParameterChoice>("extraNotes", "Extra Notes", extraNotesChoices, 0));
 
         juce::StringArray extraVoicesChoices;
+        extraVoicesChoices.add("Ignore higher notes");
         extraVoicesChoices.add("Repeat higher notes");
         extraVoicesChoices.add("Use higher octaves");
         extraVoicesChoices.add("Shrink voice pattern");

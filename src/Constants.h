@@ -13,7 +13,7 @@ namespace constants {
     constexpr size_t MAX_OCTAVES = 4;
 
     constexpr int STRETCH_INDEX = 2;
-    constexpr int SHRINK_INDEX = 3;
+    constexpr int SHRINK_INDEX = 4;
 
     const juce::Colour COLOR_STANDARD = juce::Colours::white;
     const juce::Colour COLOR_SLIDER = juce::Colours::white;
