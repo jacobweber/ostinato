@@ -1,4 +1,4 @@
-### 0.0.11 (unreleased)
+### 0.0.11
 
 * Add settings menu with options for matching pressed keys to voices.
 * Remove stretch button.
