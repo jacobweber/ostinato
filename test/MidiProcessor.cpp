@@ -37,8 +37,7 @@ TEST_CASE("MidiProcessor without transport") {
         *(tester.state.rateParameter) = 3; // eighths
         *(tester.state.stepState[0].voiceParameters[0]) = true;
         *(tester.state.stepState[1].voiceParameters[1]) = true;
-        *(tester.state.extraNotesParameter) = constants::STRETCH_INDEX;
-        *(tester.state.extraVoicesParameter) = constants::SHRINK_INDEX;
+        *(tester.state.voiceMatchingParameter) = constants::voiceMatchingChoices::StretchVoiceStepsPattern;
 
         tester.midiIn.addEvent(juce::MidiMessage::noteOn(1, 60, (juce::uint8) 100), 10);
         tester.midiIn.addEvent(juce::MidiMessage::noteOn(2, 62, (juce::uint8) 101), 9);

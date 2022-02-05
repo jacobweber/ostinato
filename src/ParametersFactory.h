@@ -50,19 +50,12 @@ public:
         notesChoices.add("Mixolydian");
         layout.add(std::make_unique<juce::AudioParameterChoice>("notes", "Notes", notesChoices, 0));
 
-        juce::StringArray extraNotesChoices; // update constants::extraNotesChoices
-        extraNotesChoices.add("Use lower notes");
-        extraNotesChoices.add("Stretch voice pattern");
-        extraNotesChoices.add("Stretch voice pattern and number of steps");
-        layout.add(std::make_unique<juce::AudioParameterChoice>("extraNotes", "Extra Notes", extraNotesChoices, 0));
-
-        juce::StringArray extraVoicesChoices; // update constants::extraVoicesChoices
-        extraVoicesChoices.add("Ignore higher notes");
-        extraVoicesChoices.add("Repeat highest note");
-        extraVoicesChoices.add("Use higher octaves");
-        extraVoicesChoices.add("Shrink voice pattern");
-        extraVoicesChoices.add("Shrink voice pattern and number of steps");
-        layout.add(std::make_unique<juce::AudioParameterChoice>("extraVoices", "Extra Voices", extraVoicesChoices, 0));
+        juce::StringArray voiceMatchingChoices; // update constants::voiceMatchingChoices
+        voiceMatchingChoices.add("Start from bottom");
+        voiceMatchingChoices.add("Use higher octaves if necessary");
+        voiceMatchingChoices.add("Stretch/shrink voice pattern");
+        voiceMatchingChoices.add("Stretch/shrink voice and step pattern");
+        layout.add(std::make_unique<juce::AudioParameterChoice>("voiceMatching", "Voice Matching", voiceMatchingChoices, 0));
 
         for (stepnum_t i = 0; i < constants::MAX_STEPS; i++) {
             for (voicenum_t j = 0; j < constants::MAX_VOICES; j++)

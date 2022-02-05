@@ -7,17 +7,11 @@ typedef size_t voicenum_t;
 typedef size_t stepnum_t;
 
 namespace constants {
-    enum extraNotesChoices {
-        UseLowerNotes,
-        StretchVoicePattern,
-        StretchVoicePatternAndNumberSteps
-    };
-    enum extraVoicesChoices {
-        IgnoreHigherNotes,
-        RepeatHighestNote,
+    enum voiceMatchingChoices {
+        StartFromBottom,
         UseHigherOctaves,
-        ShrinkVoicePattern,
-        ShrinkVoicePatternAndNumberSteps
+        StretchVoicePattern,
+        StretchVoiceStepsPattern
     };
 
     constexpr size_t MAX_NOTES = 24;

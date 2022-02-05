@@ -118,16 +118,9 @@ void Header::showSettingsMenu() {
     menu.setLookAndFeel(&getLookAndFeel());
     int index = 1;
 
-    menu.addItem(index++, "More pressed notes than voices:", false);
-    auto current = state.extraNotesParameter->getCurrentValueAsText();
-    for (const juce::String &value: state.extraNotesParameter->getAllValueStrings()) {
-        menu.addItem(index++, value, true, value == current);
-    }
-    menu.addSeparator();
-
-    menu.addItem(index++, "More voices than pressed notes:", false);
-    current = state.extraVoicesParameter->getCurrentValueAsText();
-    for (const juce::String &value: state.extraVoicesParameter->getAllValueStrings()) {
+    menu.addItem(index++, "Matching pressed keys to voices:", false);
+    auto current = state.voiceMatchingParameter->getCurrentValueAsText();
+    for (const juce::String &value: state.voiceMatchingParameter->getAllValueStrings()) {
         menu.addItem(index++, value, true, value == current);
     }
 
@@ -139,23 +132,13 @@ void Header::settingsMenuItemChosenCallback(int result, Header* component) {
     if (component == nullptr) return;
     if (result == 0) return;
 
-    auto extraNotesParameter = component->state.extraNotesParameter;
-    int firstExtraNotes = 2;
-    int lastExtraNotes = firstExtraNotes + extraNotesParameter->getAllValueStrings().size() - 1;
-    if (result >= firstExtraNotes && result <= lastExtraNotes) {
-        component->state.extraNotesParameter->beginChangeGesture();
-        *(component->state.extraNotesParameter) = result - firstExtraNotes;
-        component->state.extraNotesParameter->endChangeGesture();
-        return;
-    }
-
-    auto extraVoicesParameter = component->state.extraVoicesParameter;
-    int firstExtraVoices = lastExtraNotes + 2;
-    int lastExtraVoices = firstExtraVoices + extraVoicesParameter->getAllValueStrings().size() - 1;
-    if (result >= firstExtraVoices && result <= lastExtraVoices) {
-        component->state.extraVoicesParameter->beginChangeGesture();
-        *(component->state.extraVoicesParameter) = result - firstExtraVoices;
-        component->state.extraVoicesParameter->endChangeGesture();
+    auto voiceMatchingParameter = component->state.voiceMatchingParameter;
+    int firstValue = 2;
+    int lastValue = firstValue + voiceMatchingParameter->getAllValueStrings().size() - 1;
+    if (result >= firstValue && result <= lastValue) {
+        component->state.voiceMatchingParameter->beginChangeGesture();
+        *(component->state.voiceMatchingParameter) = result - firstValue;
+        component->state.voiceMatchingParameter->endChangeGesture();
         return;
     }
 }

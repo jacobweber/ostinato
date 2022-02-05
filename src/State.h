@@ -16,8 +16,7 @@ public:
         rateParameter = dynamic_cast<juce::AudioParameterChoice *> (parameters.getParameter("rate"));
         rateTypeParameter = dynamic_cast<juce::AudioParameterChoice *> (parameters.getParameter("rateType"));
         notesParameter = dynamic_cast<juce::AudioParameterChoice *> (parameters.getParameter("notes"));
-        extraNotesParameter = dynamic_cast<juce::AudioParameterChoice *> (parameters.getParameter("extraNotes"));
-        extraVoicesParameter = dynamic_cast<juce::AudioParameterChoice *> (parameters.getParameter("extraVoices"));
+        voiceMatchingParameter = dynamic_cast<juce::AudioParameterChoice *> (parameters.getParameter("voiceMatching"));
         for (stepnum_t i = 0; i < constants::MAX_STEPS; i++) {
             for (voicenum_t j = 0; j < constants::MAX_VOICES; j++) {
                 juce::AudioParameterBool *voiceParameter = dynamic_cast<juce::AudioParameterBool *> (parameters.getParameter(
@@ -43,8 +42,7 @@ public:
         *(rateParameter) = 3; // index
         *(rateTypeParameter) = 0; // index
         *(notesParameter) = 0; // index
-        *(extraNotesParameter) = 0; // index
-        *(extraVoicesParameter) = 0; // index
+        *(voiceMatchingParameter) = 0; // index
         for (stepnum_t i = 0; i < constants::MAX_STEPS; i++) {
             for (voicenum_t j = 0; j < constants::MAX_VOICES; j++) {
                 *(stepState[i].voiceParameters[j]) = i == j && j < 4;
@@ -149,8 +147,7 @@ private:
         xml.setAttribute("rate", rateParameter->getCurrentValueAsText());
         xml.setAttribute("rateType", rateTypeParameter->getCurrentValueAsText());
         xml.setAttribute("notes", notesParameter->getCurrentValueAsText());
-        xml.setAttribute("extraNotes", extraNotesParameter->getCurrentValueAsText());
-        xml.setAttribute("extraVoices", extraVoicesParameter->getCurrentValueAsText());
+        xml.setAttribute("voiceMatching", voiceMatchingParameter->getCurrentValueAsText());
         for (stepnum_t i = 0; i < numSteps; i++) {
             juce::XmlElement* step = new juce::XmlElement("step");
             juce::String voices = "";
@@ -182,8 +179,7 @@ private:
         *(rateParameter) = std::max(0, rateParameter->getAllValueStrings().indexOf(xml->getStringAttribute("rate")));
         *(rateTypeParameter) = std::max(0, rateTypeParameter->getAllValueStrings().indexOf(xml->getStringAttribute("rateType")));
         *(notesParameter) = std::max(0, notesParameter->getAllValueStrings().indexOf(xml->getStringAttribute("notes")));
-        *(extraNotesParameter) = std::max(0, extraNotesParameter->getAllValueStrings().indexOf(xml->getStringAttribute("extraNotes")));
-        *(extraVoicesParameter) = std::max(0, extraVoicesParameter->getAllValueStrings().indexOf(xml->getStringAttribute("extraVoices")));
+        *(voiceMatchingParameter) = std::max(0, voiceMatchingParameter->getAllValueStrings().indexOf(xml->getStringAttribute("voiceMatching")));
         stepnum_t _stepIndex = 0;
         for (auto* step : xml->getChildIterator()) {
             if (!step->hasTagName("step")) continue;
@@ -208,8 +204,7 @@ public:
     juce::AudioParameterChoice *rateParameter = nullptr;
     juce::AudioParameterChoice *rateTypeParameter = nullptr;
     juce::AudioParameterChoice *notesParameter = nullptr;
-    juce::AudioParameterChoice *extraNotesParameter = nullptr;
-    juce::AudioParameterChoice *extraVoicesParameter = nullptr;
+    juce::AudioParameterChoice *voiceMatchingParameter = nullptr;
     std::array<StepState, constants::MAX_STEPS> stepState;
 
     std::atomic<stepnum_t> stepIndex{0};

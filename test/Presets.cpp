@@ -10,8 +10,7 @@ TEST_CASE("Presets") {
     SECTION("save to string") {
         *(tester.state.rateParameter) = 3; // eighths
         *(tester.state.rateTypeParameter) = 1; // triplet
-        *(tester.state.extraNotesParameter) = constants::STRETCH_INDEX;
-        *(tester.state.extraVoicesParameter) = constants::SHRINK_INDEX;
+        *(tester.state.voiceMatchingParameter) = constants::voiceMatchingChoices::StretchVoiceStepsPattern;
         juce::String grid = "--*--\n"
                             "-*-*-\n"
                             "*---*\n";
@@ -25,7 +24,7 @@ TEST_CASE("Presets") {
         juce::String result = tester.state.saveToString();
 
         juce::String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n\n"
-            "<ostinato steps=\"5\" voices=\"3\" rate=\"Eighth\" rateType=\"Triplet\" notes=\"Pressed Keys\" extraNotes=\"Stretch voice pattern and number of steps\" extraVoices=\"Shrink voice pattern and number of steps\">\n"
+            "<ostinato steps=\"5\" voices=\"3\" rate=\"Eighth\" rateType=\"Triplet\" notes=\"Pressed Keys\" voiceMatching=\"Stretch/shrink voice and step pattern\">\n"
             "  <step voices=\"100\" octave=\"-1\" length=\"0.5\" tie=\"false\" vol=\"0.5\" power=\"true\"/>\n"
             "  <step voices=\"010\" octave=\"0\" length=\"0.75\" tie=\"false\" vol=\"0.5\" power=\"true\"/>\n"
             "  <step voices=\"001\" octave=\"0\" length=\"0.5\" tie=\"true\" vol=\"0.5\" power=\"true\"/>\n"
@@ -37,7 +36,7 @@ TEST_CASE("Presets") {
 
     SECTION("load from string") {
         juce::String input = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n\n"
-            "<ostinato steps=\"5\" voices=\"3\" rate=\"Eighth\" rateType=\"Triplet\" notes=\"Pressed Keys\" extraNotes=\"Stretch voice pattern and number of steps\" extraVoices=\"Shrink voice pattern and number of steps\" >\n"
+            "<ostinato steps=\"5\" voices=\"3\" rate=\"Eighth\" rateType=\"Triplet\" notes=\"Pressed Keys\" voiceMatching=\"Stretch/shrink voice and step pattern\">\n"
             "  <step voices=\"100\" octave=\"-1\" length=\"0.5\" tie=\"false\" vol=\"0.5\" power=\"true\"/>\n"
             "  <step voices=\"010\" octave=\"0\" length=\"0.75\" tie=\"false\" vol=\"0.5\" power=\"true\"/>\n"
             "  <step voices=\"001\" octave=\"0\" length=\"0.5\" tie=\"true\" vol=\"0.5\" power=\"true\"/>\n"
@@ -48,8 +47,7 @@ TEST_CASE("Presets") {
 
         REQUIRE(tester.state.rateParameter->getIndex() == 3); // eighths
         REQUIRE(tester.state.rateTypeParameter->getIndex() == 1); // triplet
-        REQUIRE(tester.state.extraNotesParameter->getIndex() == constants::STRETCH_INDEX);
-        REQUIRE(tester.state.extraVoicesParameter->getIndex() == constants::SHRINK_INDEX);
+        REQUIRE(tester.state.voiceMatchingParameter->getIndex() == constants::voiceMatchingChoices::StretchVoiceStepsPattern);
         juce::String grid = "--*--\n"
                             "-*-*-\n"
                             "*---*\n";
