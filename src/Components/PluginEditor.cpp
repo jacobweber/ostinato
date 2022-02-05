@@ -56,7 +56,7 @@ void PluginEditor::paint(juce::Graphics &g) {
 
 void PluginEditor::resized() {
     auto area = getLocalBounds();
-    header.setBounds(area.removeFromTop(85));
+    header.setBounds(area.removeFromTop(133));
     stepStrips.setBounds(area);
 }
 
@@ -68,6 +68,6 @@ void PluginEditor::timerCallback() {
 void PluginEditor::refreshSize() {
     int numSteps = state.stepsParameter->getIndex() + 1;
     int width = juce::jmin(1200, juce::jmax(800, 100 * numSteps));
-    setSize(width, 600);
+    setSize(width, 648);
 }
 

@@ -204,9 +204,20 @@ void Header::resized() {
     auto area = getLocalBounds();
     messageLabel.setBounds(area.removeFromBottom(25).withTrimmedRight(4).withTrimmedLeft(4).withTrimmedBottom(4));
 
+    juce::FlexItem::Margin margin{0.0, 5.0, 0.0, 0.0};
+
+    auto toolbar2Rect = area.removeFromBottom(48).reduced(8);
+    juce::FlexBox toolbar2;
+    toolbar2.justifyContent = juce::FlexBox::JustifyContent::flexStart;
+    toolbar2.alignItems = juce::FlexBox::AlignItems::center;
+    toolbar2.items.add(juce::FlexItem(notesMenu).withAlignSelf(juce::FlexItem::AlignSelf::autoAlign).withHeight(
+            MENU_HEIGHT).withWidth(130.0).withMargin(margin));
+    toolbar2.items.add(juce::FlexItem(modeMenu).withAlignSelf(juce::FlexItem::AlignSelf::autoAlign).withHeight(
+            MENU_HEIGHT).withWidth(130.0).withMargin(margin));
+    toolbar2.performLayout(toolbar2Rect);
+
     auto toolbarRect = area.removeFromBottom(48).reduced(8);
     juce::FlexBox toolbar;
-    juce::FlexItem::Margin margin{0.0, 5.0, 0.0, 0.0};
     toolbar.justifyContent = juce::FlexBox::JustifyContent::flexStart;
     toolbar.alignItems = juce::FlexBox::AlignItems::center;
     toolbar.items.add(
@@ -220,10 +231,6 @@ void Header::resized() {
     toolbar.items.add(juce::FlexItem(rateMenu).withAlignSelf(juce::FlexItem::AlignSelf::autoAlign).withHeight(
             MENU_HEIGHT).withWidth(130.0).withMargin(margin));
     toolbar.items.add(juce::FlexItem(rateTypeMenu).withAlignSelf(juce::FlexItem::AlignSelf::autoAlign).withHeight(
-            MENU_HEIGHT).withWidth(130.0).withMargin(margin));
-    toolbar.items.add(juce::FlexItem(notesMenu).withAlignSelf(juce::FlexItem::AlignSelf::autoAlign).withHeight(
-            MENU_HEIGHT).withWidth(130.0).withMargin(margin));
-    toolbar.items.add(juce::FlexItem(modeMenu).withAlignSelf(juce::FlexItem::AlignSelf::autoAlign).withHeight(
             MENU_HEIGHT).withWidth(130.0).withMargin(margin));
     toolbar.items.add(juce::FlexItem(settingsButton).withAlignSelf(juce::FlexItem::AlignSelf::autoAlign).withHeight(
             ICON_SIZE + 10).withWidth(
