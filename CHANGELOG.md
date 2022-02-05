@@ -1,3 +1,8 @@
+### 0.0.11 (unreleased)
+
+* Add settings menu with options for matching pressed keys to voices.
+* Remove stretch button.
+
 ### 0.0.10
 
 * Drag to select voices.
