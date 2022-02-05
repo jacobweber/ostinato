@@ -226,11 +226,11 @@ void Header::resized() {
     toolbar2.justifyContent = juce::FlexBox::JustifyContent::flexStart;
     toolbar2.alignItems = juce::FlexBox::AlignItems::center;
     toolbar2.items.add(juce::FlexItem(modeMenu).withAlignSelf(juce::FlexItem::AlignSelf::autoAlign).withHeight(
-            MENU_HEIGHT).withWidth(130.0).withMargin(margin));
+            MENU_HEIGHT).withWidth(90.0).withMargin(margin));
     toolbar2.items.add(juce::FlexItem(scaleMenu).withAlignSelf(juce::FlexItem::AlignSelf::autoAlign).withHeight(
             MENU_HEIGHT).withWidth(130.0).withMargin(margin));
     toolbar2.items.add(juce::FlexItem(keyMenu).withAlignSelf(juce::FlexItem::AlignSelf::autoAlign).withHeight(
-            MENU_HEIGHT).withWidth(130.0).withMargin(margin));
+            MENU_HEIGHT).withWidth(90.0).withMargin(margin));
     toolbar2.performLayout(toolbar2Rect);
 
     auto toolbarRect = area.removeFromBottom(48).reduced(8);
