@@ -26,9 +26,9 @@ public:
 private:
     void stopPlaying(juce::MidiBuffer &midiOut, int offset);
 
-    void getCurrentStep(voicenum_t &outNumVoices);
+    void getCurrentStep();
 
-    void playCurrentStep(voicenum_t numVoices, juce::MidiBuffer &midiOut, int playSampleOffsetWithinBlock);
+    void playCurrentStep(juce::MidiBuffer &midiOut, int playSampleOffsetWithinBlock);
 
     static double getPpqPosPerStep(State &state);
 

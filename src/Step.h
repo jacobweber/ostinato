@@ -8,6 +8,7 @@ constexpr voicenum_t MAX_ACTUAL_VOICES =
 
 struct CurrentStep {
     std::array<bool, MAX_ACTUAL_VOICES> voices{};
+    voicenum_t numVoices = 1;
     double length = 0.0;
     double volume = 0.0;
     int octave = 0; // index

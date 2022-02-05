@@ -185,11 +185,10 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midiIn, juce::MidiBuffe
 
         if (playSampleOffsetWithinBlock != -1) {
             // play a step within this block
-            voicenum_t numVoices;
-            getCurrentStep(numVoices);
+            getCurrentStep();
 
             if (currentStep.power && !tieActive) {
-                playCurrentStep(numVoices, midiOut, playSampleOffsetWithinBlock);
+                playCurrentStep(midiOut, playSampleOffsetWithinBlock);
                 DBG("play step at " << playSampleOffsetWithinBlock << " samples into block, vol "
                                     << currentStep.volume);
             } else {
@@ -235,7 +234,7 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midiIn, juce::MidiBuffe
     }
 }
 
-void MidiProcessor::getCurrentStep(voicenum_t &outNumVoices) {
+void MidiProcessor::getCurrentStep() {
     int notesSource = state.notesParameter->getIndex();
     int voiceMatching = state.voiceMatchingParameter->getIndex();
     bool stretchStepsParam = notesSource == 0 // stretch can't be on while using a scale
@@ -248,7 +247,7 @@ void MidiProcessor::getCurrentStep(voicenum_t &outNumVoices) {
             stretcher.setStepIndex(nextStepIndex);
         }
         stretcher.getNextStretchedStep(numHeldNotes, currentStep);
-        outNumVoices = stretcher.getNumVoices();
+        currentStep.numVoices = stretcher.getNumVoices();
 
         state.stepIndex = stretcher.getOrigStepIndex();
     } else {
@@ -258,7 +257,7 @@ void MidiProcessor::getCurrentStep(voicenum_t &outNumVoices) {
         }
 
         stepnum_t numSteps = static_cast<stepnum_t>(state.stepsParameter->getIndex()) + 1;
-        outNumVoices = static_cast<voicenum_t>(state.voicesParameter->getIndex()) + 1;
+        voicenum_t numVoices = static_cast<voicenum_t>(state.voicesParameter->getIndex()) + 1;
 
         if (nextStepIndex >= numSteps) {
             nextStepIndex = 0;
@@ -271,9 +270,10 @@ void MidiProcessor::getCurrentStep(voicenum_t &outNumVoices) {
         currentStep.length = state.stepState[nextStepIndex].lengthParameter->get();
         currentStep.tie = state.stepState[nextStepIndex].tieParameter->get();
         if (voiceMatching == constants::voiceMatchingChoices::StretchVoicePattern) {
-            Stretcher::getStretchedVoices(state, nextStepIndex, numHeldNotes, currentStep.voices, outNumVoices);
+            Stretcher::getStretchedVoices(state, nextStepIndex, numHeldNotes, currentStep);
         } else {
-            for (voicenum_t voiceNum = 0; voiceNum < outNumVoices; voiceNum++) {
+            currentStep.numVoices = numVoices;
+            for (voicenum_t voiceNum = 0; voiceNum < numVoices; voiceNum++) {
                 currentStep.voices[voiceNum] = state.stepState[nextStepIndex].voiceParameters[voiceNum]->get();
             }
         }
@@ -285,7 +285,7 @@ void MidiProcessor::getCurrentStep(voicenum_t &outNumVoices) {
     }
 }
 
-void MidiProcessor::playCurrentStep(voicenum_t numVoices, juce::MidiBuffer &midiOut, int playSampleOffsetWithinBlock) {
+void MidiProcessor::playCurrentStep(juce::MidiBuffer &midiOut, int playSampleOffsetWithinBlock) {
     int voiceMatching = state.voiceMatchingParameter->getIndex();
     int octaveRange = (pressedNotes[pressedNotes.size() - 1].note - pressedNotes[0].note) / 12 + 1;
     DBG("octave range: " << octaveRange);
@@ -293,7 +293,8 @@ void MidiProcessor::playCurrentStep(voicenum_t numVoices, juce::MidiBuffer &midi
     int notesSource = state.notesParameter->getIndex();
     int transpose = (-currentStep.octave + static_cast<int>(constants::MAX_OCTAVES)) * 12;
     MidiValue noteValue{};
-    for (int voiceNum = 0; voiceNum < static_cast<int>(numVoices); voiceNum++) {
+    int numVoices = static_cast<int>(currentStep.numVoices);
+    for (int voiceNum = 0; voiceNum < numVoices; voiceNum++) {
         if (currentStep.voices[static_cast<size_t>(voiceNum)]) {
             noteValue.note = -1;
             if (notesSource == 0) { // pressed notes
