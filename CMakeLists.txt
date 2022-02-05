@@ -12,7 +12,8 @@ cmake_minimum_required(VERSION 3.15)
 
 set(CMAKE_OSX_DEPLOYMENT_TARGET "10.13" CACHE STRING "Minimum OS X deployment version")
 
-# Building universals increases build times
+# Building universals increases build times.
+# Github will build Intel by default. Pluginval requires Intel or both.
 # set(CMAKE_OSX_ARCHITECTURES "arm64;x86_64" CACHE STRING "")
 
 # The top-level CMakeLists.txt file for a project must contain a literal, direct call to the
