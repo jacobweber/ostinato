@@ -295,23 +295,24 @@ void MidiProcessor::playCurrentStep(juce::MidiBuffer &midiOut, int playSampleOff
     int scaleIndex = state.scaleParameter->getIndex();
     const std::vector<int> &scale = scales.allScales[static_cast<size_t>(scaleIndex)];
     int notesPerOctave = 0;
-    int notePosInKey = 0;
-    int scaleDegreeInKey = 0;
+    int pressedScaleDegree = 0;
+    int scaleRootNote = 0;
     if (mode == constants::modeChoices::Scale) {
         int key = state.keyParameter->getIndex();
         size_t scaleSize = scale.size();
         notesPerOctave = static_cast<int>(scaleSize);
-        notePosInKey = pressedNotes[0].note % 12 - key;
+        int notePosInKey = pressedNotes[0].note % 12 - key;
         if (notePosInKey < 0) notePosInKey += 12;
+        scaleRootNote = pressedNotes[0].note - notePosInKey;
         size_t i = 0;
         for (; i < scaleSize; i++) {
             if (scale[i] >= notePosInKey) {
-                scaleDegreeInKey = static_cast<int>(i);
+                pressedScaleDegree = static_cast<int>(i);
                 break;
             }
         }
         // in case we play B in C minor
-        if (i == scaleSize) scaleDegreeInKey = static_cast<int>(scaleSize);
+        if (i == scaleSize) pressedScaleDegree = static_cast<int>(scaleSize);
     }
 
     int transpose = (-currentStep.octave + static_cast<int>(constants::MAX_OCTAVES)) * 12;
@@ -329,12 +330,12 @@ void MidiProcessor::playCurrentStep(juce::MidiBuffer &midiOut, int playSampleOff
                     }
                 }
             } else { // scale
-                int octave = (voiceNum + scaleDegreeInKey) / notesPerOctave;
-                int scaleDegree = (voiceNum + scaleDegreeInKey) % notesPerOctave;
+                int octave = (voiceNum + pressedScaleDegree) / notesPerOctave;
+                int scaleDegree = (voiceNum + pressedScaleDegree) % notesPerOctave;
                 DBG("scale degree " << scaleDegree << " octave " << octave);
                 noteValue = pressedNotes[0];
-                noteValue.note +=
-                        scale[static_cast<size_t>(scaleDegree)] + static_cast<int>(12 * octave) - notePosInKey;
+                noteValue.note = scaleRootNote +
+                        scale[static_cast<size_t>(scaleDegree)] + static_cast<int>(12 * octave);
             }
 
             if (noteValue.note != -1) {
