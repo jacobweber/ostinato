@@ -1,6 +1,6 @@
 #include <catch2/catch.hpp>
 
-#include "MidiProcesserTester.h"
+#include "MidiProcessorTester.h"
 #include "StateHelper.h"
 #include "MessageReader.h"
 

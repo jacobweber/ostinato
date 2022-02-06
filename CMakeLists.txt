@@ -160,6 +160,7 @@ enable_testing()
 
 # All test .cpp files should be listed here
 set(TestFiles
+        test/MidiProcessorTester.cpp
         test/CatchMain.cpp
         test/PluginInfo.cpp
         test/MidiValue.cpp
@@ -167,6 +168,7 @@ set(TestFiles
         test/Presets.cpp
         test/Recorder.cpp
         test/Scales.cpp
+        test/StateHelper.cpp
         test/Stretcher.cpp)
 
 # Download the tagged version of Catch2

@@ -1,6 +1,6 @@
 #include <catch2/catch.hpp>
 
-#include "MidiProcesserTester.h"
+#include "MidiProcessorTester.h"
 
 TEST_CASE("Scales") {
     MidiProcessorTester tester{};
