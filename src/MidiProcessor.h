@@ -14,8 +14,7 @@
 
 class MidiProcessor {
 public:
-    explicit MidiProcessor(State &s) : state(s) {
-    }
+    explicit MidiProcessor(State &s);
 
     void prepareToPlay(double sampleRate, int);
 

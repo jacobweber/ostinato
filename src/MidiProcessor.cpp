@@ -1,6 +1,9 @@
 #include "MidiProcessor.h"
 #include "Constants.h"
 
+MidiProcessor::MidiProcessor(State &s) : state(s) {
+}
+
 void MidiProcessor::prepareToPlay(double _sampleRate, int _maximumExpectedSamplesPerBlock) {
     sampleRate = _sampleRate;
     recorder.prepareToPlay(_sampleRate, _maximumExpectedSamplesPerBlock);

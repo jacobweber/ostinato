@@ -94,11 +94,22 @@ target_compile_features(Ostinato PRIVATE cxx_std_20)
 
 target_sources(Ostinato
         PRIVATE
+        src/Components/ActiveLight.cpp
+        src/Components/FileButton.cpp
         src/Components/FontAwesome.cpp
+        src/Components/LookAndFeel.cpp
         src/Components/PluginEditor.cpp
         src/Components/Header.cpp
+        src/Components/StepStrip.cpp
+        src/Components/StepStrips.cpp
+        src/MessageReader.cpp
+        src/ParametersFactory.cpp
         src/PluginProcessor.cpp
-        src/MidiProcessor.cpp)
+        src/Recorder.cpp
+        src/MidiProcessor.cpp
+        src/State.cpp
+        src/Stretcher.cpp
+        src/Timecode.cpp)
 
 # `target_compile_definitions` adds some preprocessor definitions to our target. In a Projucer
 # project, these might be passed in the 'Preprocessor Definitions' field. JUCE modules also make use

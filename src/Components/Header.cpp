@@ -1,4 +1,5 @@
 #include "Header.h"
+#include "FontAwesome.h"
 
 Header::Header(State &s, PluginProcessor &p) : state(s), pluginProcessor(p) {
     juce::Image floppyDisk = FontAwesome::getInstance()->getIcon(true,
