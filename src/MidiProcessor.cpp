@@ -289,11 +289,32 @@ void MidiProcessor::playCurrentStep(juce::MidiBuffer &midiOut, int playSampleOff
     int voiceMatching = state.voiceMatchingParameter->getIndex();
     int octaveRange = (pressedNotes[pressedNotes.size() - 1].note - pressedNotes[0].note) / 12 + 1;
     DBG("octave range: " << octaveRange);
+    MidiValue noteValue{};
 
     int mode = state.modeParameter->getIndex();
     int scaleIndex = state.scaleParameter->getIndex();
+    const std::vector<int> &scale = scales.allScales[static_cast<size_t>(scaleIndex)];
+    int notesPerOctave = 0;
+    int notePosInKey = 0;
+    int scaleDegreeInKey = 0;
+    if (mode == constants::modeChoices::Scale) {
+        int key = state.keyParameter->getIndex();
+        size_t scaleSize = scale.size();
+        notesPerOctave = static_cast<int>(scaleSize);
+        notePosInKey = pressedNotes[0].note % 12 - key;
+        if (notePosInKey < 0) notePosInKey += 12;
+        size_t i = 0;
+        for (; i < scaleSize; i++) {
+            if (scale[i] >= notePosInKey) {
+                scaleDegreeInKey = static_cast<int>(i);
+                break;
+            }
+        }
+        // in case we play B in C minor
+        if (i == scaleSize) scaleDegreeInKey = static_cast<int>(scaleSize);
+    }
+
     int transpose = (-currentStep.octave + static_cast<int>(constants::MAX_OCTAVES)) * 12;
-    MidiValue noteValue{};
     int numVoices = static_cast<int>(currentStep.numVoices);
     for (int voiceNum = 0; voiceNum < numVoices; voiceNum++) {
         if (currentStep.voices[static_cast<size_t>(voiceNum)]) {
@@ -308,15 +329,14 @@ void MidiProcessor::playCurrentStep(juce::MidiBuffer &midiOut, int playSampleOff
                     }
                 }
             } else { // scale
-                noteValue = pressedNotes[0];
-                const std::vector<int> &scale = scales.allScales[static_cast<size_t>(scaleIndex)];
-                int notesPerOctave = static_cast<int>(scale.size());
-                int octave = voiceNum / notesPerOctave;
-                int scaleDegree = voiceNum % notesPerOctave;
+                int octave = (voiceNum + scaleDegreeInKey) / notesPerOctave;
+                int scaleDegree = (voiceNum + scaleDegreeInKey) % notesPerOctave;
                 DBG("scale degree " << scaleDegree << " octave " << octave);
+                noteValue = pressedNotes[0];
                 noteValue.note +=
-                        scale[static_cast<size_t>(scaleDegree)] + static_cast<int>(12 * octave);
+                        scale[static_cast<size_t>(scaleDegree)] + static_cast<int>(12 * octave) - notePosInKey;
             }
+
             if (noteValue.note != -1) {
                 noteValue.note += transpose;
                 if (noteValue.note >= 0 && noteValue.note <= 127) {

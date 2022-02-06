@@ -11,12 +11,39 @@ TEST_CASE("Scales") {
         *(tester.state.rateParameter) = 3; // eighths
         *(tester.state.modeParameter) = constants::modeChoices::Scale;
         *(tester.state.scaleParameter) = 0; // major
+        *(tester.state.keyParameter) = 0; // C
         *(tester.state.stepState[0].voiceParameters[0]) = true;
         *(tester.state.stepState[1].voiceParameters[1]) = true;
         *(tester.state.stepState[2].voiceParameters[2]) = true;
         *(tester.state.stepState[3].voiceParameters[3]) = true;
 
-        tester.midiIn.addEvent(juce::MidiMessage::noteOn(1, 60, (juce::uint8) 100), 10);
+        tester.midiIn.addEvent(juce::MidiMessage::noteOn(1, 62, (juce::uint8) 100), 10);
+
+        tester.processBlocks(10);
+        // 250 samples/step
+        REQUIRE(tester.midiOutString(false) == "100: Note on D3 Velocity 100 Channel 1\n"
+                                               "225: Note off D3 Velocity 0 Channel 1\n"
+                                               "350: Note on E3 Velocity 100 Channel 1\n"
+                                               "475: Note off E3 Velocity 0 Channel 1\n"
+                                               "600: Note on F3 Velocity 100 Channel 1\n"
+                                               "725: Note off F3 Velocity 0 Channel 1\n"
+                                               "850: Note on G3 Velocity 100 Channel 1\n"
+                                               "975: Note off G3 Velocity 0 Channel 1\n");
+    }
+
+    SECTION("play scale, rounding up from last degree") {
+        *(tester.state.stepsParameter) = 3; // 4 steps
+        *(tester.state.voicesParameter) = 3; // 4 voices
+        *(tester.state.rateParameter) = 3; // eighths
+        *(tester.state.modeParameter) = constants::modeChoices::Scale;
+        *(tester.state.scaleParameter) = 1; // minor
+        *(tester.state.keyParameter) = 0; // C
+        *(tester.state.stepState[0].voiceParameters[0]) = true;
+        *(tester.state.stepState[1].voiceParameters[1]) = true;
+        *(tester.state.stepState[2].voiceParameters[2]) = true;
+        *(tester.state.stepState[3].voiceParameters[3]) = true;
+
+        tester.midiIn.addEvent(juce::MidiMessage::noteOn(1, 59, (juce::uint8) 100), 10);
 
         tester.processBlocks(10);
         // 250 samples/step
@@ -24,8 +51,8 @@ TEST_CASE("Scales") {
                                                "225: Note off C3 Velocity 0 Channel 1\n"
                                                "350: Note on D3 Velocity 100 Channel 1\n"
                                                "475: Note off D3 Velocity 0 Channel 1\n"
-                                               "600: Note on E3 Velocity 100 Channel 1\n"
-                                               "725: Note off E3 Velocity 0 Channel 1\n"
+                                               "600: Note on D#3 Velocity 100 Channel 1\n"
+                                               "725: Note off D#3 Velocity 0 Channel 1\n"
                                                "850: Note on F3 Velocity 100 Channel 1\n"
                                                "975: Note off F3 Velocity 0 Channel 1\n");
     }
@@ -55,6 +82,9 @@ TEST_CASE("Scales") {
 
         *(tester.state.modeParameter) = constants::modeChoices::Scale;
         *(tester.state.scaleParameter) = 1; // minor
+        *(tester.state.keyParameter) = 0; // C
+        // still holding C as lowest note
+
         tester.processBlocks(12);
         // 250 samples/step
         REQUIRE(tester.midiOutString(false) == "850: Note on F3 Velocity 100 Channel 1\n"
@@ -95,6 +125,9 @@ TEST_CASE("Scales") {
 
         *(tester.state.modeParameter) = constants::modeChoices::Scale;
         *(tester.state.scaleParameter) = 0; // major
+        *(tester.state.keyParameter) = 0; // C
+        // still holding C as lowest note
+
         tester.processBlocks(10);
         // 250 samples/step
         REQUIRE(tester.midiOutString(false) == "1100: Note on C3 Velocity 100 Channel 1\n"
