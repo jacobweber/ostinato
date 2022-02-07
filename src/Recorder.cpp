@@ -90,10 +90,10 @@ void Recorder::finalizeStep(bool allowEmpty) {
     samplesUntilStepFinalized = -1;
     if (!allowEmpty && notesInCurrentStep.isEmpty()) return;
     DBG("finalize step " << numSteps);
-    notesInSteps[numSteps] = notesInCurrentStep;
+    notesInSteps[static_cast<size_t>(numSteps)] = notesInCurrentStep;
     numSteps++;
     notesInCurrentStep.clear();
-    if (static_cast<int>(numSteps) == constants::MAX_STEPS) {
+    if (numSteps == constants::MAX_STEPS) {
         DBG("ran out of steps");
         recording = RanOutOfSteps;
     }
@@ -104,7 +104,7 @@ void Recorder::finalizeStep(bool allowEmpty) {
 UpdatedSteps Recorder::getUpdatedSteps() {
     UpdatedSteps steps{};
     juce::SortedSet<int> voices;
-    steps.numSteps = static_cast<int>(numSteps);
+    steps.numSteps = numSteps;
     for (size_t stepNum = 0; stepNum < static_cast<size_t>(steps.numSteps); stepNum++) {
         DBG("step " << stepNum);
         auto const &notesInStep = notesInSteps[stepNum];

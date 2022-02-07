@@ -47,7 +47,7 @@ private:
     int samplesUntilStepFinalized = -1;
 
     NotesInSteps notesInSteps;
-    stepnum_t numSteps = 0;
+    int numSteps = 0;
 
     std::atomic<bool> refreshUI = false;
 };
