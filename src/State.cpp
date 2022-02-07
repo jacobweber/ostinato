@@ -81,7 +81,7 @@ void State::randomizeParams(bool stepsAndVoices, bool rate, bool scale) {
     std::uniform_int_distribution<int> randVoiceEnabled(0, 5);
 
     int numOctaveChoices = constants::MAX_OCTAVES * 2 + 1;
-    std::discrete_distribution<int> randOctave(numOctaveChoices, 0.0, static_cast<double>(numOctaveChoices),
+    std::discrete_distribution<int> randOctave(static_cast<size_t>(numOctaveChoices), 0.0, static_cast<double>(numOctaveChoices),
                                                 [](double val) { // make central octaves more likely
                                                     double weight = std::floor(val);
                                                     if (weight > constants::MAX_OCTAVES) {
