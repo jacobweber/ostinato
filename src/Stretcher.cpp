@@ -205,7 +205,7 @@ void Stretcher::updateStretchedStep(stepnum_t stepNum, CurrentStep &outStep) {
     // if we have a prev voice but not a next one, draw horizontal line
     // if we have a next voice but not a prev one, ignore it
     // find this outStep's Y position on that line, and round it to a voice num for this outStep
-    for (voicenum_t lineNum = 0; lineNum < prev.numActiveVoices; lineNum++) {
+    for (size_t lineNum = 0; lineNum < static_cast<size_t>(prev.numActiveVoices); lineNum++) {
         double prevVoiceY = prev.activeVoicesY[lineNum];
         double nextVoiceY =
                 lineNum < next.numActiveVoices ? next.activeVoicesY[lineNum] : prevVoiceY;
@@ -232,7 +232,7 @@ void Stretcher::updateOrigStepFromState(Stretcher::OrigStep &outStep, State &_st
     if (_state.stepState[stepNum].powerParameter->get()) {
         for (voicenum_t origVoiceNum = 0; origVoiceNum < origNumVoices; origVoiceNum++) {
             if (_state.stepState[stepNum].voiceParameters[origVoiceNum]->get()) {
-                outStep.activeVoicesY[outStep.numActiveVoices++] =
+                outStep.activeVoicesY[static_cast<size_t>(outStep.numActiveVoices++)] =
                         origVoiceSizeY * static_cast<double>(origVoiceNum);
             }
         }

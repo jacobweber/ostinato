@@ -18,7 +18,7 @@ public:
         stepnum_t stepNum;
         double x;
         std::array<double, constants::MAX_VOICES> activeVoicesY;
-        voicenum_t numActiveVoices;
+        int numActiveVoices;
         double length;
         double volume;
         int octave;
