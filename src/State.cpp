@@ -80,7 +80,7 @@ void State::randomizeParams(bool stepsAndVoices, bool rate, bool scale) {
 
     std::uniform_int_distribution<int> randVoiceEnabled(0, 5);
 
-    size_t numOctaveChoices = constants::MAX_OCTAVES * 2 + 1;
+    int numOctaveChoices = constants::MAX_OCTAVES * 2 + 1;
     std::discrete_distribution<int> randOctave(numOctaveChoices, 0.0, static_cast<double>(numOctaveChoices),
                                                 [](double val) { // make central octaves more likely
                                                     double weight = std::floor(val);
@@ -156,7 +156,7 @@ std::unique_ptr<juce::XmlElement> State::exportSettingsToXml() {
             voices += stepState[i].voiceParameters[j]->get() ? "1" : "0";
         }
         step->setAttribute("voices", voices);
-        step->setAttribute("octave", juce::String(-(stepState[i].octaveParameter->getIndex()) + static_cast<int>(constants::MAX_OCTAVES)));
+        step->setAttribute("octave", juce::String(-(stepState[i].octaveParameter->getIndex()) + constants::MAX_OCTAVES));
         step->setAttribute("length", stepState[i].lengthParameter->get());
         step->setAttribute("tie", stepState[i].tieParameter->get() ? "true" : "false");
         step->setAttribute("vol", stepState[i].volParameter->get());
@@ -190,7 +190,7 @@ void State::importSettingsFromXml(juce::XmlDocument xmlDoc) {
         for (int voice = 0; voice < std::min(voicesStr.length(), numVoices); voice++) {
             *(stepState[_stepIndex].voiceParameters[static_cast<size_t>(voice)]) = voicesStr[voice] == '1';
         }
-        *(stepState[_stepIndex].octaveParameter) = -(step->getIntAttribute("octave", 0)) + static_cast<int>(constants::MAX_OCTAVES); // index
+        *(stepState[_stepIndex].octaveParameter) = -(step->getIntAttribute("octave", 0)) + constants::MAX_OCTAVES; // index
         *(stepState[_stepIndex].lengthParameter) = static_cast<float>(step->getDoubleAttribute("length", 0.0));
         *(stepState[_stepIndex].tieParameter) = step->getBoolAttribute("tie", false);
         *(stepState[_stepIndex].volParameter) = static_cast<float>(step->getDoubleAttribute("vol", 0.0));

@@ -86,12 +86,12 @@ juce::AudioProcessorValueTreeState::ParameterLayout ParametersFactory::create() 
                             std::to_string(j + 1) + " On", i == j && j < 4));
 
         juce::StringArray octaveChoices;
-        for (int o = static_cast<int>(constants::MAX_OCTAVES); o >= -static_cast<int>(constants::MAX_OCTAVES); o--)
+        for (int o = constants::MAX_OCTAVES; o >= -constants::MAX_OCTAVES; o--)
             octaveChoices.add(std::to_string(o));
         layout.add(std::make_unique<juce::AudioParameterChoice>("step" + std::to_string(i) + "_octave",
                                                                 "Step " + std::to_string(i + 1) + " Octave",
                                                                 octaveChoices,
-                                                                static_cast<int>(constants::MAX_OCTAVES))); // 0
+                                                                constants::MAX_OCTAVES)); // 0
 
         layout.add(std::make_unique<juce::AudioParameterFloat>("step" + std::to_string(i) + "_length",
                                                                 "Step " + std::to_string(i + 1) + " Note Length",

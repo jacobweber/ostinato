@@ -318,7 +318,7 @@ void MidiProcessor::playCurrentStep(juce::MidiBuffer &midiOut, int playSampleOff
         if (i == scaleSize) pressedScaleDegree = static_cast<int>(scaleSize);
     }
 
-    int transpose = (-currentStep.octave + static_cast<int>(constants::MAX_OCTAVES)) * 12;
+    int transpose = (-currentStep.octave + constants::MAX_OCTAVES) * 12;
     int numVoices = static_cast<int>(currentStep.numVoices);
     for (int voiceNum = 0; voiceNum < numVoices; voiceNum++) {
         if (currentStep.voices[static_cast<size_t>(voiceNum)]) {
