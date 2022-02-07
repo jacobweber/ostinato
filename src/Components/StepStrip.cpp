@@ -22,7 +22,7 @@ StepStrip::StepStrip(State &s, stepnum_t n) : stepNum(n), state(s) {
     clearButton.setImages(true, false, true, square, 1.0f, {}, {}, 1.0f, {}, {}, 1.0f,
                             constants::COLOR_TOGGLE_INACTIVE);
     clearButton.onClick = [this] {
-        for (voicenum_t i = 0; i < voices.size(); i++)
+        for (size_t i = 0; i < voices.size(); i++)
             *(state.stepState[stepNum].voiceParameters[i]) = false;
     };
     clearButton.setTooltip(constants::TOOLTIP_VOICES_CLEAR);
@@ -36,7 +36,7 @@ StepStrip::StepStrip(State &s, stepnum_t n) : stepNum(n), state(s) {
     fillButton.setImages(true, false, true, checkSquare, 1.0f, {}, {}, 1.0f, {}, {}, 1.0f,
                             constants::COLOR_TOGGLE_INACTIVE);
     fillButton.onClick = [this] {
-        for (voicenum_t i = 0; i < voices.size(); i++)
+        for (size_t i = 0; i < voices.size(); i++)
             *(state.stepState[stepNum].voiceParameters[i]) = true;
     };
     fillButton.setTooltip(constants::TOOLTIP_VOICES_FILL);
@@ -166,10 +166,10 @@ void StepStrip::refresh() {
 }
 
 void StepStrip::refreshVoices() {
-    voicenum_t oldNumVoices = voices.size();
-    voicenum_t newNumVoices = static_cast<voicenum_t>(state.voicesParameter->getIndex()) + 1;
+    int oldNumVoices = static_cast<int>(voices.size());
+    int newNumVoices = state.voicesParameter->getIndex() + 1;
     if (newNumVoices > oldNumVoices) {
-        for (voicenum_t i = oldNumVoices; i < newNumVoices; i++) {
+        for (size_t i = static_cast<size_t>(oldNumVoices); i < static_cast<size_t>(newNumVoices); i++) {
             voices.push_back(std::make_unique<juce::TextButton>());
             voices[i]->setClickingTogglesState(true);
             voices[i]->setInterceptsMouseClicks(false, false);
@@ -181,7 +181,7 @@ void StepStrip::refreshVoices() {
         }
         resized();
     } else if (newNumVoices < oldNumVoices) {
-        for (voicenum_t i = oldNumVoices - 1; i >= newNumVoices; i--) {
+        for (size_t i = static_cast<size_t>(oldNumVoices) - 1; i >= static_cast<size_t>(newNumVoices); i--) {
             removeChildComponent(voices[i].get());
             voicesAttachments.pop_back();
             voices.pop_back();
@@ -198,6 +198,6 @@ int StepStrip::getVoiceForPoint(int x, int y) {
     return -1;
 }
 
-void StepStrip::hoverVoice(voicenum_t voiceNum, bool over) {
-    voices[voiceNum]->setState(over ? juce::Button::buttonOver : juce::Button::buttonNormal);
+void StepStrip::hoverVoice(int voiceNum, bool over) {
+    voices[static_cast<size_t>(voiceNum)]->setState(over ? juce::Button::buttonOver : juce::Button::buttonNormal);
 }

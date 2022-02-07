@@ -35,7 +35,7 @@ public:
 
     int getVoiceForPoint(int x, int y);
 
-    void hoverVoice(voicenum_t voiceNum, bool over);
+    void hoverVoice(int voiceNum, bool over);
 
 private:
     stepnum_t stepNum{0};
