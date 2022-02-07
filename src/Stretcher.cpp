@@ -208,7 +208,7 @@ void Stretcher::updateStretchedStep(stepnum_t stepNum, CurrentStep &outStep) {
     for (size_t lineNum = 0; lineNum < static_cast<size_t>(prev.numActiveVoices); lineNum++) {
         double prevVoiceY = prev.activeVoicesY[lineNum];
         double nextVoiceY =
-                lineNum < next.numActiveVoices ? next.activeVoicesY[lineNum] : prevVoiceY;
+                lineNum < static_cast<size_t>(next.numActiveVoices) ? next.activeVoicesY[lineNum] : prevVoiceY;
         double slope = (nextVoiceY - prevVoiceY) / (next.x - prev.x);
         double curVoiceY = prevVoiceY + slope * (curStepX - prev.x);
         DBG("  voice " << curVoiceY << " (orig: " << prevVoiceY << "-" << nextVoiceY << ")");
