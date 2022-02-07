@@ -320,7 +320,7 @@ void MidiProcessor::playCurrentStep(juce::MidiBuffer &midiOut, int playSampleOff
     }
 
     int transpose = (-currentStep.octave + constants::MAX_OCTAVES) * 12;
-    int numVoices = static_cast<int>(currentStep.numVoices;
+    int numVoices = currentStep.numVoices;
     for (int voiceNum = 0; voiceNum < numVoices; voiceNum++) {
         if (currentStep.voices[static_cast<size_t>(voiceNum)]) {
             noteValue.note = -1;
