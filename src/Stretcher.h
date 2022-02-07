@@ -36,7 +36,7 @@ public:
 
     void setSkipLastStepIfMatchesFirst(bool skip);
 
-    static void getStretchedVoices(State &state, stepnum_t stepNum, int numHeldNotes, CurrentStep &outStep);
+    static void getStretchedVoices(State &state, int stepNum, int numHeldNotes, CurrentStep &outStep);
 
     void getNextStretchedStep(int numHeldNotes, CurrentStep &outStep);
 

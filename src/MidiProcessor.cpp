@@ -274,7 +274,7 @@ void MidiProcessor::getCurrentStep() {
         currentStep.length = step.lengthParameter->get();
         currentStep.tie = step.tieParameter->get();
         if (voiceMatching == constants::voiceMatchingChoices::StretchVoicePattern) {
-            Stretcher::getStretchedVoices(state, static_cast<size_t>(nextStepIndex), numHeldNotes, currentStep);
+            Stretcher::getStretchedVoices(state, nextStepIndex, numHeldNotes, currentStep);
         } else {
             currentStep.numVoices = numVoices;
             for (size_t voiceNum = 0; voiceNum < static_cast<size_t>(numVoices); voiceNum++) {
