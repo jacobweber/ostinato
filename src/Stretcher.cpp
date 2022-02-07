@@ -34,7 +34,7 @@ void Stretcher::setSkipLastStepIfMatchesFirst(bool skip) {
 
 void Stretcher::getStretchedVoices(State &state, stepnum_t stepNum, size_t numHeldNotes, CurrentStep &outStep) {
     voicenum_t origNumVoices = static_cast<voicenum_t>(state.voicesParameter->getIndex()) + 1;
-    stepnum_t numVoices = std::min(numHeldNotes, MAX_ACTUAL_VOICES);
+    stepnum_t numVoices = std::min(numHeldNotes, static_cast<size_t>(MAX_ACTUAL_VOICES));
     double origVoiceSizeY =
             numHeldNotes == 1 ? 1 : static_cast<double>(numVoices - 1) / static_cast<double>(origNumVoices - 1);
 
@@ -156,7 +156,7 @@ void Stretcher::recalcStretchInfo(size_t _numNotes, stepnum_t _origNumSteps, voi
     origNumSteps = _origNumSteps;
     origNumVoices = _origNumVoices;
 
-    numVoices = std::min(numNotes, MAX_ACTUAL_VOICES);
+    numVoices = std::min(numNotes, static_cast<size_t>(MAX_ACTUAL_VOICES));
     // we'll round up; extra steps will make it more accurate
     numSteps = static_cast<stepnum_t>(1 + std::ceil(
             static_cast<double>((origNumSteps - 1) * (numNotes - 1)) / static_cast<double>(origNumVoices - 1)));
