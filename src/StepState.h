@@ -4,7 +4,7 @@
 
 class StepState {
 public:
-    juce::AudioParameterBool *voiceParameters[constants::MAX_VOICES]{};
+    std::array<juce::AudioParameterBool *, constants::MAX_VOICES> voiceParameters;
     juce::AudioParameterChoice *octaveParameter = nullptr;
     juce::AudioParameterFloat *lengthParameter = nullptr;
     juce::AudioParameterBool *tieParameter = nullptr;
