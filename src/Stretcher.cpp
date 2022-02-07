@@ -70,8 +70,8 @@ void Stretcher::getNextStretchedStep(int numHeldNotes, CurrentStep &outStep) {
     // mult = .3,  at .8,   .95 intdiv .3 = 3, 3 * .3 = .9
     // mult = .3,  at 1.1, 1.25 intdiv .3 = 4, 4 * .3 = 1.2
 
-    recalcStretchInfo(numHeldNotes, static_cast<stepnum_t>(state.stepsParameter->getIndex()) + 1,
-                        static_cast<voicenum_t>(state.voicesParameter->getIndex()) + 1);
+    recalcStretchInfo(numHeldNotes, state.stepsParameter->getIndex() + 1,
+                        state.voicesParameter->getIndex() + 1);
 
     if (nextStepIndex >= numSteps) {
         nextStepIndex = 0;
@@ -131,8 +131,8 @@ Stretcher::StretchedResult Stretcher::stretch(int numHeldNotes) {
 }
 
 Stretcher::StretchedResult Stretcher::stretch(int numHeldNotes, int generateSteps) {
-    recalcStretchInfo(numHeldNotes, static_cast<stepnum_t>(state.stepsParameter->getIndex()) + 1,
-                        static_cast<voicenum_t>(state.voicesParameter->getIndex()) + 1);
+    recalcStretchInfo(numHeldNotes, state.stepsParameter->getIndex() + 1,
+                        state.voicesParameter->getIndex() + 1);
 
     if (generateSteps == 0) generateSteps = numSteps;
 
@@ -148,7 +148,7 @@ Stretcher::StretchedResult Stretcher::stretch(int numHeldNotes, int generateStep
     return result;
 }
 
-void Stretcher::recalcStretchInfo(int _numNotes, int _origNumSteps, voicenum_t _origNumVoices) {
+void Stretcher::recalcStretchInfo(int _numNotes, int _origNumSteps, int _origNumVoices) {
     if (numNotes == _numNotes && origNumSteps == _origNumSteps && origNumVoices == _origNumVoices
         && (!skipLastStepIfMatchesFirst || nextStepIndex < numSteps - 1))
         return;
@@ -160,7 +160,7 @@ void Stretcher::recalcStretchInfo(int _numNotes, int _origNumSteps, voicenum_t _
     // we'll round up; extra steps will make it more accurate
     numSteps = static_cast<int>(1 + std::ceil(
             static_cast<double>((origNumSteps - 1) * (numNotes - 1))
-            / static_cast<double>(static_cast<int>(origNumVoices) - 1)));
+            / static_cast<double>(origNumVoices - 1)));
     // avoid dividing by 0 here and later
     origStepSizeX =
             numNotes == 1 ? 1 : static_cast<double>(numSteps - 1) / static_cast<double>(origNumSteps - 1);
@@ -175,7 +175,7 @@ void Stretcher::recalcStretchInfo(int _numNotes, int _origNumSteps, voicenum_t _
 }
 
 bool Stretcher::firstLastOrigStepsSame() {
-    for (voicenum_t voiceNum = 0; voiceNum < origNumVoices; voiceNum++) {
+    for (voicenum_t voiceNum = 0; voiceNum < static_cast<size_t>(origNumVoices); voiceNum++) {
         if (state.stepState[0].voiceParameters[voiceNum]->get() !=
             state.stepState[static_cast<size_t>(origNumSteps) - 1].voiceParameters[voiceNum]->get())
             return false;
