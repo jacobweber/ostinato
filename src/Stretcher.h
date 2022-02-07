@@ -28,7 +28,7 @@ public:
 
     int getNumVoices() const;
 
-    stepnum_t getNumSteps() const;
+    int getNumSteps() const;
 
     stepnum_t getOrigStepIndex() const;
 
@@ -58,7 +58,7 @@ private:
 
     bool skipLastStepIfMatchesFirst = true;
     int numVoices = 0;
-    stepnum_t numSteps = 0;
+    int numSteps = 0;
     int numNotes = 0;
     OrigStep prev{};
     OrigStep next{};
