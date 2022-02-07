@@ -99,24 +99,24 @@ void StepStrips::refreshActiveStep() {
 
 void StepStrips::refresh() {
     refreshSteps();
-    stepnum_t numSteps = strips.size();
-    for (stepnum_t i = 0; i < numSteps; i++) {
+    size_t numSteps = strips.size();
+    for (size_t i = 0; i < numSteps; i++) {
         strips[i]->refresh();
     }
     setEnabled(!state.recordButton);
 }
 
 void StepStrips::refreshSteps() {
-    stepnum_t oldNumSteps = strips.size();
-    auto newNumSteps = static_cast<stepnum_t>(state.stepsParameter->getIndex()) + 1;
+    size_t oldNumSteps = strips.size();
+    size_t newNumSteps = static_cast<size_t>(state.stepsParameter->getIndex()) + 1;
     if (newNumSteps > oldNumSteps) {
-        for (stepnum_t i = oldNumSteps; i < newNumSteps; i++) {
+        for (size_t i = oldNumSteps; i < newNumSteps; i++) {
             strips.push_back(std::make_unique<StepStrip>(state, static_cast<int>(i)));
             addAndMakeVisible(*strips[i]);
         }
         resized();
     } else if (newNumSteps < oldNumSteps) {
-        for (stepnum_t i = oldNumSteps - 1; i >= newNumSteps; i--) {
+        for (size_t i = oldNumSteps - 1; i >= newNumSteps; i--) {
             removeChildComponent(strips[i].get());
             strips.pop_back();
         }
