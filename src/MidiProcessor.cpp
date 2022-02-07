@@ -242,7 +242,7 @@ void MidiProcessor::getCurrentStep() {
     int voiceMatching = state.voiceMatchingParameter->getIndex();
     bool stretchStepsParam = mode != constants::modeChoices::Scale // stretch can't be on while using a scale
         && voiceMatching == constants::voiceMatchingChoices::StretchVoiceStepsPattern;
-    size_t numHeldNotes = static_cast<size_t>(pressedNotes.size());
+    int numHeldNotes = pressedNotes.size();
 
     if (stretchStepsParam) {
         if (!stretchStepsActive) {

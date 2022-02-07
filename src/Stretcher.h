@@ -36,16 +36,16 @@ public:
 
     void setSkipLastStepIfMatchesFirst(bool skip);
 
-    static void getStretchedVoices(State &state, stepnum_t stepNum, size_t numHeldNotes, CurrentStep &outStep);
+    static void getStretchedVoices(State &state, stepnum_t stepNum, int numHeldNotes, CurrentStep &outStep);
 
-    void getNextStretchedStep(size_t numHeldNotes, CurrentStep &outStep);
+    void getNextStretchedStep(int numHeldNotes, CurrentStep &outStep);
 
-    Stretcher::StretchedResult stretch(size_t numHeldNotes);
+    Stretcher::StretchedResult stretch(int numHeldNotes);
 
-    Stretcher::StretchedResult stretch(size_t numHeldNotes, stepnum_t generateSteps);
+    Stretcher::StretchedResult stretch(int numHeldNotes, stepnum_t generateSteps);
 
 private:
-    void recalcStretchInfo(size_t _numNotes, stepnum_t _origNumSteps, voicenum_t _origNumVoices);
+    void recalcStretchInfo(int _numNotes, stepnum_t _origNumSteps, voicenum_t _origNumVoices);
 
     bool firstLastOrigStepsSame();
 
@@ -59,7 +59,7 @@ private:
     bool skipLastStepIfMatchesFirst = true;
     voicenum_t numVoices = 0;
     stepnum_t numSteps = 0;
-    size_t numNotes = 0;
+    int numNotes = 0;
     OrigStep prev{};
     OrigStep next{};
 
