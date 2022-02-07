@@ -16,10 +16,10 @@ void MessageReader::timerCallback() {
 
 void MessageReader::updateSteps(const UpdatedSteps &steps) {
     DBG("get refresh state with " << steps.numSteps << " steps and " << steps.numVoices << " voices");
-    *(state.voicesParameter) = static_cast<int>(steps.numVoices) - 1;
-    *(state.stepsParameter) = static_cast<int>(steps.numSteps) - 1;
-    for (stepnum_t stepNum = 0; stepNum < steps.numSteps; stepNum++) {
-        for (voicenum_t voiceNum = 0; voiceNum < steps.numVoices; voiceNum++) {
+    *(state.voicesParameter) = steps.numVoices - 1;
+    *(state.stepsParameter) = steps.numSteps - 1;
+    for (size_t stepNum = 0; stepNum < static_cast<size_t>(steps.numSteps); stepNum++) {
+        for (size_t voiceNum = 0; voiceNum < static_cast<size_t>(steps.numVoices); voiceNum++) {
             *(state.stepState[stepNum].voiceParameters[voiceNum]) = steps.steps[stepNum].voices[voiceNum];
         }
         *(state.stepState[stepNum].powerParameter) = true;

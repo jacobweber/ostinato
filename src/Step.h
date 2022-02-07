@@ -23,6 +23,6 @@ struct UpdatedStep {
 };
 struct UpdatedSteps {
     std::array<UpdatedStep, static_cast<size_t>(constants::MAX_STEPS)> steps;
-    stepnum_t numSteps;
-    voicenum_t numVoices;
+    int numSteps;
+    int numVoices;
 };

@@ -104,8 +104,8 @@ void Recorder::finalizeStep(bool allowEmpty) {
 UpdatedSteps Recorder::getUpdatedSteps() {
     UpdatedSteps steps{};
     juce::SortedSet<int> voices;
-    steps.numSteps = numSteps;
-    for (stepnum_t stepNum = 0; stepNum < steps.numSteps; stepNum++) {
+    steps.numSteps = static_cast<int>(numSteps);
+    for (size_t stepNum = 0; stepNum < static_cast<size_t>(steps.numSteps); stepNum++) {
         DBG("step " << stepNum);
         auto const &notesInStep = notesInSteps[stepNum];
         for (auto const &midiValue: notesInStep) {
@@ -115,19 +115,19 @@ UpdatedSteps Recorder::getUpdatedSteps() {
     }
 
     // ignore extra notes on top
-    steps.numVoices = static_cast<voicenum_t>(juce::jmax(1, juce::jmin(constants::MAX_VOICES, voices.size())));
+    steps.numVoices = juce::jmax(1, juce::jmin(constants::MAX_VOICES, voices.size()));
 
-    for (stepnum_t stepNum = 0; stepNum < steps.numSteps; stepNum++) {
+    for (size_t stepNum = 0; stepNum < static_cast<size_t>(steps.numSteps); stepNum++) {
         auto const &notesInStep = notesInSteps[stepNum];
-        for (voicenum_t voiceNum = 0; voiceNum < steps.numVoices; voiceNum++) {
+        for (size_t voiceNum = 0; voiceNum < static_cast<size_t>(steps.numVoices); voiceNum++) {
             steps.steps[stepNum].voices[voiceNum] = false;
         }
         int totalVel = 0;
         int numActualNotes = 0;
         for (auto const &midiValue: notesInStep) {
             int index = voices.indexOf(midiValue.note);
-            if (index != -1 && index < static_cast<int>(steps.numVoices)) {
-                steps.steps[stepNum].voices[static_cast<voicenum_t>(index)] = true;
+            if (index != -1 && index < steps.numVoices) {
+                steps.steps[stepNum].voices[static_cast<size_t>(index)] = true;
                 totalVel += midiValue.vel;
                 numActualNotes++;
             }
@@ -139,8 +139,8 @@ UpdatedSteps Recorder::getUpdatedSteps() {
 
     /*
     juce::String grid = juce::String();
-    for (voicenum_t j = 0; j < steps.numVoices; j++) {
-        for (stepnum_t i = 0; i < steps.numSteps; i++) {
+    for (size_t j = 0; j < static_cast<size_t>(steps.numVoices); j++) {
+        for (size_t i = 0; i < static_cast<size_t>(steps.numSteps); i++) {
             grid += steps.steps[i].voices[j] ? '*' : '-';
         }
         grid += '\n';
