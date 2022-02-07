@@ -247,7 +247,7 @@ void MidiProcessor::getCurrentStep() {
     if (stretchStepsParam) {
         if (!stretchStepsActive) {
             stretchStepsActive = true;
-            stretcher.setStepIndex(nextStepIndex);
+            stretcher.setStepIndex(static_cast<size_t>(nextStepIndex));
         }
         stretcher.getNextStretchedStep(numHeldNotes, currentStep);
         currentStep.numVoices = static_cast<int>(stretcher.getNumVoices());
@@ -256,33 +256,34 @@ void MidiProcessor::getCurrentStep() {
     } else {
         if (stretchStepsActive) {
             stretchStepsActive = false;
-            nextStepIndex = stretcher.getNextStepIndex();
+            nextStepIndex = static_cast<int>(stretcher.getNextStepIndex());
         }
 
         int numSteps = state.stepsParameter->getIndex() + 1;
         int numVoices = state.voicesParameter->getIndex() + 1;
 
-        if (static_cast<int>(nextStepIndex) >= numSteps) {
+        if (nextStepIndex >= numSteps) {
             nextStepIndex = 0;
         }
-        state.stepIndex = nextStepIndex;
+        state.stepIndex = static_cast<size_t>(nextStepIndex);
 
-        currentStep.power = state.stepState[nextStepIndex].powerParameter->get();
-        currentStep.volume = state.stepState[nextStepIndex].volParameter->get();
-        currentStep.octave = state.stepState[nextStepIndex].octaveParameter->getIndex();
-        currentStep.length = state.stepState[nextStepIndex].lengthParameter->get();
-        currentStep.tie = state.stepState[nextStepIndex].tieParameter->get();
+        StepState step = state.stepState[static_cast<size_t>(nextStepIndex)];
+        currentStep.power = step.powerParameter->get();
+        currentStep.volume = step.volParameter->get();
+        currentStep.octave = step.octaveParameter->getIndex();
+        currentStep.length = step.lengthParameter->get();
+        currentStep.tie = step.tieParameter->get();
         if (voiceMatching == constants::voiceMatchingChoices::StretchVoicePattern) {
             Stretcher::getStretchedVoices(state, nextStepIndex, numHeldNotes, currentStep);
         } else {
             currentStep.numVoices = numVoices;
             for (size_t voiceNum = 0; voiceNum < static_cast<size_t>(numVoices); voiceNum++) {
-                currentStep.voices[voiceNum] = state.stepState[nextStepIndex].voiceParameters[voiceNum]->get();
+                currentStep.voices[voiceNum] = step.voiceParameters[voiceNum]->get();
             }
         }
 
         nextStepIndex++;
-        if (static_cast<int>(nextStepIndex) >= numSteps) {
+        if (nextStepIndex >= numSteps) {
             nextStepIndex = 0;
         }
     }
