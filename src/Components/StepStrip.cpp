@@ -181,8 +181,8 @@ void StepStrip::refreshVoices() {
         }
         resized();
     } else if (newNumVoices < oldNumVoices) {
-        for (size_t i = static_cast<size_t>(oldNumVoices) - 1; i >= static_cast<size_t>(newNumVoices); i--) {
-            removeChildComponent(voices[i].get());
+        for (int i = oldNumVoices - 1; i >= newNumVoices; i--) {
+            removeChildComponent(voices[static_cast<size_t>(i)].get());
             voicesAttachments.pop_back();
             voices.pop_back();
         }

@@ -107,17 +107,17 @@ void StepStrips::refresh() {
 }
 
 void StepStrips::refreshSteps() {
-    size_t oldNumSteps = strips.size();
-    size_t newNumSteps = static_cast<size_t>(state.stepsParameter->getIndex()) + 1;
+    int oldNumSteps = static_cast<int>(strips.size());
+    int newNumSteps = state.stepsParameter->getIndex() + 1;
     if (newNumSteps > oldNumSteps) {
-        for (size_t i = oldNumSteps; i < newNumSteps; i++) {
-            strips.push_back(std::make_unique<StepStrip>(state, static_cast<int>(i)));
-            addAndMakeVisible(*strips[i]);
+        for (int i = oldNumSteps; i < newNumSteps; i++) {
+            strips.push_back(std::make_unique<StepStrip>(state, i));
+            addAndMakeVisible(*strips[static_cast<size_t>(i)]);
         }
         resized();
     } else if (newNumSteps < oldNumSteps) {
-        for (size_t i = oldNumSteps - 1; i >= newNumSteps; i--) {
-            removeChildComponent(strips[i].get());
+        for (int i = oldNumSteps - 1; i >= newNumSteps; i--) {
+            removeChildComponent(strips[static_cast<size_t>(i)].get());
             strips.pop_back();
         }
         resized();
