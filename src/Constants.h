@@ -4,7 +4,6 @@
 #include <cstddef>
 
 typedef size_t voicenum_t;
-typedef size_t stepnum_t;
 
 namespace constants {
     enum modeChoices {
