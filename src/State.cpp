@@ -140,9 +140,9 @@ void State::randomizeParams(bool stepsAndVoices, bool rate, bool scale) {
 std::unique_ptr<juce::XmlElement> State::exportSettingsToXml() {
     juce::XmlElement xml("ostinato");
     int numSteps = stepsParameter->getIndex() + 1;
-    xml.setAttribute("steps", static_cast<int>(numSteps));
+    xml.setAttribute("steps", numSteps);
     int numVoices = voicesParameter->getIndex() + 1;
-    xml.setAttribute("voices", static_cast<int>(numVoices));
+    xml.setAttribute("voices", numVoices);
     xml.setAttribute("rate", rateParameter->getCurrentValueAsText());
     xml.setAttribute("rateType", rateTypeParameter->getCurrentValueAsText());
     xml.setAttribute("mode", modeParameter->getCurrentValueAsText());

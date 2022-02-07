@@ -316,11 +316,11 @@ void MidiProcessor::playCurrentStep(juce::MidiBuffer &midiOut, int playSampleOff
             }
         }
         // in case we play B in C minor
-        if (i == scaleSize) pressedScaleDegree = static_cast<int>(scaleSize);
+        if (i == scaleSize) pressedScaleDegree = notesPerOctave;
     }
 
     int transpose = (-currentStep.octave + constants::MAX_OCTAVES) * 12;
-    int numVoices = static_cast<int>(currentStep.numVoices);
+    int numVoices = static_cast<int>(currentStep.numVoices;
     for (int voiceNum = 0; voiceNum < numVoices; voiceNum++) {
         if (currentStep.voices[static_cast<size_t>(voiceNum)]) {
             noteValue.note = -1;
@@ -339,7 +339,7 @@ void MidiProcessor::playCurrentStep(juce::MidiBuffer &midiOut, int playSampleOff
                 DBG("scale degree " << scaleDegree << " octave " << octave);
                 noteValue = pressedNotes[0];
                 noteValue.note = scaleRootNote +
-                        scale[static_cast<size_t>(scaleDegree)] + static_cast<int>(12 * octave);
+                        scale[static_cast<size_t>(scaleDegree)] + (12 * octave);
             }
 
             if (noteValue.note != -1) {
