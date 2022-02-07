@@ -16,7 +16,7 @@ State::State(juce::AudioProcessorValueTreeState &p) : parameters(p) {
     keyParameter = dynamic_cast<juce::AudioParameterChoice *> (parameters.getParameter("key"));
     voiceMatchingParameter = dynamic_cast<juce::AudioParameterChoice *> (parameters.getParameter("voiceMatching"));
     for (size_t i = 0; i < static_cast<size_t>(constants::MAX_STEPS); i++) {
-        for (voicenum_t j = 0; j < constants::MAX_VOICES; j++) {
+        for (size_t j = 0; j < static_cast<size_t>(constants::MAX_VOICES); j++) {
             juce::AudioParameterBool *voiceParameter = dynamic_cast<juce::AudioParameterBool *> (parameters.getParameter(
                     "step" + std::to_string(i) + "_voice" + std::to_string(j)));
             stepState[i].voiceParameters[j] = voiceParameter ? voiceParameter : nullptr;
@@ -44,7 +44,7 @@ void State::resetToDefaults() {
     *(keyParameter) = 0; // index
     *(voiceMatchingParameter) = constants::voiceMatchingChoices::StartFromBottom; // index
     for (stepnum_t i = 0; i < static_cast<size_t>(constants::MAX_STEPS); i++) {
-        for (voicenum_t j = 0; j < constants::MAX_VOICES; j++) {
+        for (size_t j = 0; j < static_cast<size_t>(constants::MAX_VOICES); j++) {
             *(stepState[i].voiceParameters[j]) = i == j && j < 4;
         }
         *(stepState[i].octaveParameter) = constants::MAX_OCTAVES; // index; 0
@@ -175,7 +175,7 @@ void State::importSettingsFromXml(juce::XmlDocument xmlDoc) {
 
     int numSteps = std::min(constants::MAX_STEPS, xml->getIntAttribute("steps", 1));
     *(stepsParameter) = numSteps - 1; // index
-    int numVoices = std::min(static_cast<int>(constants::MAX_VOICES), xml->getIntAttribute("voices", 1));
+    int numVoices = std::min(constants::MAX_VOICES, xml->getIntAttribute("voices", 1));
     *(voicesParameter) = numVoices - 1; // index
     *(rateParameter) = std::max(0, rateParameter->getAllValueStrings().indexOf(xml->getStringAttribute("rate")));
     *(rateTypeParameter) = std::max(0, rateTypeParameter->getAllValueStrings().indexOf(xml->getStringAttribute("rateType")));

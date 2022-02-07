@@ -14,7 +14,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout ParametersFactory::create() 
     layout.add(std::make_unique<juce::AudioParameterChoice>("steps", "Number of Steps", stepsChoices, 3));
 
     juce::StringArray voicesChoices;
-    for (voicenum_t i = 1; i <= constants::MAX_VOICES; i++) {
+    for (int i = 1; i <= constants::MAX_VOICES; i++) {
         voicesChoices.add(std::to_string(i));
     }
     layout.add(std::make_unique<juce::AudioParameterChoice>("voices", "Number of Voices", voicesChoices, 3));
@@ -78,12 +78,12 @@ juce::AudioProcessorValueTreeState::ParameterLayout ParametersFactory::create() 
     layout.add(std::make_unique<juce::AudioParameterChoice>("voiceMatching", "Voice Matching", voiceMatchingChoices, 0));
 
     for (int i = 0; i < constants::MAX_STEPS; i++) {
-        for (voicenum_t j = 0; j < constants::MAX_VOICES; j++)
+        for (int j = 0; j < constants::MAX_VOICES; j++)
             layout.add(
                     std::make_unique<juce::AudioParameterBool>(
                             "step" + std::to_string(i) + "_voice" + std::to_string(j),
                             "Step " + std::to_string(i + 1) + " Voice " +
-                            std::to_string(j + 1) + " On", i == static_cast<int>(j) && j < 4));
+                            std::to_string(j + 1) + " On", i == j && j < 4));
 
         juce::StringArray octaveChoices;
         for (int o = constants::MAX_OCTAVES; o >= -constants::MAX_OCTAVES; o--)

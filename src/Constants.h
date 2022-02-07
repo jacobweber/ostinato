@@ -22,7 +22,7 @@ namespace constants {
 
     constexpr int MAX_NOTES = 24;
     constexpr int MAX_STEPS = 16;
-    constexpr voicenum_t MAX_VOICES = 8;
+    constexpr int MAX_VOICES = 8;
     constexpr int MAX_OCTAVES = 4;
 
     const juce::Colour COLOR_STANDARD = juce::Colours::white;

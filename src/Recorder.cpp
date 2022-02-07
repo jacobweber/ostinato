@@ -115,8 +115,7 @@ UpdatedSteps Recorder::getUpdatedSteps() {
     }
 
     // ignore extra notes on top
-    steps.numVoices = juce::jmax(static_cast<voicenum_t>(1),
-                                    juce::jmin(constants::MAX_VOICES, static_cast<voicenum_t>(voices.size())));
+    steps.numVoices = static_cast<voicenum_t>(juce::jmax(1, juce::jmin(constants::MAX_VOICES, voices.size())));
 
     for (stepnum_t stepNum = 0; stepNum < steps.numSteps; stepNum++) {
         auto const &notesInStep = notesInSteps[stepNum];

@@ -52,8 +52,8 @@ Header::Header(State &s, PluginProcessor &p) : state(s), pluginProcessor(p) {
     addAndMakeVisible(voicesLabel);
     voicesLabel.setFont(textFont);
     voicesLabel.attachToComponent(&voicesMenu, false);
-    for (voicenum_t i = 1; i <= constants::MAX_VOICES; i++) {
-        voicesMenu.addItem(std::to_string(i), static_cast<int>(i));
+    for (int i = 1; i <= constants::MAX_VOICES; i++) {
+        voicesMenu.addItem(std::to_string(i), i);
     }
     voicesMenu.onChange = [this] { onUpdateVoices(); };
     addAndMakeVisible(voicesMenu);
@@ -91,7 +91,7 @@ Header::Header(State &s, PluginProcessor &p) : state(s), pluginProcessor(p) {
         if (mode == constants::modeChoices::Scale) {
             int scaleIndex = state.scaleParameter->getIndex();
             const std::vector<int> &scale = scales.allScales[static_cast<size_t>(scaleIndex)];
-            *(state.voicesParameter) = static_cast<int>(juce::jmax(constants::MAX_VOICES, scale.size() + 1));
+            *(state.voicesParameter) = juce::jmax(constants::MAX_VOICES, static_cast<int>(scale.size()) + 1);
             // TODO: disable stretch params
         }
         refreshMessage();
