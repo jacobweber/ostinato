@@ -10,8 +10,8 @@ public:
 
     struct StretchedResult {
         std::vector<CurrentStep> steps;
-        stepnum_t numSteps = 0;
-        voicenum_t numVoices = 0;
+        int numSteps = 0;
+        int numVoices = 0;
     };
 
     struct OrigStep {

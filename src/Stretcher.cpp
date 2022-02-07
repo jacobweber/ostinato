@@ -143,8 +143,8 @@ Stretcher::StretchedResult Stretcher::stretch(size_t numHeldNotes, stepnum_t gen
         result.steps.push_back(currentStep);
     }
 
-    result.numSteps = numSteps;
-    result.numVoices = numVoices;
+    result.numSteps = static_cast<int>(numSteps);
+    result.numVoices = static_cast<int>(numVoices);
     return result;
 }
 

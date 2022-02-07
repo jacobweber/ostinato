@@ -32,8 +32,8 @@ juce::String StateHelper::getGrid(State &state) {
 
 juce::String StateHelper::getGrid(Stretcher::StretchedResult &state) {
     juce::String grid = juce::String();
-    for (int j = static_cast<int>(state.numVoices) - 1; j >= 0; j--) {
-        for (stepnum_t i = 0; i < state.steps.size(); i++) {
+    for (int j = state.numVoices - 1; j >= 0; j--) {
+        for (size_t i = 0; i < state.steps.size(); i++) {
             grid += state.steps[i].voices[static_cast<size_t>(j)] ? '*' : '-';
         }
         grid += '\n';
