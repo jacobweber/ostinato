@@ -45,7 +45,7 @@ public:
     Stretcher::StretchedResult stretch(int numHeldNotes, int generateSteps);
 
 private:
-    void recalcStretchInfo(int _numNotes, stepnum_t _origNumSteps, voicenum_t _origNumVoices);
+    void recalcStretchInfo(int _numNotes, int _origNumSteps, voicenum_t _origNumVoices);
 
     bool firstLastOrigStepsSame();
 
@@ -63,7 +63,7 @@ private:
     OrigStep prev{};
     OrigStep next{};
 
-    stepnum_t origNumSteps = 0;
+    int origNumSteps = 0;
     voicenum_t origNumVoices = 0;
     double origStepSizeX = 0.0;
     double origVoiceSizeY = 0.0;
