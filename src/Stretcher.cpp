@@ -33,22 +33,22 @@ void Stretcher::setSkipLastStepIfMatchesFirst(bool skip) {
 }
 
 void Stretcher::getStretchedVoices(State &state, int stepNum, int numHeldNotes, CurrentStep &outStep) {
-    voicenum_t origNumVoices = static_cast<voicenum_t>(state.voicesParameter->getIndex()) + 1;
-    stepnum_t numVoices = static_cast<size_t>(std::min(numHeldNotes, MAX_ACTUAL_VOICES));
+    int origNumVoices = state.voicesParameter->getIndex() + 1;
+    int numVoices = std::min(numHeldNotes, MAX_ACTUAL_VOICES);
     double origVoiceSizeY =
             numHeldNotes == 1 ? 1 : static_cast<double>(numVoices - 1) / static_cast<double>(origNumVoices - 1);
 
-    outStep.numVoices = static_cast<int>(numVoices);
-    for (voicenum_t voiceNum = 0; voiceNum < numVoices; voiceNum++) {
+    outStep.numVoices = numVoices;
+    for (size_t voiceNum = 0; voiceNum < static_cast<size_t>(numVoices); voiceNum++) {
         outStep.voices[voiceNum] = false;
     }
 
-    voicenum_t newVoiceNum = 0;
-    for (voicenum_t origVoiceNum = 0; origVoiceNum < origNumVoices; origVoiceNum++) {
+    int newVoiceNum = 0;
+    for (voicenum_t origVoiceNum = 0; origVoiceNum < static_cast<size_t>(origNumVoices); origVoiceNum++) {
         if (state.stepState[static_cast<size_t>(stepNum)].voiceParameters[origVoiceNum]->get()) {
             double curVoiceY = origVoiceSizeY * static_cast<double>(origVoiceNum);
-            newVoiceNum = std::min(static_cast<voicenum_t>(std::round(curVoiceY)), numVoices - 1);
-            outStep.voices[newVoiceNum] = true;
+            newVoiceNum = std::min(static_cast<int>(std::round(curVoiceY)), numVoices - 1);
+            outStep.voices[static_cast<size_t>(newVoiceNum)] = true;
         }
     }
 }
