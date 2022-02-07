@@ -49,7 +49,7 @@ private:
 
     bool firstLastOrigStepsSame();
 
-    void updateStretchedStep(stepnum_t stepNum, CurrentStep &outStep);
+    void updateStretchedStep(int stepNum, CurrentStep &outStep);
 
     void updateOrigStepFromState(OrigStep &outStep, State &_state, int stepNum) const;
 

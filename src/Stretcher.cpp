@@ -118,7 +118,7 @@ void Stretcher::getNextStretchedStep(int numHeldNotes, CurrentStep &outStep) {
 
     DBG("stretched step " << nextStepIndex << " (orig: " << prev.stepNum << "-" << next.stepNum << ", X: "
                             << prev.x << "-" << next.x << ")");
-    updateStretchedStep(static_cast<size_t>(nextStepIndex), outStep);
+    updateStretchedStep(nextStepIndex, outStep);
 
     nextStepIndex++;
     if (nextStepIndex >= numSteps) {
@@ -183,7 +183,7 @@ bool Stretcher::firstLastOrigStepsSame() {
     return true;
 }
 
-void Stretcher::updateStretchedStep(stepnum_t stepNum, CurrentStep &outStep) {
+void Stretcher::updateStretchedStep(int stepNum, CurrentStep &outStep) {
     outStep.numVoices = numVoices;
     for (voicenum_t voiceNum = 0; voiceNum < static_cast<size_t>(numVoices); voiceNum++) {
         outStep.voices[voiceNum] = false;
