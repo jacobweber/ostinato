@@ -73,7 +73,7 @@ void Stretcher::getNextStretchedStep(int numHeldNotes, CurrentStep &outStep) {
     recalcStretchInfo(numHeldNotes, static_cast<stepnum_t>(state.stepsParameter->getIndex()) + 1,
                         static_cast<voicenum_t>(state.voicesParameter->getIndex()) + 1);
 
-    if (nextStepIndex >= numSteps) {
+    if (static_cast<size_t>(nextStepIndex) >= numSteps) {
         nextStepIndex = 0;
     }
 
@@ -118,10 +118,10 @@ void Stretcher::getNextStretchedStep(int numHeldNotes, CurrentStep &outStep) {
 
     DBG("stretched step " << nextStepIndex << " (orig: " << prev.stepNum << "-" << next.stepNum << ", X: "
                             << prev.x << "-" << next.x << ")");
-    updateStretchedStep(nextStepIndex, outStep);
+    updateStretchedStep(static_cast<size_t>(nextStepIndex), outStep);
 
     nextStepIndex++;
-    if (nextStepIndex >= numSteps) {
+    if (static_cast<size_t>(nextStepIndex) >= numSteps) {
         nextStepIndex = 0;
     }
 }
@@ -150,7 +150,7 @@ Stretcher::StretchedResult Stretcher::stretch(int numHeldNotes, stepnum_t genera
 
 void Stretcher::recalcStretchInfo(int _numNotes, stepnum_t _origNumSteps, voicenum_t _origNumVoices) {
     if (numNotes == _numNotes && origNumSteps == _origNumSteps && origNumVoices == _origNumVoices
-        && (!skipLastStepIfMatchesFirst || nextStepIndex < numSteps - 1))
+        && (!skipLastStepIfMatchesFirst || static_cast<size_t>(nextStepIndex) < numSteps - 1))
         return;
     numNotes = _numNotes;
     origNumSteps = _origNumSteps;
