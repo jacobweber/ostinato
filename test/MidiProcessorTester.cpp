@@ -20,7 +20,7 @@ MidiProcessorTester::MidiProcessorTester(int bs, int sr) : blockSize(bs), sample
     *(state.scaleParameter) = 0; // index
     *(state.keyParameter) = 0; // index
     *(state.voiceMatchingParameter) = constants::voiceMatchingChoices::StartFromBottom; // index
-    for (stepnum_t i = 0; i < static_cast<size_t>(constants::MAX_STEPS); i++) {
+    for (size_t i = 0; i < static_cast<size_t>(constants::MAX_STEPS); i++) {
         for (size_t j = 0; j < static_cast<size_t>(constants::MAX_VOICES); j++) {
             *(state.stepState[i].voiceParameters[j]) = false;
         }

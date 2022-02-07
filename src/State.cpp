@@ -43,7 +43,7 @@ void State::resetToDefaults() {
     *(scaleParameter) = 0; // index
     *(keyParameter) = 0; // index
     *(voiceMatchingParameter) = constants::voiceMatchingChoices::StartFromBottom; // index
-    for (stepnum_t i = 0; i < static_cast<size_t>(constants::MAX_STEPS); i++) {
+    for (size_t i = 0; i < static_cast<size_t>(constants::MAX_STEPS); i++) {
         for (size_t j = 0; j < static_cast<size_t>(constants::MAX_VOICES); j++) {
             *(stepState[i].voiceParameters[j]) = i == j && j < 4;
         }
