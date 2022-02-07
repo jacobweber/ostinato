@@ -38,7 +38,7 @@ void Stretcher::getStretchedVoices(State &state, stepnum_t stepNum, size_t numHe
     double origVoiceSizeY =
             numHeldNotes == 1 ? 1 : static_cast<double>(numVoices - 1) / static_cast<double>(origNumVoices - 1);
 
-    outStep.numVoices = numVoices;
+    outStep.numVoices = static_cast<int>(numVoices);
     for (voicenum_t voiceNum = 0; voiceNum < numVoices; voiceNum++) {
         outStep.voices[voiceNum] = false;
     }
@@ -183,7 +183,7 @@ bool Stretcher::firstLastOrigStepsSame() {
 }
 
 void Stretcher::updateStretchedStep(stepnum_t stepNum, CurrentStep &outStep) {
-    outStep.numVoices = numVoices;
+    outStep.numVoices = static_cast<int>(numVoices);
     for (voicenum_t voiceNum = 0; voiceNum < numVoices; voiceNum++) {
         outStep.voices[voiceNum] = false;
     }

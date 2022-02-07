@@ -250,7 +250,7 @@ void MidiProcessor::getCurrentStep() {
             stretcher.setStepIndex(nextStepIndex);
         }
         stretcher.getNextStretchedStep(numHeldNotes, currentStep);
-        currentStep.numVoices = stretcher.getNumVoices();
+        currentStep.numVoices = static_cast<int>(stretcher.getNumVoices());
 
         state.stepIndex = stretcher.getOrigStepIndex();
     } else {
@@ -275,7 +275,7 @@ void MidiProcessor::getCurrentStep() {
         if (voiceMatching == constants::voiceMatchingChoices::StretchVoicePattern) {
             Stretcher::getStretchedVoices(state, nextStepIndex, numHeldNotes, currentStep);
         } else {
-            currentStep.numVoices = numVoices;
+            currentStep.numVoices = static_cast<int>(numVoices);
             for (voicenum_t voiceNum = 0; voiceNum < numVoices; voiceNum++) {
                 currentStep.voices[voiceNum] = state.stepState[nextStepIndex].voiceParameters[voiceNum]->get();
             }
