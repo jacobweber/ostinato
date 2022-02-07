@@ -130,14 +130,14 @@ Stretcher::StretchedResult Stretcher::stretch(int numHeldNotes) {
     return stretch(numHeldNotes, 0);
 }
 
-Stretcher::StretchedResult Stretcher::stretch(int numHeldNotes, stepnum_t generateSteps) {
+Stretcher::StretchedResult Stretcher::stretch(int numHeldNotes, int generateSteps) {
     recalcStretchInfo(numHeldNotes, static_cast<stepnum_t>(state.stepsParameter->getIndex()) + 1,
                         static_cast<voicenum_t>(state.voicesParameter->getIndex()) + 1);
 
-    if (generateSteps == 0) generateSteps = numSteps;
+    if (generateSteps == 0) generateSteps = static_cast<int>(numSteps);
 
     Stretcher::StretchedResult result;
-    for (stepnum_t stepNum = 0; stepNum < generateSteps; stepNum++) {
+    for (stepnum_t stepNum = 0; stepNum < static_cast<size_t>(generateSteps); stepNum++) {
         CurrentStep currentStep;
         getNextStretchedStep(numNotes, currentStep);
         result.steps.push_back(currentStep);

@@ -42,7 +42,7 @@ public:
 
     Stretcher::StretchedResult stretch(int numHeldNotes);
 
-    Stretcher::StretchedResult stretch(int numHeldNotes, stepnum_t generateSteps);
+    Stretcher::StretchedResult stretch(int numHeldNotes, int generateSteps);
 
 private:
     void recalcStretchInfo(int _numNotes, stepnum_t _origNumSteps, voicenum_t _origNumVoices);
