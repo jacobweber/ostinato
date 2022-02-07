@@ -6,7 +6,7 @@
 Stretcher::Stretcher(State &_state) : state(_state) {
 }
 
-void Stretcher::setStepIndex(stepnum_t origStepIndex) {
+void Stretcher::setStepIndex(int origStepIndex) {
     nextStepIndex = origStepIndex;
     reuseNextStep = false;
     tieActive = false;
@@ -24,7 +24,7 @@ stepnum_t Stretcher::getOrigStepIndex() const {
     return prev.stepNum;
 }
 
-stepnum_t Stretcher::getNextStepIndex() const {
+int Stretcher::getNextStepIndex() const {
     return nextStepIndex;
 }
 

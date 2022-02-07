@@ -247,7 +247,7 @@ void MidiProcessor::getCurrentStep() {
     if (stretchStepsParam) {
         if (!stretchStepsActive) {
             stretchStepsActive = true;
-            stretcher.setStepIndex(static_cast<size_t>(nextStepIndex));
+            stretcher.setStepIndex(nextStepIndex);
         }
         stretcher.getNextStretchedStep(numHeldNotes, currentStep);
         currentStep.numVoices = static_cast<int>(stretcher.getNumVoices());
@@ -256,7 +256,7 @@ void MidiProcessor::getCurrentStep() {
     } else {
         if (stretchStepsActive) {
             stretchStepsActive = false;
-            nextStepIndex = static_cast<int>(stretcher.getNextStepIndex());
+            nextStepIndex = stretcher.getNextStepIndex();
         }
 
         int numSteps = state.stepsParameter->getIndex() + 1;

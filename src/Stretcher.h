@@ -24,7 +24,7 @@ public:
         int octave;
     };
 
-    void setStepIndex(stepnum_t origStepIndex);
+    void setStepIndex(int origStepIndex);
 
     voicenum_t getNumVoices() const;
 
@@ -32,7 +32,7 @@ public:
 
     stepnum_t getOrigStepIndex() const;
 
-    stepnum_t getNextStepIndex() const;
+    int getNextStepIndex() const;
 
     void setSkipLastStepIfMatchesFirst(bool skip);
 
@@ -70,6 +70,6 @@ private:
     double roundingOffset = 0.0;
 
     bool tieActive = false;
-    stepnum_t nextStepIndex = 0;
+    int nextStepIndex = 0;
     bool reuseNextStep = false;
 };
