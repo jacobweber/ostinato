@@ -6,14 +6,14 @@
 
 class ActiveLight : public juce::Component {
 public:
-    ActiveLight(State &s, stepnum_t n);
+    ActiveLight(State &s, int _stepNum);
 
     void enablementChanged() override;
 
     void paint(juce::Graphics &g) override;
 
 private:
-    stepnum_t stepNum{0};
+    int stepNum{0};
     State &state;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ActiveLight)

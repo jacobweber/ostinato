@@ -17,7 +17,7 @@ public:
     typedef juce::AudioProcessorValueTreeState::SliderAttachment SliderAttachment;
     typedef juce::AudioProcessorValueTreeState::ComboBoxAttachment ComboBoxAttachment;
 
-    StepStrip(State &s, stepnum_t n);
+    StepStrip(State &_state, int _stepNum);
 
     ~StepStrip() override;
 
@@ -38,7 +38,7 @@ public:
     void hoverVoice(int voiceNum, bool over);
 
 private:
-    stepnum_t stepNum{0};
+    int stepNum{0};
     State &state;
 
     juce::Font textFont{12.0f};

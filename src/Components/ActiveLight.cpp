@@ -4,7 +4,7 @@
 #include "../State.h"
 #include "../Constants.h"
 
-ActiveLight::ActiveLight(State &s, stepnum_t n) : stepNum(n), state(s) {
+ActiveLight::ActiveLight(State &_state, int _stepNum) : stepNum(_stepNum), state(_state) {
 }
 
 void ActiveLight::enablementChanged() {

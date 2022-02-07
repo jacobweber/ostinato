@@ -111,7 +111,7 @@ void StepStrips::refreshSteps() {
     auto newNumSteps = static_cast<stepnum_t>(state.stepsParameter->getIndex()) + 1;
     if (newNumSteps > oldNumSteps) {
         for (stepnum_t i = oldNumSteps; i < newNumSteps; i++) {
-            strips.push_back(std::make_unique<StepStrip>(state, i));
+            strips.push_back(std::make_unique<StepStrip>(state, static_cast<int>(i)));
             addAndMakeVisible(*strips[i]);
         }
         resized();

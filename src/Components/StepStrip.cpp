@@ -8,7 +8,7 @@
 #include "ActiveLight.h"
 #include "FontAwesome.h"
 
-StepStrip::StepStrip(State &s, stepnum_t n) : stepNum(n), state(s) {
+StepStrip::StepStrip(State &_state, int _stepNum) : stepNum(_stepNum), state(_state) {
     DBG("created strip " << stepNum);
     setInterceptsMouseClicks(false, true);
 
@@ -23,7 +23,7 @@ StepStrip::StepStrip(State &s, stepnum_t n) : stepNum(n), state(s) {
                             constants::COLOR_TOGGLE_INACTIVE);
     clearButton.onClick = [this] {
         for (size_t i = 0; i < voices.size(); i++)
-            *(state.stepState[stepNum].voiceParameters[i]) = false;
+            *(state.stepState[static_cast<size_t>(stepNum)].voiceParameters[i]) = false;
     };
     clearButton.setTooltip(constants::TOOLTIP_VOICES_CLEAR);
     addAndMakeVisible(clearButton);
@@ -37,7 +37,7 @@ StepStrip::StepStrip(State &s, stepnum_t n) : stepNum(n), state(s) {
                             constants::COLOR_TOGGLE_INACTIVE);
     fillButton.onClick = [this] {
         for (size_t i = 0; i < voices.size(); i++)
-            *(state.stepState[stepNum].voiceParameters[i]) = true;
+            *(state.stepState[static_cast<size_t>(stepNum)].voiceParameters[i]) = true;
     };
     fillButton.setTooltip(constants::TOOLTIP_VOICES_FILL);
     addAndMakeVisible(fillButton);
@@ -114,7 +114,7 @@ void StepStrip::paint(juce::Graphics &) {
 }
 
 void StepStrip::paintOverChildren(juce::Graphics &g) {
-    bool active = state.stepState[stepNum].powerParameter->get();
+    bool active = state.stepState[static_cast<size_t>(stepNum)].powerParameter->get();
     if (!active) {
         auto rect = getLocalBounds();
         g.setColour(juce::Colour(0.0f, 0.0f, 0.0f, 0.5f));
