@@ -250,7 +250,7 @@ void MidiProcessor::getCurrentStep() {
             stretcher.setStepIndex(nextStepIndex);
         }
         stretcher.getNextStretchedStep(numHeldNotes, currentStep);
-        currentStep.numVoices = static_cast<int>(stretcher.getNumVoices());
+        currentStep.numVoices = stretcher.getNumVoices();
 
         state.stepIndex = static_cast<int>(stretcher.getOrigStepIndex());
     } else {

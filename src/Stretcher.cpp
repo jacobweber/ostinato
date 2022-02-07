@@ -12,7 +12,7 @@ void Stretcher::setStepIndex(int origStepIndex) {
     tieActive = false;
 }
 
-voicenum_t Stretcher::getNumVoices() const {
+int Stretcher::getNumVoices() const {
     return numVoices;
 }
 
@@ -144,7 +144,7 @@ Stretcher::StretchedResult Stretcher::stretch(int numHeldNotes, int generateStep
     }
 
     result.numSteps = static_cast<int>(numSteps);
-    result.numVoices = static_cast<int>(numVoices);
+    result.numVoices = numVoices;
     return result;
 }
 
@@ -156,7 +156,7 @@ void Stretcher::recalcStretchInfo(int _numNotes, stepnum_t _origNumSteps, voicen
     origNumSteps = _origNumSteps;
     origNumVoices = _origNumVoices;
 
-    numVoices = static_cast<size_t>(std::min(numNotes, MAX_ACTUAL_VOICES));
+    numVoices = std::min(numNotes, MAX_ACTUAL_VOICES);
     // we'll round up; extra steps will make it more accurate
     numSteps = static_cast<stepnum_t>(1 + std::ceil(
             static_cast<double>((origNumSteps - 1) * (static_cast<size_t>(numNotes) - 1)) / static_cast<double>(origNumVoices - 1)));
@@ -183,8 +183,8 @@ bool Stretcher::firstLastOrigStepsSame() {
 }
 
 void Stretcher::updateStretchedStep(stepnum_t stepNum, CurrentStep &outStep) {
-    outStep.numVoices = static_cast<int>(numVoices);
-    for (voicenum_t voiceNum = 0; voiceNum < numVoices; voiceNum++) {
+    outStep.numVoices = numVoices;
+    for (voicenum_t voiceNum = 0; voiceNum < static_cast<size_t>(numVoices); voiceNum++) {
         outStep.voices[voiceNum] = false;
     }
 
@@ -212,7 +212,7 @@ void Stretcher::updateStretchedStep(stepnum_t stepNum, CurrentStep &outStep) {
         double slope = (nextVoiceY - prevVoiceY) / (next.x - prev.x);
         double curVoiceY = prevVoiceY + slope * (curStepX - prev.x);
         DBG("  voice " << curVoiceY << " (orig: " << prevVoiceY << "-" << nextVoiceY << ")");
-        voicenum_t voiceNum = std::min(static_cast<voicenum_t>(std::round(curVoiceY)), numVoices - 1);
+        voicenum_t voiceNum = std::min(static_cast<voicenum_t>(std::round(curVoiceY)), static_cast<voicenum_t>(numVoices) - 1);
         outStep.voices[voiceNum] = true;
     }
 

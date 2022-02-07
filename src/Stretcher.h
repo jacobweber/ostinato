@@ -26,7 +26,7 @@ public:
 
     void setStepIndex(int origStepIndex);
 
-    voicenum_t getNumVoices() const;
+    int getNumVoices() const;
 
     stepnum_t getNumSteps() const;
 
@@ -57,7 +57,7 @@ private:
     State &state;
 
     bool skipLastStepIfMatchesFirst = true;
-    voicenum_t numVoices = 0;
+    int numVoices = 0;
     stepnum_t numSteps = 0;
     int numNotes = 0;
     OrigStep prev{};
