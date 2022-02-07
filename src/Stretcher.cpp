@@ -231,7 +231,7 @@ void Stretcher::updateStretchedStep(stepnum_t stepNum, CurrentStep &outStep) {
 void Stretcher::updateOrigStepFromState(Stretcher::OrigStep &outStep, State &_state, stepnum_t stepNum) const {
     outStep.numActiveVoices = 0;
     if (_state.stepState[stepNum].powerParameter->get()) {
-        for (voicenum_t origVoiceNum = 0; origVoiceNum < origNumVoices; origVoiceNum++) {
+        for (voicenum_t origVoiceNum = 0; origVoiceNum < static_cast<size_t>(origNumVoices); origVoiceNum++) {
             if (_state.stepState[stepNum].voiceParameters[origVoiceNum]->get()) {
                 outStep.activeVoicesY[static_cast<size_t>(outStep.numActiveVoices++)] =
                         origVoiceSizeY * static_cast<double>(origVoiceNum);
