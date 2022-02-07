@@ -20,7 +20,7 @@ int Stretcher::getNumSteps() const {
     return numSteps;
 }
 
-stepnum_t Stretcher::getOrigStepIndex() const {
+int Stretcher::getOrigStepIndex() const {
     return prev.stepNum;
 }
 
@@ -80,12 +80,12 @@ void Stretcher::getNextStretchedStep(int numHeldNotes, CurrentStep &outStep) {
     if (!reuseNextStep || nextStepIndex == 0) {
         reuseNextStep = true;
 
-        stepnum_t prevOrigStepNum;
+        int prevOrigStepNum;
         if (numSteps > origNumSteps) {
-            prevOrigStepNum = static_cast<stepnum_t>((static_cast<double>(nextStepIndex + 1) + roundingOffset) /
+            prevOrigStepNum = static_cast<int>((static_cast<double>(nextStepIndex + 1) + roundingOffset) /
                                                         origStepSizeX) - 1; // ugly
         } else {
-            prevOrigStepNum = static_cast<stepnum_t>((static_cast<double>(nextStepIndex) + roundingOffset) /
+            prevOrigStepNum = static_cast<int>((static_cast<double>(nextStepIndex) + roundingOffset) /
                                                         origStepSizeX);
         }
 
@@ -98,7 +98,7 @@ void Stretcher::getNextStretchedStep(int numHeldNotes, CurrentStep &outStep) {
         }
     }
 
-    auto nextOrigStepNum = static_cast<stepnum_t>((static_cast<double>(nextStepIndex + 1) + roundingOffset) /
+    int nextOrigStepNum = static_cast<int>((static_cast<double>(nextStepIndex + 1) + roundingOffset) /
                                                     origStepSizeX);
 
     if (nextOrigStepNum > next.stepNum) { // passed the next original step, so recalc things
@@ -106,8 +106,8 @@ void Stretcher::getNextStretchedStep(int numHeldNotes, CurrentStep &outStep) {
         next.stepNum = nextOrigStepNum;
         next.x = static_cast<double>(next.stepNum) * origStepSizeX;
 
-        tieActive = state.stepState[prev.stepNum].tieParameter->get();
-        if (next.stepNum == static_cast<size_t>(origNumSteps)) {
+        tieActive = state.stepState[static_cast<size_t>(prev.stepNum)].tieParameter->get();
+        if (next.stepNum == origNumSteps) {
             // when on last original step, act as if there's one more step with the same settings
         } else if (tieActive) {
             // when tied, keep next the same as prev
@@ -228,17 +228,18 @@ void Stretcher::updateStretchedStep(stepnum_t stepNum, CurrentStep &outStep) {
     outStep.tie = false;
 }
 
-void Stretcher::updateOrigStepFromState(Stretcher::OrigStep &outStep, State &_state, stepnum_t stepNum) const {
+void Stretcher::updateOrigStepFromState(Stretcher::OrigStep &outStep, State &_state, int stepNum) const {
     outStep.numActiveVoices = 0;
-    if (_state.stepState[stepNum].powerParameter->get()) {
+    StepState step = _state.stepState[static_cast<size_t>(stepNum)];
+    if (step.powerParameter->get()) {
         for (voicenum_t origVoiceNum = 0; origVoiceNum < static_cast<size_t>(origNumVoices); origVoiceNum++) {
-            if (_state.stepState[stepNum].voiceParameters[origVoiceNum]->get()) {
+            if (step.voiceParameters[origVoiceNum]->get()) {
                 outStep.activeVoicesY[static_cast<size_t>(outStep.numActiveVoices++)] =
                         origVoiceSizeY * static_cast<double>(origVoiceNum);
             }
         }
     }
-    outStep.length = _state.stepState[stepNum].lengthParameter->get();
-    outStep.volume = _state.stepState[stepNum].volParameter->get();
-    outStep.octave = _state.stepState[stepNum].octaveParameter->getIndex();
+    outStep.length = step.lengthParameter->get();
+    outStep.volume = step.volParameter->get();
+    outStep.octave = step.octaveParameter->getIndex();
 }

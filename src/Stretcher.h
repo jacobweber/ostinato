@@ -15,7 +15,7 @@ public:
     };
 
     struct OrigStep {
-        stepnum_t stepNum;
+        int stepNum;
         double x;
         std::array<double, constants::MAX_VOICES> activeVoicesY;
         int numActiveVoices;
@@ -30,7 +30,7 @@ public:
 
     int getNumSteps() const;
 
-    stepnum_t getOrigStepIndex() const;
+    int getOrigStepIndex() const;
 
     int getNextStepIndex() const;
 
@@ -51,7 +51,7 @@ private:
 
     void updateStretchedStep(stepnum_t stepNum, CurrentStep &outStep);
 
-    void updateOrigStepFromState(OrigStep &outStep, State &_state, stepnum_t stepNum) const;
+    void updateOrigStepFromState(OrigStep &outStep, State &_state, int stepNum) const;
 
 private:
     State &state;
