@@ -75,22 +75,22 @@ void StepStrips::resized() {
 void StepStrips::refreshActiveStep() {
     if (state.playing) {
         if (oldPlaying) {
-            if (oldStepIndex != state.stepIndex) {
-                if (static_cast<size_t>(oldStepIndex) < strips.size()) {
-                    strips[static_cast<size_t>(oldStepIndex)]->refreshActiveLight();
+            if (oldStepNum != state.stepNum) {
+                if (static_cast<size_t>(oldStepNum) < strips.size()) {
+                    strips[static_cast<size_t>(oldStepNum)]->refreshActiveLight();
                 }
-                strips[static_cast<size_t>(state.stepIndex)]->refreshActiveLight();
-                oldStepIndex = state.stepIndex;
+                strips[static_cast<size_t>(state.stepNum)]->refreshActiveLight();
+                oldStepNum = state.stepNum;
             }
         } else { // start
-            strips[static_cast<size_t>(state.stepIndex)]->refreshActiveLight();
+            strips[static_cast<size_t>(state.stepNum)]->refreshActiveLight();
             oldPlaying = state.playing;
-            oldStepIndex = state.stepIndex;
+            oldStepNum = state.stepNum;
         }
     } else {
         if (oldPlaying) { // stop
-            if (static_cast<size_t>(oldStepIndex) < strips.size()) {
-                strips[static_cast<size_t>(oldStepIndex)]->refreshActiveLight();
+            if (static_cast<size_t>(oldStepNum) < strips.size()) {
+                strips[static_cast<size_t>(oldStepNum)]->refreshActiveLight();
             }
             oldPlaying = state.playing;
         }

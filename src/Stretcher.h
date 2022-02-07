@@ -24,15 +24,15 @@ public:
         int octave;
     };
 
-    void setStepIndex(int origStepIndex);
+    void setStepNum(int origStepNum);
 
     int getNumVoices() const;
 
     int getNumSteps() const;
 
-    int getOrigStepIndex() const;
+    int getOrigStepNum() const;
 
-    int getNextStepIndex() const;
+    int getNextStepNum() const;
 
     void setSkipLastStepIfMatchesFirst(bool skip);
 
@@ -70,6 +70,6 @@ private:
     double roundingOffset = 0.0;
 
     bool tieActive = false;
-    int nextStepIndex = 0;
+    int nextStepNum = 0;
     bool reuseNextStep = false;
 };

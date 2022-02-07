@@ -16,7 +16,7 @@ void MidiProcessor::prepareToPlay(double _sampleRate, int _maximumExpectedSample
     sustainOn = false;
     prevPpqPos = 0;
     nextPpqPos = 0;
-    nextStepIndex = 0;
+    nextStepNum = 0;
     tieActive = false;
     stretchStepsActive = false;
 }
@@ -113,9 +113,9 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midiIn, juce::MidiBuffe
         if (pressedNotes.size() > 0) { // notes pressed, so start cycle
             DBG("start cycle at " << posInfo.ppqPosition << " ppq");
             cycleOn = true;
-            nextStepIndex = 0;
+            nextStepNum = 0;
             state.playing = true;
-            state.stepIndex = 0;
+            state.stepNum = 0;
             // we're not taking into account offset within block of pressing notes
             if (transportOn) {
                 ppqPosPerStep = getPpqPosPerStep(state);
@@ -213,7 +213,7 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midiIn, juce::MidiBuffe
                 nextStepPpqPos = roundNextPpqPos(nextStepPpqPos + ppqPosPerStep, ppqPosPerStep);
                 DBG("next step in " << ppqPosPerStep << " ppq at " << nextStepPpqPos << " ppq, length "
                                     << currentStep.length
-                                    << " %, index " << nextStepIndex
+                                    << " %, index " << nextStepNum
                                     << ", " << pressedNotes.size()
                                     << " pressed notes, " << posInfo.bpm << " bpm");
             } else {
@@ -226,7 +226,7 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midiIn, juce::MidiBuffe
                 samplesUntilNextStep = samplesPerStep + playSampleOffsetWithinBlock;
                 DBG("next step in " << ppqPosPerStep << " ppq or " << samplesUntilNextStep << " samples or "
                                     << (1 / stepsPerSec) << " secs, length " << currentStep.length << " %, index "
-                                    << nextStepIndex
+                                    << nextStepNum
                                     << ", "
                                     << pressedNotes.size()
                                     << " pressed notes, " << posInfo.bpm << " bpm");
@@ -247,34 +247,34 @@ void MidiProcessor::getCurrentStep() {
     if (stretchStepsParam) {
         if (!stretchStepsActive) {
             stretchStepsActive = true;
-            stretcher.setStepIndex(nextStepIndex);
+            stretcher.setStepNum(nextStepNum);
         }
         stretcher.getNextStretchedStep(numHeldNotes, currentStep);
         currentStep.numVoices = stretcher.getNumVoices();
 
-        state.stepIndex = stretcher.getOrigStepIndex();
+        state.stepNum = stretcher.getOrigStepNum();
     } else {
         if (stretchStepsActive) {
             stretchStepsActive = false;
-            nextStepIndex = stretcher.getNextStepIndex();
+            nextStepNum = stretcher.getNextStepNum();
         }
 
         int numSteps = state.stepsParameter->getIndex() + 1;
         int numVoices = state.voicesParameter->getIndex() + 1;
 
-        if (nextStepIndex >= numSteps) {
-            nextStepIndex = 0;
+        if (nextStepNum >= numSteps) {
+            nextStepNum = 0;
         }
-        state.stepIndex = nextStepIndex;
+        state.stepNum = nextStepNum;
 
-        StepState step = state.stepState[static_cast<size_t>(nextStepIndex)];
+        StepState step = state.stepState[static_cast<size_t>(nextStepNum)];
         currentStep.power = step.powerParameter->get();
         currentStep.volume = step.volParameter->get();
         currentStep.octave = step.octaveParameter->getIndex();
         currentStep.length = step.lengthParameter->get();
         currentStep.tie = step.tieParameter->get();
         if (voiceMatching == constants::voiceMatchingChoices::StretchVoicePattern) {
-            Stretcher::getStretchedVoices(state, nextStepIndex, numHeldNotes, currentStep);
+            Stretcher::getStretchedVoices(state, nextStepNum, numHeldNotes, currentStep);
         } else {
             currentStep.numVoices = numVoices;
             for (size_t voiceNum = 0; voiceNum < static_cast<size_t>(numVoices); voiceNum++) {
@@ -282,9 +282,9 @@ void MidiProcessor::getCurrentStep() {
             }
         }
 
-        nextStepIndex++;
-        if (nextStepIndex >= numSteps) {
-            nextStepIndex = 0;
+        nextStepNum++;
+        if (nextStepNum >= numSteps) {
+            nextStepNum = 0;
         }
     }
 }

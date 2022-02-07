@@ -183,18 +183,18 @@ void State::importSettingsFromXml(juce::XmlDocument xmlDoc) {
     *(scaleParameter) = std::max(0, scaleParameter->getAllValueStrings().indexOf(xml->getStringAttribute("scale")));
     *(keyParameter) = std::max(0, keyParameter->getAllValueStrings().indexOf(xml->getStringAttribute("key")));
     *(voiceMatchingParameter) = std::max(0, voiceMatchingParameter->getAllValueStrings().indexOf(xml->getStringAttribute("voiceMatching")));
-    size_t _stepIndex = 0;
+    size_t _stepNum = 0;
     for (auto* step : xml->getChildIterator()) {
         if (!step->hasTagName("step")) continue;
         juce::String voicesStr = step->getStringAttribute("voices", "0");
         for (int voice = 0; voice < std::min(voicesStr.length(), numVoices); voice++) {
-            *(stepState[_stepIndex].voiceParameters[static_cast<size_t>(voice)]) = voicesStr[voice] == '1';
+            *(stepState[_stepNum].voiceParameters[static_cast<size_t>(voice)]) = voicesStr[voice] == '1';
         }
-        *(stepState[_stepIndex].octaveParameter) = -(step->getIntAttribute("octave", 0)) + constants::MAX_OCTAVES; // index
-        *(stepState[_stepIndex].lengthParameter) = static_cast<float>(step->getDoubleAttribute("length", 0.0));
-        *(stepState[_stepIndex].tieParameter) = step->getBoolAttribute("tie", false);
-        *(stepState[_stepIndex].volParameter) = static_cast<float>(step->getDoubleAttribute("vol", 0.0));
-        *(stepState[_stepIndex].powerParameter) = step->getBoolAttribute("power", true);
-        _stepIndex++;
+        *(stepState[_stepNum].octaveParameter) = -(step->getIntAttribute("octave", 0)) + constants::MAX_OCTAVES; // index
+        *(stepState[_stepNum].lengthParameter) = static_cast<float>(step->getDoubleAttribute("length", 0.0));
+        *(stepState[_stepNum].tieParameter) = step->getBoolAttribute("tie", false);
+        *(stepState[_stepNum].volParameter) = static_cast<float>(step->getDoubleAttribute("vol", 0.0));
+        *(stepState[_stepNum].powerParameter) = step->getBoolAttribute("power", true);
+        _stepNum++;
     }
 }
