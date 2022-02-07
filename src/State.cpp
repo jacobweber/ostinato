@@ -95,18 +95,18 @@ void State::randomizeParams(bool stepsAndVoices, bool rate, bool scale) {
     std::uniform_real_distribution<float> randVolume(0.0, 1.0);
     std::uniform_int_distribution<int> randPower(0, 10);
 
-    stepnum_t numSteps;
-    voicenum_t numVoices;
+    int numSteps;
+    int numVoices;
     if (stepsAndVoices) {
-        std::uniform_int_distribution<stepnum_t> randNumSteps(1, constants::MAX_STEPS);
-        std::uniform_int_distribution<voicenum_t> randNumVoices(1, constants::MAX_VOICES);
+        std::uniform_int_distribution<int> randNumSteps(1, constants::MAX_STEPS);
+        std::uniform_int_distribution<int> randNumVoices(1, constants::MAX_VOICES);
         numSteps = randNumSteps(mt);
         numVoices = randNumVoices(mt);
-        *(stepsParameter) = static_cast<int>(numSteps - 1); // index
-        *(voicesParameter) = static_cast<int>(numVoices - 1); // index
+        *(stepsParameter) = numSteps - 1; // index
+        *(voicesParameter) = numVoices - 1; // index
     } else {
-        numSteps = static_cast<stepnum_t>(stepsParameter->getIndex()) + 1;
-        numVoices = static_cast<voicenum_t>(voicesParameter->getIndex()) + 1;
+        numSteps = stepsParameter->getIndex() + 1;
+        numVoices = voicesParameter->getIndex() + 1;
     }
 
     if (rate) {
@@ -116,17 +116,17 @@ void State::randomizeParams(bool stepsAndVoices, bool rate, bool scale) {
         *(rateTypeParameter) = randRateType(mt); // index
     }
 
-    std::uniform_int_distribution<voicenum_t> randMainVoice(0, numVoices - 1);
+    std::uniform_int_distribution<int> randMainVoice(0, numVoices - 1);
 
     if (scale) {
         std::uniform_int_distribution<int> randScale(0, scaleParameter->getAllValueStrings().size() - 1);
         *(scaleParameter) = randScale(mt); // index
     }
 
-    for (stepnum_t i = 0; i < numSteps; i++) {
-        voicenum_t mainVoice = randMainVoice(mt);
-        for (voicenum_t j = 0; j < numVoices; j++) {
-            bool enabled = j == mainVoice || randVoiceEnabled(mt) == 0;
+    for (size_t i = 0; i < static_cast<size_t>(numSteps); i++) {
+        int mainVoice = randMainVoice(mt);
+        for (size_t j = 0; j < static_cast<size_t>(numVoices); j++) {
+            bool enabled = j == static_cast<size_t>(mainVoice) || randVoiceEnabled(mt) == 0;
             *(stepState[i].voiceParameters[j]) = enabled;
         }
         *(stepState[i].octaveParameter) = randOctave(mt); // index
@@ -139,9 +139,9 @@ void State::randomizeParams(bool stepsAndVoices, bool rate, bool scale) {
 
 std::unique_ptr<juce::XmlElement> State::exportSettingsToXml() {
     juce::XmlElement xml("ostinato");
-    stepnum_t numSteps = static_cast<stepnum_t>(stepsParameter->getIndex()) + 1;
+    int numSteps = stepsParameter->getIndex() + 1;
     xml.setAttribute("steps", static_cast<int>(numSteps));
-    voicenum_t numVoices = static_cast<voicenum_t>(voicesParameter->getIndex()) + 1;
+    int numVoices = voicesParameter->getIndex() + 1;
     xml.setAttribute("voices", static_cast<int>(numVoices));
     xml.setAttribute("rate", rateParameter->getCurrentValueAsText());
     xml.setAttribute("rateType", rateTypeParameter->getCurrentValueAsText());
@@ -149,10 +149,10 @@ std::unique_ptr<juce::XmlElement> State::exportSettingsToXml() {
     xml.setAttribute("scale", scaleParameter->getCurrentValueAsText());
     xml.setAttribute("key", keyParameter->getCurrentValueAsText());
     xml.setAttribute("voiceMatching", voiceMatchingParameter->getCurrentValueAsText());
-    for (stepnum_t i = 0; i < numSteps; i++) {
+    for (size_t i = 0; i < static_cast<size_t>(numSteps); i++) {
         juce::XmlElement* step = new juce::XmlElement("step");
         juce::String voices = "";
-        for (int j = 0; j < static_cast<int>(numVoices); j++) {
+        for (size_t j = 0; j < static_cast<size_t>(numVoices); j++) {
             voices += stepState[i].voiceParameters[j]->get() ? "1" : "0";
         }
         step->setAttribute("voices", voices);
@@ -183,7 +183,7 @@ void State::importSettingsFromXml(juce::XmlDocument xmlDoc) {
     *(scaleParameter) = std::max(0, scaleParameter->getAllValueStrings().indexOf(xml->getStringAttribute("scale")));
     *(keyParameter) = std::max(0, keyParameter->getAllValueStrings().indexOf(xml->getStringAttribute("key")));
     *(voiceMatchingParameter) = std::max(0, voiceMatchingParameter->getAllValueStrings().indexOf(xml->getStringAttribute("voiceMatching")));
-    stepnum_t _stepIndex = 0;
+    size_t _stepIndex = 0;
     for (auto* step : xml->getChildIterator()) {
         if (!step->hasTagName("step")) continue;
         juce::String voicesStr = step->getStringAttribute("voices", "0");
