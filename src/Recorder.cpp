@@ -93,7 +93,7 @@ void Recorder::finalizeStep(bool allowEmpty) {
     notesInSteps[numSteps] = notesInCurrentStep;
     numSteps++;
     notesInCurrentStep.clear();
-    if (numSteps == constants::MAX_STEPS) {
+    if (static_cast<int>(numSteps) == constants::MAX_STEPS) {
         DBG("ran out of steps");
         recording = RanOutOfSteps;
     }

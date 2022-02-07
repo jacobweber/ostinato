@@ -22,7 +22,7 @@ struct UpdatedStep {
     float volume;
 };
 struct UpdatedSteps {
-    std::array<UpdatedStep, constants::MAX_STEPS> steps;
+    std::array<UpdatedStep, static_cast<size_t>(constants::MAX_STEPS)> steps;
     stepnum_t numSteps;
     voicenum_t numVoices;
 };

@@ -141,7 +141,7 @@ TEST_CASE("Recorder") {
     SECTION("run out of steps while recording, with held note") {
         tester.state.recordButton = true;
         int sampleNum = 0;
-        for (stepnum_t step = 0; step < constants::MAX_STEPS - 1; step++) {
+        for (int step = 0; step < constants::MAX_STEPS - 1; step++) {
             tester.midiIn.addEvent(juce::MidiMessage::noteOn(1, 60, (juce::uint8) 100), sampleNum);
             tester.midiIn.addEvent(juce::MidiMessage::noteOff(1, 60), sampleNum + 150);
             tester.processBlocks(2);

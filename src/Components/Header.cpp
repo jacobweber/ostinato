@@ -42,8 +42,8 @@ Header::Header(State &s, PluginProcessor &p) : state(s), pluginProcessor(p) {
     addAndMakeVisible(stepsLabel);
     stepsLabel.setFont(textFont);
     stepsLabel.attachToComponent(&stepsMenu, false);
-    for (stepnum_t i = 1; i <= constants::MAX_STEPS; i++) {
-        stepsMenu.addItem(std::to_string(i), static_cast<int>(i));
+    for (int i = 1; i <= constants::MAX_STEPS; i++) {
+        stepsMenu.addItem(std::to_string(i), i);
     }
     stepsMenu.onChange = [this] { onUpdateSteps(); };
     addAndMakeVisible(stepsMenu);

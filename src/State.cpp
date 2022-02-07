@@ -15,7 +15,7 @@ State::State(juce::AudioProcessorValueTreeState &p) : parameters(p) {
     scaleParameter = dynamic_cast<juce::AudioParameterChoice *> (parameters.getParameter("scale"));
     keyParameter = dynamic_cast<juce::AudioParameterChoice *> (parameters.getParameter("key"));
     voiceMatchingParameter = dynamic_cast<juce::AudioParameterChoice *> (parameters.getParameter("voiceMatching"));
-    for (stepnum_t i = 0; i < constants::MAX_STEPS; i++) {
+    for (size_t i = 0; i < static_cast<size_t>(constants::MAX_STEPS); i++) {
         for (voicenum_t j = 0; j < constants::MAX_VOICES; j++) {
             juce::AudioParameterBool *voiceParameter = dynamic_cast<juce::AudioParameterBool *> (parameters.getParameter(
                     "step" + std::to_string(i) + "_voice" + std::to_string(j)));
@@ -43,7 +43,7 @@ void State::resetToDefaults() {
     *(scaleParameter) = 0; // index
     *(keyParameter) = 0; // index
     *(voiceMatchingParameter) = constants::voiceMatchingChoices::StartFromBottom; // index
-    for (stepnum_t i = 0; i < constants::MAX_STEPS; i++) {
+    for (stepnum_t i = 0; i < static_cast<size_t>(constants::MAX_STEPS); i++) {
         for (voicenum_t j = 0; j < constants::MAX_VOICES; j++) {
             *(stepState[i].voiceParameters[j]) = i == j && j < 4;
         }
@@ -173,7 +173,7 @@ void State::importSettingsFromXml(juce::XmlDocument xmlDoc) {
     if (xml == nullptr) return;
     if (!xml->hasTagName("ostinato")) return;
 
-    int numSteps = std::min(static_cast<int>(constants::MAX_STEPS), xml->getIntAttribute("steps", 1));
+    int numSteps = std::min(constants::MAX_STEPS, xml->getIntAttribute("steps", 1));
     *(stepsParameter) = numSteps - 1; // index
     int numVoices = std::min(static_cast<int>(constants::MAX_VOICES), xml->getIntAttribute("voices", 1));
     *(voicesParameter) = numVoices - 1; // index
