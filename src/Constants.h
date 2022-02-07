@@ -3,8 +3,6 @@
 #include "juce_gui_basics/juce_gui_basics.h"
 #include <cstddef>
 
-typedef size_t voicenum_t;
-
 namespace constants {
     enum modeChoices {
         Poly,
