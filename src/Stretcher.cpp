@@ -44,7 +44,7 @@ void Stretcher::getStretchedVoices(State &state, int stepNum, int numHeldNotes, 
     }
 
     int newVoiceNum = 0;
-    for (voicenum_t origVoiceNum = 0; origVoiceNum < static_cast<size_t>(origNumVoices); origVoiceNum++) {
+    for (size_t origVoiceNum = 0; origVoiceNum < static_cast<size_t>(origNumVoices); origVoiceNum++) {
         if (state.stepState[static_cast<size_t>(stepNum)].voiceParameters[origVoiceNum]->get()) {
             double curVoiceY = origVoiceSizeY * static_cast<double>(origVoiceNum);
             newVoiceNum = std::min(static_cast<int>(std::round(curVoiceY)), numVoices - 1);
@@ -137,7 +137,7 @@ Stretcher::StretchedResult Stretcher::stretch(int numHeldNotes, int generateStep
     if (generateSteps == 0) generateSteps = numSteps;
 
     Stretcher::StretchedResult result;
-    for (stepnum_t stepNum = 0; stepNum < static_cast<size_t>(generateSteps); stepNum++) {
+    for (size_t stepNum = 0; stepNum < static_cast<size_t>(generateSteps); stepNum++) {
         CurrentStep currentStep;
         getNextStretchedStep(numNotes, currentStep);
         result.steps.push_back(currentStep);
@@ -175,7 +175,7 @@ void Stretcher::recalcStretchInfo(int _numNotes, int _origNumSteps, int _origNum
 }
 
 bool Stretcher::firstLastOrigStepsSame() {
-    for (voicenum_t voiceNum = 0; voiceNum < static_cast<size_t>(origNumVoices); voiceNum++) {
+    for (size_t voiceNum = 0; voiceNum < static_cast<size_t>(origNumVoices); voiceNum++) {
         if (state.stepState[0].voiceParameters[voiceNum]->get() !=
             state.stepState[static_cast<size_t>(origNumSteps) - 1].voiceParameters[voiceNum]->get())
             return false;
@@ -185,7 +185,7 @@ bool Stretcher::firstLastOrigStepsSame() {
 
 void Stretcher::updateStretchedStep(int stepNum, CurrentStep &outStep) {
     outStep.numVoices = numVoices;
-    for (voicenum_t voiceNum = 0; voiceNum < static_cast<size_t>(numVoices); voiceNum++) {
+    for (size_t voiceNum = 0; voiceNum < static_cast<size_t>(numVoices); voiceNum++) {
         outStep.voices[voiceNum] = false;
     }
 
@@ -213,8 +213,8 @@ void Stretcher::updateStretchedStep(int stepNum, CurrentStep &outStep) {
         double slope = (nextVoiceY - prevVoiceY) / (next.x - prev.x);
         double curVoiceY = prevVoiceY + slope * (curStepX - prev.x);
         DBG("  voice " << curVoiceY << " (orig: " << prevVoiceY << "-" << nextVoiceY << ")");
-        voicenum_t voiceNum = std::min(static_cast<voicenum_t>(std::round(curVoiceY)), static_cast<voicenum_t>(numVoices) - 1);
-        outStep.voices[voiceNum] = true;
+        int voiceNum = std::min(static_cast<int>(std::round(curVoiceY)), numVoices - 1);
+        outStep.voices[static_cast<size_t>(voiceNum)] = true;
     }
 
     double lengthSlope = (next.length - prev.length) / (next.x - prev.x);
@@ -232,7 +232,7 @@ void Stretcher::updateOrigStepFromState(Stretcher::OrigStep &outStep, State &_st
     outStep.numActiveVoices = 0;
     StepState step = _state.stepState[static_cast<size_t>(stepNum)];
     if (step.powerParameter->get()) {
-        for (voicenum_t origVoiceNum = 0; origVoiceNum < static_cast<size_t>(origNumVoices); origVoiceNum++) {
+        for (size_t origVoiceNum = 0; origVoiceNum < static_cast<size_t>(origNumVoices); origVoiceNum++) {
             if (step.voiceParameters[origVoiceNum]->get()) {
                 outStep.activeVoicesY[static_cast<size_t>(outStep.numActiveVoices++)] =
                         origVoiceSizeY * static_cast<double>(origVoiceNum);
