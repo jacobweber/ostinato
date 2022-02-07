@@ -39,7 +39,7 @@ private:
 private:
     State &state;
     bool oldPlaying{false};
-    stepnum_t oldStepIndex{0};
+    int oldStepIndex{0};
 
     int curMouseStep = -1;
     int curMouseVoice = -1;
