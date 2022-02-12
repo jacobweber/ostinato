@@ -89,9 +89,7 @@ Header::Header(State &s, PluginProcessor &p) : state(s), pluginProcessor(p) {
         // shouldn't do this in UI
         int mode = state.modeParameter->getIndex();
         if (mode == constants::modeChoices::Scale) {
-            int scaleIndex = state.scaleParameter->getIndex();
-            const std::vector<int> &scale = scales.chordScales[static_cast<size_t>(scaleIndex)];
-            *(state.voicesParameter) = juce::jmax(constants::MAX_VOICES, static_cast<int>(scale.size()) + 1);
+            updateNumVoicesForScale();
             // TODO: disable stretch params
         }
         refreshMessage();
@@ -108,6 +106,10 @@ Header::Header(State &s, PluginProcessor &p) : state(s), pluginProcessor(p) {
     }
     addAndMakeVisible(scaleMenu);
     scaleAttachment = std::make_unique<ComboBoxAttachment>(state.parameters, "scale", scaleMenu);
+    scaleMenu.onChange = [this] {
+        // shouldn't do this in UI
+        updateNumVoicesForScale();
+    };
 
     addAndMakeVisible(chordScaleLabel);
     chordScaleLabel.setFont(textFont);
@@ -180,6 +182,12 @@ void Header::timerCallback() {
     if (state.recordButton != recordButton.getToggleState()) {
         recordButton.setToggleState(state.recordButton, juce::NotificationType::sendNotification);
     }
+}
+
+void Header::updateNumVoicesForScale() {
+    int scaleIndex = state.scaleParameter->getIndex();
+    const std::vector<int> &scale = scales.allScales[static_cast<size_t>(scaleIndex)];
+    *(state.voicesParameter) = juce::jmin(constants::MAX_VOICES, static_cast<int>(scale.size()) + 1) - 1;
 }
 
 void Header::refresh() {

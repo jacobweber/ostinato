@@ -26,6 +26,8 @@ public:
 
     void timerCallback();
 
+    void updateNumVoicesForScale();
+
     void refresh();
 
     void refreshMessage();
