@@ -315,10 +315,11 @@ void MidiProcessor::playCurrentStep(juce::MidiBuffer &midiOut, int playSampleOff
 
     int transpose = (-currentStep.octave + constants::MAX_OCTAVES) * 12;
     int numVoices = currentStep.numVoices;
+    int playedVoices = 0;
     for (int voiceNum = 0; voiceNum < numVoices; voiceNum++) {
         if (currentStep.voices[static_cast<size_t>(voiceNum)]) {
             noteValue.note = -1;
-            if (mode == constants::modeChoices::Poly || mode == constants::modeChoices::Mono) {
+            if (mode == constants::modeChoices::Poly) {
                 if (voiceMatching == constants::voiceMatchingChoices::UseHigherOctaves) {
 		            noteValue = pressedNotes[voiceNum % pressedNotes.size()];
 			        noteValue.note += voiceNum / pressedNotes.size() * 12 * octaveRange;
@@ -326,6 +327,10 @@ void MidiProcessor::playCurrentStep(juce::MidiBuffer &midiOut, int playSampleOff
                     if (voiceNum < pressedNotes.size()) {
                         noteValue = pressedNotes[voiceNum];
                     }
+                }
+            } else if (mode == constants::modeChoices::Mono) {
+                if (playedVoices == 0 && voiceNum < pressedNotes.size()) {
+                    noteValue = pressedNotes[voiceNum];
                 }
             } else if (mode == constants::modeChoices::Scale) {
                 int scaleOctaveSpan = (scale[scale.size() - 1] / 12) + 1;
@@ -353,6 +358,7 @@ void MidiProcessor::playCurrentStep(juce::MidiBuffer &midiOut, int playSampleOff
             }
 
             if (noteValue.note != -1) {
+                playedVoices++;
                 noteValue.note += transpose;
                 if (noteValue.note >= 0 && noteValue.note <= 127) {
                     double vel = juce::jmin(currentStep.volume * 2 * noteValue.vel, 127.0);
