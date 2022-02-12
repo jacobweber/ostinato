@@ -205,7 +205,7 @@ void Header::refreshEnabled() {
     const int mode = state.modeParameter->getIndex();
     const bool hasScale = mode == constants::modeChoices::Scale;
     const bool hasChordScale = mode == constants::modeChoices::Chord;
-    const bool hasKey = mode == constants::modeChoices::Scale;
+    const bool hasKey = mode == constants::modeChoices::Scale || constants::modeChoices::Chord;
     fileButton.setEnabled(notRecording);
     stepsMenu.setEnabled(notRecording);
     voicesMenu.setEnabled(notRecording);
@@ -246,7 +246,7 @@ void Header::resized() {
     toolbar2.items.add(juce::FlexItem(chordScaleMenu).withAlignSelf(juce::FlexItem::AlignSelf::autoAlign).withHeight(
             MENU_HEIGHT).withWidth(130.0).withMargin(margin));
     toolbar2.items.add(juce::FlexItem(keyMenu).withAlignSelf(juce::FlexItem::AlignSelf::autoAlign).withHeight(
-            MENU_HEIGHT).withWidth(90.0).withMargin(margin));
+            MENU_HEIGHT).withWidth(130.0).withMargin(margin));
     toolbar2.performLayout(toolbar2Rect);
 
     auto toolbarRect = area.removeFromBottom(48).reduced(8);
