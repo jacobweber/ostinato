@@ -15,7 +15,14 @@ public:
     const std::vector<int> majPent = {0, 2, 4, 7, 9};
     const std::vector<int> minPent = {0, 3, 5, 7, 10};
     const std::vector<int> blues = {0, 3, 5, 6, 7, 10};
+    const std::vector<int> whole = {0, 2, 4, 6, 8, 10};
+    const std::vector<int> wholeHalf = {0, 2, 3, 5, 6, 8, 9, 11};
+    const std::vector<int> fourth = {0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55};
+    const std::vector<int> fifth = {0, 7, 14, 21, 28, 35, 42, 49, 56, 63, 70, 77};
 
     const std::vector<std::vector<int>> allScales = {major, minor_natural, minor_harmonic, locrian, dorian, phrygian,
-                                                     lydian, mixolydian, majPent, minPent, blues};
+                                                     lydian, mixolydian, majPent, minPent, blues, whole};
+
+    const std::vector<std::vector<int>> sevenNoteScales = {major, minor_natural, minor_harmonic, locrian, dorian, phrygian,
+                                                     lydian, mixolydian};
 };
