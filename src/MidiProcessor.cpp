@@ -319,7 +319,7 @@ void MidiProcessor::playCurrentStep(juce::MidiBuffer &midiOut, int playSampleOff
     for (int voiceNum = 0; voiceNum < numVoices; voiceNum++) {
         if (currentStep.voices[static_cast<size_t>(voiceNum)]) {
             noteValue.note = -1;
-            if (mode == constants::modeChoices::Poly) {
+            if (mode == constants::modeChoices::Poly || (mode == constants::modeChoices::Mono && playedVoices == 0)) {
                 if (voiceMatching == constants::voiceMatchingChoices::UseHigherOctaves) {
 		            noteValue = pressedNotes[voiceNum % pressedNotes.size()];
 			        noteValue.note += voiceNum / pressedNotes.size() * 12 * octaveRange;
@@ -327,10 +327,6 @@ void MidiProcessor::playCurrentStep(juce::MidiBuffer &midiOut, int playSampleOff
                     if (voiceNum < pressedNotes.size()) {
                         noteValue = pressedNotes[voiceNum];
                     }
-                }
-            } else if (mode == constants::modeChoices::Mono) {
-                if (playedVoices == 0 && voiceNum < pressedNotes.size()) {
-                    noteValue = pressedNotes[voiceNum];
                 }
             } else if (mode == constants::modeChoices::Scale) {
                 int scaleOctaveSpan = (scale[scale.size() - 1] / 12) + 1;
