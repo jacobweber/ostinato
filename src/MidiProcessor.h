@@ -35,8 +35,18 @@ private:
 
     static double roundNextPpqPos(double scheduledPpqPos, double ppqPosPerStep);
 
+    /**
+     * @param note MIDI note number
+     * @param keyIndex key param (0 for "pressed key", 1 for C, 2 for C#, etc.)
+     * @return position of note relative to key root (0-11)
+     */
     static int findNotePosInKey(int note, int keyIndex);
 
+    /**
+     * @param scale scales param (all scales must have 7 notes)
+     * @param notePosInKey position of note relative to key root (0-11)
+     * @return scale degree closest to note (0-7)
+     */
     static int findClosestScaleDegree(const std::vector<int> &scale, int notePosInKey);
 
 private:
