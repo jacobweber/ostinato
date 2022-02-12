@@ -53,6 +53,17 @@ juce::AudioProcessorValueTreeState::ParameterLayout ParametersFactory::create() 
     scaleChoices.add("Mixolydian");
     layout.add(std::make_unique<juce::AudioParameterChoice>("scale", "Scale", scaleChoices, 0));
 
+    juce::StringArray chordScaleChoices;
+    chordScaleChoices.add("Major");
+    chordScaleChoices.add("Minor");
+    chordScaleChoices.add("Harmonic Minor");
+    chordScaleChoices.add("Locrian");
+    chordScaleChoices.add("Dorian");
+    chordScaleChoices.add("Phrygian");
+    chordScaleChoices.add("Lydian");
+    chordScaleChoices.add("Mixolydian");
+    layout.add(std::make_unique<juce::AudioParameterChoice>("chordScale", "Chord Scale", chordScaleChoices, 0));
+
     juce::StringArray keyChoices;
     keyChoices.add("Pressed Key");
     keyChoices.add("C");

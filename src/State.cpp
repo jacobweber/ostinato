@@ -13,6 +13,7 @@ State::State(juce::AudioProcessorValueTreeState &p) : parameters(p) {
     rateTypeParameter = dynamic_cast<juce::AudioParameterChoice *> (parameters.getParameter("rateType"));
     modeParameter = dynamic_cast<juce::AudioParameterChoice *> (parameters.getParameter("mode"));
     scaleParameter = dynamic_cast<juce::AudioParameterChoice *> (parameters.getParameter("scale"));
+    chordScaleParameter = dynamic_cast<juce::AudioParameterChoice *> (parameters.getParameter("chordScale"));
     keyParameter = dynamic_cast<juce::AudioParameterChoice *> (parameters.getParameter("key"));
     voiceMatchingParameter = dynamic_cast<juce::AudioParameterChoice *> (parameters.getParameter("voiceMatching"));
     for (size_t i = 0; i < static_cast<size_t>(constants::MAX_STEPS); i++) {
@@ -41,6 +42,7 @@ void State::resetToDefaults() {
     *(rateTypeParameter) = 0; // index
     *(modeParameter) = constants::modeChoices::Poly; // index
     *(scaleParameter) = 0; // index
+    *(chordScaleParameter) = 0; // index
     *(keyParameter) = 0; // index
     *(voiceMatchingParameter) = constants::voiceMatchingChoices::StartFromBottom; // index
     for (size_t i = 0; i < static_cast<size_t>(constants::MAX_STEPS); i++) {
@@ -121,6 +123,8 @@ void State::randomizeParams(bool stepsAndVoices, bool rate, bool scale) {
     if (scale) {
         std::uniform_int_distribution<int> randScale(0, scaleParameter->getAllValueStrings().size() - 1);
         *(scaleParameter) = randScale(mt); // index
+        std::uniform_int_distribution<int> randChordScale(0, chordScaleParameter->getAllValueStrings().size() - 1);
+        *(chordScaleParameter) = randChordScale(mt); // index
     }
 
     for (size_t i = 0; i < static_cast<size_t>(numSteps); i++) {
@@ -147,6 +151,7 @@ std::unique_ptr<juce::XmlElement> State::exportSettingsToXml() {
     xml.setAttribute("rateType", rateTypeParameter->getCurrentValueAsText());
     xml.setAttribute("mode", modeParameter->getCurrentValueAsText());
     xml.setAttribute("scale", scaleParameter->getCurrentValueAsText());
+    xml.setAttribute("chordScale", chordScaleParameter->getCurrentValueAsText());
     xml.setAttribute("key", keyParameter->getCurrentValueAsText());
     xml.setAttribute("voiceMatching", voiceMatchingParameter->getCurrentValueAsText());
     for (size_t i = 0; i < static_cast<size_t>(numSteps); i++) {
@@ -181,6 +186,7 @@ void State::importSettingsFromXml(juce::XmlDocument xmlDoc) {
     *(rateTypeParameter) = std::max(0, rateTypeParameter->getAllValueStrings().indexOf(xml->getStringAttribute("rateType")));
     *(modeParameter) = std::max(0, modeParameter->getAllValueStrings().indexOf(xml->getStringAttribute("mode")));
     *(scaleParameter) = std::max(0, scaleParameter->getAllValueStrings().indexOf(xml->getStringAttribute("scale")));
+    *(chordScaleParameter) = std::max(0, chordScaleParameter->getAllValueStrings().indexOf(xml->getStringAttribute("chordScale")));
     *(keyParameter) = std::max(0, keyParameter->getAllValueStrings().indexOf(xml->getStringAttribute("key")));
     *(voiceMatchingParameter) = std::max(0, voiceMatchingParameter->getAllValueStrings().indexOf(xml->getStringAttribute("voiceMatching")));
     size_t _stepNum = 0;

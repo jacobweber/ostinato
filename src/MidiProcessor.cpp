@@ -297,7 +297,7 @@ void MidiProcessor::playCurrentStep(juce::MidiBuffer &midiOut, int playSampleOff
 
     int mode = state.modeParameter->getIndex();
     int scaleIndex = state.scaleParameter->getIndex();
-    const std::vector<int> &scale = scales.sevenNoteScales[static_cast<size_t>(scaleIndex)];
+    const std::vector<int> &scale = scales.chordScales[static_cast<size_t>(scaleIndex)];
     int notesPerOctave = 0;
     int pressedScaleDegree = -1;
     int scaleRootNote = 0;

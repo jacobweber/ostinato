@@ -23,6 +23,7 @@ public:
     const std::vector<std::vector<int>> allScales = {major, minor_natural, minor_harmonic, locrian, dorian, phrygian,
                                                      lydian, mixolydian, majPent, minPent, blues, whole};
 
-    const std::vector<std::vector<int>> sevenNoteScales = {major, minor_natural, minor_harmonic, locrian, dorian, phrygian,
+    // only 7-note scales allowed here
+    const std::vector<std::vector<int>> chordScales = {major, minor_natural, minor_harmonic, locrian, dorian, phrygian,
                                                      lydian, mixolydian};
 };
