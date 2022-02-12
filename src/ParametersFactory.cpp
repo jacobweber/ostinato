@@ -51,9 +51,6 @@ juce::AudioProcessorValueTreeState::ParameterLayout ParametersFactory::create() 
     scaleChoices.add("Phrygian");
     scaleChoices.add("Lydian");
     scaleChoices.add("Mixolydian");
-    scaleChoices.add("Major Pentatonic");
-    scaleChoices.add("Minor Pentatonic");
-    scaleChoices.add("Blues");
     layout.add(std::make_unique<juce::AudioParameterChoice>("scale", "Scale", scaleChoices, 0));
 
     juce::StringArray keyChoices;
