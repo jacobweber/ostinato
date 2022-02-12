@@ -35,6 +35,8 @@ private:
 
     static double roundNextPpqPos(double scheduledPpqPos, double ppqPosPerStep);
 
+    static int findNotePosInKey(int note, int keyIndex);
+
     static int findClosestScaleDegree(const std::vector<int> &scale, int notePosInKey);
 
 private:

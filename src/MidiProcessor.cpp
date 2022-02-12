@@ -303,16 +303,9 @@ void MidiProcessor::playCurrentStep(juce::MidiBuffer &midiOut, int playSampleOff
     int scaleRootNote = 0;
     if (mode == constants::modeChoices::Scale) {
         notesInScale = static_cast<int>(scale.size());
-        int key = state.keyParameter->getIndex();
-        int notePosInKey = 0;
-        if (key != 0) {
-            key--;
-            notePosInKey = pressedNotes[0].note % 12 - key;
-            if (notePosInKey < 0) notePosInKey += 12;
-        }
+        int notePosInKey = findNotePosInKey(pressedNotes[0].note, state.keyParameter->getIndex());
         scaleRootNote = pressedNotes[0].note - notePosInKey;
         pressedScaleDegree = findClosestScaleDegree(scale, notePosInKey);
-        DBG("key " << key << ", scaleIndex " << scaleIndex << ", pressedScaleDegree " << pressedScaleDegree);
     }
 
     int transpose = (-currentStep.octave + constants::MAX_OCTAVES) * 12;
@@ -382,6 +375,14 @@ double MidiProcessor::roundNextPpqPos(double scheduledPpqPos, double ppqPosPerSt
     double nextStepPpqPos = prevStepPpqPos + ppqPosPerStep;
     double nextStepDiff = nextStepPpqPos - scheduledPpqPos;
     return offsetWithinStep < nextStepDiff ? prevStepPpqPos : nextStepPpqPos;
+}
+
+int MidiProcessor::findNotePosInKey(int note, int keyIndex) {
+    if (keyIndex == 0) return 0; // "pressed note"
+    keyIndex--;
+    int notePosInKey = note % 12 - keyIndex; // 60 is C, so note % 12 is note position relative to C
+    if (notePosInKey < 0) notePosInKey += 12;
+    return notePosInKey;
 }
 
 int MidiProcessor::findClosestScaleDegree(const std::vector<int> &scale, int notePosInKey) {
