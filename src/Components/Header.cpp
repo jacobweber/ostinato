@@ -121,6 +121,16 @@ Header::Header(State &s, PluginProcessor &p) : state(s), pluginProcessor(p) {
     addAndMakeVisible(chordScaleMenu);
     chordScaleAttachment = std::make_unique<ComboBoxAttachment>(state.parameters, "chordScale", chordScaleMenu);
 
+    addAndMakeVisible(chordVoicingLabel);
+    chordVoicingLabel.setFont(textFont);
+    chordVoicingLabel.attachToComponent(&chordVoicingMenu, false);
+    int chordVoicingIndex = 1;
+    for (const juce::String &value: state.chordVoicingParameter->getAllValueStrings()) {
+        chordVoicingMenu.addItem(value, chordVoicingIndex++);
+    }
+    addAndMakeVisible(chordVoicingMenu);
+    chordVoicingAttachment = std::make_unique<ComboBoxAttachment>(state.parameters, "chordVoicing", chordVoicingMenu);
+
     addAndMakeVisible(keyLabel);
     keyLabel.setFont(textFont);
     keyLabel.attachToComponent(&keyMenu, false);
@@ -201,6 +211,8 @@ void Header::refreshMessage() {
         text = constants::MSG_RECORD;
     } else if (modeMenu.getSelectedItemIndex() == constants::modeChoices::Scale) {
         text = constants::MSG_SCALE;
+    } else if (modeMenu.getSelectedItemIndex() == constants::modeChoices::Chord) {
+        text = constants::MSG_CHORD;
     } else {
         text = "";
     }
@@ -212,7 +224,7 @@ void Header::refreshEnabled() {
     const bool notRecording = !state.recordButton;
     const int mode = state.modeParameter->getIndex();
     const bool hasScale = mode == constants::modeChoices::Scale;
-    const bool hasChordScale = mode == constants::modeChoices::Chord;
+    const bool hasChord = mode == constants::modeChoices::Chord;
     const bool hasKey = mode == constants::modeChoices::Scale || mode == constants::modeChoices::Chord;
     fileButton.setEnabled(notRecording);
     stepsMenu.setEnabled(notRecording);
@@ -221,7 +233,8 @@ void Header::refreshEnabled() {
     rateTypeMenu.setEnabled(notRecording);
     modeMenu.setEnabled(notRecording);
     scaleMenu.setEnabled(notRecording && hasScale);
-    chordScaleMenu.setEnabled(notRecording && hasChordScale);
+    chordScaleMenu.setEnabled(notRecording && hasChord);
+    chordVoicingMenu.setEnabled(notRecording && hasChord);
     keyMenu.setEnabled(notRecording && hasKey);
     settingsButton.setEnabled(notRecording);
     // TODO: disable stretch if mode is Chord/Scale?
@@ -252,6 +265,8 @@ void Header::resized() {
     toolbar2.items.add(juce::FlexItem(scaleMenu).withAlignSelf(juce::FlexItem::AlignSelf::autoAlign).withHeight(
             MENU_HEIGHT).withWidth(130.0).withMargin(margin));
     toolbar2.items.add(juce::FlexItem(chordScaleMenu).withAlignSelf(juce::FlexItem::AlignSelf::autoAlign).withHeight(
+            MENU_HEIGHT).withWidth(130.0).withMargin(margin));
+    toolbar2.items.add(juce::FlexItem(chordVoicingMenu).withAlignSelf(juce::FlexItem::AlignSelf::autoAlign).withHeight(
             MENU_HEIGHT).withWidth(130.0).withMargin(margin));
     toolbar2.items.add(juce::FlexItem(keyMenu).withAlignSelf(juce::FlexItem::AlignSelf::autoAlign).withHeight(
             MENU_HEIGHT).withWidth(130.0).withMargin(margin));

@@ -71,6 +71,19 @@ juce::AudioProcessorValueTreeState::ParameterLayout ParametersFactory::create() 
     chordScaleChoices.add("Mixolydian");
     layout.add(std::make_unique<juce::AudioParameterChoice>("chordScale", "Chord Scale", chordScaleChoices, 0));
 
+    juce::StringArray chordVoicingChoices;
+    chordVoicingChoices.add("Triad");
+    chordVoicingChoices.add("Seventh");
+    chordVoicingChoices.add("Ninth");
+    chordVoicingChoices.add("Eleventh");
+    chordVoicingChoices.add("Sus 4");
+    chordVoicingChoices.add("Sus 2");
+    chordVoicingChoices.add("Mu");
+    chordVoicingChoices.add("Sixth");
+    chordVoicingChoices.add("Power");
+    chordVoicingChoices.add("Quartal");
+    layout.add(std::make_unique<juce::AudioParameterChoice>("chordVoicing", "Chord Voicing", chordVoicingChoices, 0));
+
     juce::StringArray keyChoices;
     keyChoices.add("Pressed Key");
     keyChoices.add("C");

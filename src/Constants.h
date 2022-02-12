@@ -46,6 +46,7 @@ namespace constants {
     const char *const LABEL_RATE = "Step Length";
     const char *const LABEL_SCALE = "Scale";
     const char *const LABEL_CHORD_SCALE = "Chord Scale";
+    const char *const LABEL_CHORD_VOICING = "Chord Voicing";
     const char *const LABEL_KEY = "Key";
     const char *const LABEL_MODE = "Mode";
     const char *const LABEL_LENGTH = "Length";
@@ -62,6 +63,7 @@ namespace constants {
     const char *const TOOLTIP_SETTINGS = "Additional settings";
 
     const char *const MSG_SCALE = "Each voice will be a scale degree, constrained to the selected key and scale.";
+    const char *const MSG_CHORD = "Each voice will be a chord tone, constrained to the selected key, scale, and voicing.";
     const char *const MSG_RECORD = "Play an arpeggiation to record it. Press the space bar to enter a rest.";
 
     constexpr double PLAY_DELAY_SEC = 0.1; // so cycle starts at first note when you press multiple notes at once

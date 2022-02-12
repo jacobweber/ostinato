@@ -38,6 +38,7 @@ public:
     juce::AudioParameterChoice *modeParameter = nullptr;
     juce::AudioParameterChoice *scaleParameter = nullptr;
     juce::AudioParameterChoice *chordScaleParameter = nullptr;
+    juce::AudioParameterChoice *chordVoicingParameter = nullptr;
     juce::AudioParameterChoice *keyParameter = nullptr;
     juce::AudioParameterChoice *voiceMatchingParameter = nullptr;
     std::array<StepState, constants::MAX_STEPS> stepState;

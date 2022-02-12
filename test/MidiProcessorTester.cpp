@@ -19,6 +19,7 @@ MidiProcessorTester::MidiProcessorTester(int bs, int sr) : blockSize(bs), sample
     *(state.modeParameter) = constants::modeChoices::Poly; // index
     *(state.scaleParameter) = 0; // index
     *(state.chordScaleParameter) = 0; // index
+    *(state.chordVoicingParameter) = 0; // index
     *(state.keyParameter) = 0; // index
     *(state.voiceMatchingParameter) = constants::voiceMatchingChoices::StartFromBottom; // index
     for (size_t i = 0; i < static_cast<size_t>(constants::MAX_STEPS); i++) {

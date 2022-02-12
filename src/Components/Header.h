@@ -68,6 +68,8 @@ private:
     juce::ComboBox scaleMenu;
     juce::Label chordScaleLabel{{}, constants::LABEL_CHORD_SCALE};
     juce::ComboBox chordScaleMenu;
+    juce::Label chordVoicingLabel{{}, constants::LABEL_CHORD_VOICING};
+    juce::ComboBox chordVoicingMenu;
     juce::Label keyLabel{{}, constants::LABEL_KEY};
     juce::ComboBox keyMenu;
     juce::ImageButton settingsButton{};
@@ -82,6 +84,7 @@ private:
     std::unique_ptr<ComboBoxAttachment> modeAttachment;
     std::unique_ptr<ComboBoxAttachment> scaleAttachment;
     std::unique_ptr<ComboBoxAttachment> chordScaleAttachment;
+    std::unique_ptr<ComboBoxAttachment> chordVoicingAttachment;
     std::unique_ptr<ComboBoxAttachment> keyAttachment;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Header)
