@@ -23,7 +23,7 @@ juce::String StateHelper::getGrid(State &state) {
     juce::String grid = juce::String();
     for (int j = numVoices - 1; j >= 0; j--) {
         for (size_t i = 0; i < static_cast<size_t>(numSteps); i++) {
-            grid += state.stepState[i].voiceParameters[j]->get() ? '*' : '-';
+            grid += state.stepState[i].voiceParameters[static_cast<size_t>(j)]->get() ? '*' : '-';
         }
         grid += '\n';
     }
