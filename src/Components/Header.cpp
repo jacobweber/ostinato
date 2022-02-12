@@ -205,7 +205,7 @@ void Header::refreshEnabled() {
     const int mode = state.modeParameter->getIndex();
     const bool hasScale = mode == constants::modeChoices::Scale;
     const bool hasChordScale = mode == constants::modeChoices::Chord;
-    const bool hasKey = mode == constants::modeChoices::Scale || constants::modeChoices::Chord;
+    const bool hasKey = mode == constants::modeChoices::Scale || mode == constants::modeChoices::Chord;
     fileButton.setEnabled(notRecording);
     stepsMenu.setEnabled(notRecording);
     voicesMenu.setEnabled(notRecording);
