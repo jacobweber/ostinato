@@ -90,7 +90,7 @@ Header::Header(State &s, PluginProcessor &p) : state(s), pluginProcessor(p) {
         int mode = state.modeParameter->getIndex();
         if (mode == constants::modeChoices::Scale) {
             int scaleIndex = state.scaleParameter->getIndex();
-            const std::vector<int> &scale = scales.allScales[static_cast<size_t>(scaleIndex)];
+            const std::vector<int> &scale = scales.sevenNoteScales[static_cast<size_t>(scaleIndex)];
             *(state.voicesParameter) = juce::jmax(constants::MAX_VOICES, static_cast<int>(scale.size()) + 1);
             // TODO: disable stretch params
         }

@@ -11,7 +11,7 @@ TEST_CASE("Scales") {
         *(tester.state.rateParameter) = 3; // eighths
         *(tester.state.modeParameter) = constants::modeChoices::Scale;
         *(tester.state.scaleParameter) = 0; // major
-        *(tester.state.keyParameter) = 0; // C
+        *(tester.state.keyParameter) = 1; // C
         *(tester.state.stepState[0].voiceParameters[0]) = true;
         *(tester.state.stepState[1].voiceParameters[1]) = true;
         *(tester.state.stepState[2].voiceParameters[2]) = true;
@@ -37,7 +37,7 @@ TEST_CASE("Scales") {
         *(tester.state.rateParameter) = 3; // eighths
         *(tester.state.modeParameter) = constants::modeChoices::Scale;
         *(tester.state.scaleParameter) = 1; // minor
-        *(tester.state.keyParameter) = 0; // C
+        *(tester.state.keyParameter) = 1; // C
         *(tester.state.stepState[0].voiceParameters[0]) = true;
         *(tester.state.stepState[1].voiceParameters[1]) = true;
         *(tester.state.stepState[2].voiceParameters[2]) = true;
@@ -82,7 +82,7 @@ TEST_CASE("Scales") {
 
         *(tester.state.modeParameter) = constants::modeChoices::Scale;
         *(tester.state.scaleParameter) = 1; // minor
-        *(tester.state.keyParameter) = 0; // C
+        *(tester.state.keyParameter) = 1; // C
         // still holding C as lowest note
 
         tester.processBlocks(12);
@@ -125,7 +125,7 @@ TEST_CASE("Scales") {
 
         *(tester.state.modeParameter) = constants::modeChoices::Scale;
         *(tester.state.scaleParameter) = 0; // major
-        *(tester.state.keyParameter) = 0; // C
+        *(tester.state.keyParameter) = 1; // C
         // still holding C as lowest note
 
         tester.processBlocks(10);

@@ -60,7 +60,7 @@ namespace constants {
     const char *const TOOLTIP_POWER_ON = "Enable this step";
     const char *const TOOLTIP_SETTINGS = "Additional settings";
 
-    const char *const MSG_SCALE = "Hold down a key to use as the root, and each voice will be a scale degree in that key.";
+    const char *const MSG_SCALE = "Each voice will be a scale degree, constrained to the selected key and scale.";
     const char *const MSG_RECORD = "Play an arpeggiation to record it. Press the space bar to enter a rest.";
 
     constexpr double PLAY_DELAY_SEC = 0.1; // so cycle starts at first note when you press multiple notes at once

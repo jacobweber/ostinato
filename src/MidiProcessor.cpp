@@ -297,16 +297,20 @@ void MidiProcessor::playCurrentStep(juce::MidiBuffer &midiOut, int playSampleOff
 
     int mode = state.modeParameter->getIndex();
     int scaleIndex = state.scaleParameter->getIndex();
-    const std::vector<int> &scale = scales.allScales[static_cast<size_t>(scaleIndex)];
+    const std::vector<int> &scale = scales.sevenNoteScales[static_cast<size_t>(scaleIndex)];
     int notesPerOctave = 0;
     int pressedScaleDegree = -1;
     int scaleRootNote = 0;
     if (mode == constants::modeChoices::Scale) {
-        int key = state.keyParameter->getIndex();
         size_t scaleSize = scale.size();
         notesPerOctave = static_cast<int>(scaleSize);
-        int notePosInKey = pressedNotes[0].note % 12 - key;
-        if (notePosInKey < 0) notePosInKey += 12;
+        int key = state.keyParameter->getIndex();
+        int notePosInKey = 0;
+        if (key != 0) {
+            key--;
+            notePosInKey = pressedNotes[0].note % 12 - key;
+            if (notePosInKey < 0) notePosInKey += 12;
+        }
         scaleRootNote = pressedNotes[0].note - notePosInKey;
         for (size_t i = 0; i < scaleSize; i++) {
             if (scale[i] >= notePosInKey) {
@@ -316,6 +320,7 @@ void MidiProcessor::playCurrentStep(juce::MidiBuffer &midiOut, int playSampleOff
         }
         // in case we play B in C minor
         if (pressedScaleDegree == -1) pressedScaleDegree = notesPerOctave;
+        DBG("key " << key << ", scaleIndex " << scaleIndex << ", pressedScaleDegree " << pressedScaleDegree);
     }
 
     int transpose = (-currentStep.octave + constants::MAX_OCTAVES) * 12;
