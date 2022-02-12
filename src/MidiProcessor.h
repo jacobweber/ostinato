@@ -10,6 +10,7 @@
 #include "Recorder.h"
 #include "Step.h"
 #include "Scales.h"
+#include "Voicings.h"
 #include "Constants.h"
 
 class MidiProcessor {
@@ -78,4 +79,5 @@ private:
     Recorder recorder{state};
 
     Scales scales;
+    Voicings voicings;
 };

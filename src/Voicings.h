@@ -4,6 +4,7 @@
 
 class Voicings {
 public:
+    // These are scale degrees, not half steps
     const std::vector<int> triad = {0, 2, 4};
     const std::vector<int> seventh = {0, 2, 4, 6};
     const std::vector<int> ninth = {0, 2, 4, 6, 8};

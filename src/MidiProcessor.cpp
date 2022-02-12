@@ -297,11 +297,16 @@ void MidiProcessor::playCurrentStep(juce::MidiBuffer &midiOut, int playSampleOff
 
     int mode = state.modeParameter->getIndex();
     int scaleIndex = state.scaleParameter->getIndex();
-    const std::vector<int> &scale = scales.allScales[static_cast<size_t>(scaleIndex)];
+    int chordScaleIndex = state.chordScaleParameter->getIndex();
+    int chordVoicingIndex = state.chordVoicingParameter->getIndex();
+    const std::vector<int> &scale = mode == constants::modeChoices::Scale
+        ? scales.allScales[static_cast<size_t>(scaleIndex)]
+        : scales.chordScales[static_cast<size_t>(chordScaleIndex)];
+    const std::vector<int> &chordVoicing = voicings.allVoicings[static_cast<size_t>(chordVoicingIndex)];
     int notesInScale = 0;
-    int pressedScaleDegree = -1;
+    int pressedScaleDegree = 0;
     int scaleRootNote = 0;
-    if (mode == constants::modeChoices::Scale) {
+    if (mode == constants::modeChoices::Scale || mode == constants::modeChoices::Chord) {
         notesInScale = static_cast<int>(scale.size());
         int notePosInKey = findNotePosInKey(pressedNotes[0].note, state.keyParameter->getIndex());
         scaleRootNote = pressedNotes[0].note - notePosInKey;
@@ -313,7 +318,7 @@ void MidiProcessor::playCurrentStep(juce::MidiBuffer &midiOut, int playSampleOff
     for (int voiceNum = 0; voiceNum < numVoices; voiceNum++) {
         if (currentStep.voices[static_cast<size_t>(voiceNum)]) {
             noteValue.note = -1;
-            if (mode != constants::modeChoices::Scale) { // pressed notes
+            if (mode == constants::modeChoices::Poly || mode == constants::modeChoices::Mono) {
                 if (voiceMatching == constants::voiceMatchingChoices::UseHigherOctaves) {
 		            noteValue = pressedNotes[voiceNum % pressedNotes.size()];
 			        noteValue.note += voiceNum / pressedNotes.size() * 12 * octaveRange;
@@ -322,14 +327,29 @@ void MidiProcessor::playCurrentStep(juce::MidiBuffer &midiOut, int playSampleOff
                         noteValue = pressedNotes[voiceNum];
                     }
                 }
-            } else { // scale
-                int octaveSpan = (scale[scale.size() - 1] / 12) + 1;
-                int octave = (voiceNum + pressedScaleDegree) / notesInScale;
-                int scaleDegree = (voiceNum + pressedScaleDegree) % notesInScale;
-                DBG("scale degree " << scaleDegree << " octave " << octave);
+            } else if (mode == constants::modeChoices::Scale) {
+                int scaleOctaveSpan = (scale[scale.size() - 1] / 12) + 1;
+                // scales only loop at the octave
+                int scaleDegree = voiceNum + pressedScaleDegree;
+                int scaleIteration = scaleDegree / notesInScale;
+                int scaleDegreeReduced = scaleDegree % notesInScale;
+                DBG("scale degree " << scaleDegree << ", iteration " << scaleIteration);
                 noteValue = pressedNotes[0];
                 noteValue.note = scaleRootNote +
-                        scale[static_cast<size_t>(scaleDegree)] + (12 * octave * octaveSpan);
+                        scale[static_cast<size_t>(scaleDegreeReduced)] + (12 * scaleIteration * scaleOctaveSpan);
+            } else if (mode == constants::modeChoices::Chord) {
+                int chordOctaveSpan = (chordVoicing[chordVoicing.size() - 1] / 7) + 1;
+                size_t chordIndex = static_cast<size_t>(voiceNum) % chordVoicing.size();
+                int chordIteration = voiceNum / static_cast<int>(chordVoicing.size());
+                // scales only loop at the octave
+                int scaleDegree = chordVoicing[chordIndex] + (7 * chordIteration * chordOctaveSpan) + pressedScaleDegree;
+                int scaleIteration = scaleDegree / notesInScale;
+                int scaleDegreeReduced = scaleDegree % notesInScale;
+                DBG("chord index " << chordIndex << ", iteration " << chordIteration
+                    << ", scale degree " << scaleDegree << ", iteration " << scaleIteration);
+                noteValue = pressedNotes[0];
+                noteValue.note = scaleRootNote +
+                        scale[static_cast<size_t>(scaleDegreeReduced)] + (12 * scaleIteration);
             }
 
             if (noteValue.note != -1) {
