@@ -35,6 +35,8 @@ private:
 
     static double roundNextPpqPos(double scheduledPpqPos, double ppqPosPerStep);
 
+    static int MidiProcessor::findClosestScaleDegree(const std::vector<int> &scale, int notePosInKey);
+
 private:
     State &state;
     double sampleRate = 0.0;

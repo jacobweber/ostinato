@@ -302,8 +302,7 @@ void MidiProcessor::playCurrentStep(juce::MidiBuffer &midiOut, int playSampleOff
     int pressedScaleDegree = -1;
     int scaleRootNote = 0;
     if (mode == constants::modeChoices::Scale) {
-        size_t scaleSize = scale.size();
-        notesPerOctave = static_cast<int>(scaleSize);
+        notesPerOctave = static_cast<int>(scale.size());
         int key = state.keyParameter->getIndex();
         int notePosInKey = 0;
         if (key != 0) {
@@ -312,14 +311,7 @@ void MidiProcessor::playCurrentStep(juce::MidiBuffer &midiOut, int playSampleOff
             if (notePosInKey < 0) notePosInKey += 12;
         }
         scaleRootNote = pressedNotes[0].note - notePosInKey;
-        for (size_t i = 0; i < scaleSize; i++) {
-            if (scale[i] >= notePosInKey) {
-                pressedScaleDegree = static_cast<int>(i);
-                break;
-            }
-        }
-        // in case we play B in C minor
-        if (pressedScaleDegree == -1) pressedScaleDegree = notesPerOctave;
+        pressedScaleDegree = findClosestScaleDegree(scale, notePosInKey);
         DBG("key " << key << ", scaleIndex " << scaleIndex << ", pressedScaleDegree " << pressedScaleDegree);
     }
 
@@ -389,4 +381,15 @@ double MidiProcessor::roundNextPpqPos(double scheduledPpqPos, double ppqPosPerSt
     double nextStepPpqPos = prevStepPpqPos + ppqPosPerStep;
     double nextStepDiff = nextStepPpqPos - scheduledPpqPos;
     return offsetWithinStep < nextStepDiff ? prevStepPpqPos : nextStepPpqPos;
+}
+
+int MidiProcessor::findClosestScaleDegree(const std::vector<int> &scale, int notePosInKey) {
+    size_t scaleSize = scale.size();
+    for (size_t i = 0; i < scaleSize; i++) {
+        if (scale[i] >= notePosInKey) {
+            return static_cast<int>(i);
+        }
+    }
+    // in case we play B in C minor
+    return static_cast<int>(scaleSize);
 }
