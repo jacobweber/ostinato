@@ -298,11 +298,11 @@ void MidiProcessor::playCurrentStep(juce::MidiBuffer &midiOut, int playSampleOff
     int mode = state.modeParameter->getIndex();
     int scaleIndex = state.scaleParameter->getIndex();
     const std::vector<int> &scale = scales.allScales[static_cast<size_t>(scaleIndex)];
-    int notesPerOctave = 0;
+    int notesInScale = 0;
     int pressedScaleDegree = -1;
     int scaleRootNote = 0;
     if (mode == constants::modeChoices::Scale) {
-        notesPerOctave = static_cast<int>(scale.size());
+        notesInScale = static_cast<int>(scale.size());
         int key = state.keyParameter->getIndex();
         int notePosInKey = 0;
         if (key != 0) {
@@ -330,12 +330,13 @@ void MidiProcessor::playCurrentStep(juce::MidiBuffer &midiOut, int playSampleOff
                     }
                 }
             } else { // scale
-                int octave = (voiceNum + pressedScaleDegree) / notesPerOctave;
-                int scaleDegree = (voiceNum + pressedScaleDegree) % notesPerOctave;
+                int octaveSpan = (scale[scale.size() - 1] / 12) + 1;
+                int octave = (voiceNum + pressedScaleDegree) / notesInScale;
+                int scaleDegree = (voiceNum + pressedScaleDegree) % notesInScale;
                 DBG("scale degree " << scaleDegree << " octave " << octave);
                 noteValue = pressedNotes[0];
                 noteValue.note = scaleRootNote +
-                        scale[static_cast<size_t>(scaleDegree)] + (12 * octave);
+                        scale[static_cast<size_t>(scaleDegree)] + (12 * octave * octaveSpan);
             }
 
             if (noteValue.note != -1) {

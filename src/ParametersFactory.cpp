@@ -56,6 +56,8 @@ juce::AudioProcessorValueTreeState::ParameterLayout ParametersFactory::create() 
     scaleChoices.add("Blues");
     scaleChoices.add("Whole Tone");
     scaleChoices.add("Whole-Half Tone");
+    scaleChoices.add("Fourths");
+    scaleChoices.add("Fifths");
     layout.add(std::make_unique<juce::AudioParameterChoice>("scale", "Scale", scaleChoices, 0));
 
     juce::StringArray chordScaleChoices;
