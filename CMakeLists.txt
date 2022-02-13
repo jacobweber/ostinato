@@ -169,6 +169,7 @@ set(TestFiles
         test/Presets.cpp
         test/Recorder.cpp
         test/Scales.cpp
+        test/Chords.cpp
         test/StateHelper.cpp
         test/Stretcher.cpp)
 
