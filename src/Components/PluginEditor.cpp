@@ -95,6 +95,10 @@ void PluginEditor::resized() {
 }
 
 void PluginEditor::timerCallback() {
+    if (!grabbedFocus && isShowing()) {
+        grabKeyboardFocus();
+        grabbedFocus = true;
+    }
     stepStrips.refreshActiveStep();
     header.timerCallback();
 }

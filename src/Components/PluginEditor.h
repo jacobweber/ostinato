@@ -33,6 +33,7 @@ private:
     State &state;
     PluginProcessor &pluginProcessor; // store subclass reference so we don't need to cast dynamically
 
+    bool grabbedFocus{false};
     LookAndFeel lookAndFeel{};
 
     [[maybe_unused]] juce::TooltipWindow tooltipWindow{nullptr, 500};
