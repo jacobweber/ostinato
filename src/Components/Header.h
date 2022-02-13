@@ -50,6 +50,10 @@ private:
     PluginProcessor &pluginProcessor;
     Scales scales{};
 
+    // to avoid circular change calls
+    bool changingScale{false};
+    bool changingChordScale{false};
+
     juce::Font textFont{12.0f};
     juce::Font messageFont{16.0f};
 

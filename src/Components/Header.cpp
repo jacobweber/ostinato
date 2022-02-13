@@ -109,8 +109,15 @@ Header::Header(State &s, PluginProcessor &p) : state(s), pluginProcessor(p) {
     scaleAttachment = std::make_unique<ComboBoxAttachment>(state.parameters, "scale", scaleMenu);
     scaleMenu.onChange = [this] {
         // shouldn't do this in UI
-        int chordScaleIndex = state.chordScaleParameter->getAllValueStrings().indexOf(state.scaleParameter->getCurrentValueAsText());
-        *(state.chordScaleParameter) = chordScaleIndex == -1 ? constants::chordScaleChoices::CSMajor : chordScaleIndex;
+        if (!changingScale) {
+            int matchingChordScaleIndex = state.chordScaleParameter->getAllValueStrings().indexOf(state.scaleParameter->getCurrentValueAsText());
+            changingChordScale = true;
+            *(state.chordScaleParameter) = matchingChordScaleIndex == -1 ? constants::chordScaleChoices::CSMajor : matchingChordScaleIndex;
+            changingChordScale = false;
+            DBG("change scale to " << (matchingChordScaleIndex == -1 ? constants::chordScaleChoices::CSMajor : matchingChordScaleIndex));
+        } else {
+            DBG("blocked change scale");
+        }
         updateNumVoicesForScale();
     };
 
@@ -125,9 +132,15 @@ Header::Header(State &s, PluginProcessor &p) : state(s), pluginProcessor(p) {
     chordScaleAttachment = std::make_unique<ComboBoxAttachment>(state.parameters, "chordScale", chordScaleMenu);
     chordScaleMenu.onChange = [this] {
         // shouldn't do this in UI
-        int scaleIndex = state.scaleParameter->getAllValueStrings().indexOf(state.chordScaleParameter->getCurrentValueAsText());
-        *(state.scaleParameter) = scaleIndex == -1 ? constants::scaleChoices::Major : scaleIndex;
-        updateNumVoicesForScale();
+        if (!changingChordScale) {
+            int matchingScaleIndex = state.scaleParameter->getAllValueStrings().indexOf(state.chordScaleParameter->getCurrentValueAsText());
+            changingScale = true;
+            *(state.scaleParameter) = matchingScaleIndex == -1 ? constants::scaleChoices::Major : matchingScaleIndex;
+            changingScale = false;
+            DBG("change chord scale to " << (matchingScaleIndex == -1 ? constants::scaleChoices::Major : matchingScaleIndex));
+        } else {
+            DBG("blocked change chord scale");
+        }
     };
 
     addChildComponent(chordVoicingLabel);
