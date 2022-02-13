@@ -109,6 +109,8 @@ Header::Header(State &s, PluginProcessor &p) : state(s), pluginProcessor(p) {
     scaleAttachment = std::make_unique<ComboBoxAttachment>(state.parameters, "scale", scaleMenu);
     scaleMenu.onChange = [this] {
         // shouldn't do this in UI
+        int chordScaleIndex = state.chordScaleParameter->getAllValueStrings().indexOf(state.scaleParameter->getCurrentValueAsText());
+        *(state.chordScaleParameter) = chordScaleIndex == -1 ? constants::chordScaleChoices::CSMajor : chordScaleIndex;
         updateNumVoicesForScale();
     };
 
@@ -121,6 +123,12 @@ Header::Header(State &s, PluginProcessor &p) : state(s), pluginProcessor(p) {
     }
     addChildComponent(chordScaleMenu);
     chordScaleAttachment = std::make_unique<ComboBoxAttachment>(state.parameters, "chordScale", chordScaleMenu);
+    chordScaleMenu.onChange = [this] {
+        // shouldn't do this in UI
+        int scaleIndex = state.scaleParameter->getAllValueStrings().indexOf(state.chordScaleParameter->getCurrentValueAsText());
+        *(state.scaleParameter) = scaleIndex == -1 ? constants::scaleChoices::Major : scaleIndex;
+        updateNumVoicesForScale();
+    };
 
     addChildComponent(chordVoicingLabel);
     chordVoicingLabel.setFont(textFont);
