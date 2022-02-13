@@ -16,6 +16,46 @@ namespace constants {
         StretchVoicePattern,
         StretchVoiceStepsPattern
     };
+    enum scaleChoices {
+        Major,
+        MinorNatural,
+        MinorHarmonic,
+        Locrian,
+        Dorian,
+        Phrygian,
+        Lydian,
+        Mixolydian,
+        MajPent,
+        MinPent,
+        Blues,
+        Whole,
+        WholeHalf,
+        Fourth,
+        Fifth
+    };
+    enum chordScaleChoices {
+        Major,
+        MinorNatural,
+        MinorHarmonic,
+        Locrian,
+        Dorian,
+        Phrygian,
+        Lydian,
+        Mixolydian
+    };
+    enum voicingChoices {
+        Triad,
+        Seventh,
+        Ninth,
+        Eleventh,
+        Sus4,
+        Sus2,
+        Mu,
+        Sixth,
+        Power,
+        Quartal
+    };
+    constexpr int PRESSED_KEY = 0;
 
     constexpr int MAX_NOTES = 24;
     constexpr int MAX_STEPS = 16;

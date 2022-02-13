@@ -10,7 +10,7 @@ TEST_CASE("Scales") {
         *(tester.state.voicesParameter) = 3; // 4 voices
         *(tester.state.rateParameter) = 3; // eighths
         *(tester.state.modeParameter) = constants::modeChoices::Scale;
-        *(tester.state.scaleParameter) = 0; // major
+        *(tester.state.scaleParameter) = constants::scaleChoices::Major;
         *(tester.state.keyParameter) = 1; // C
         *(tester.state.stepState[0].voiceParameters[0]) = true;
         *(tester.state.stepState[1].voiceParameters[1]) = true;
@@ -124,7 +124,7 @@ TEST_CASE("Scales") {
                                                "975: Note off F3 Velocity 0 Channel 4\n");
 
         *(tester.state.modeParameter) = constants::modeChoices::Scale;
-        *(tester.state.scaleParameter) = 0; // major
+        *(tester.state.scaleParameter) = constants::scaleChoices::Major;
         *(tester.state.keyParameter) = 1; // C
         // still holding C as lowest note
 

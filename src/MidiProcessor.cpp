@@ -401,7 +401,7 @@ double MidiProcessor::roundNextPpqPos(double scheduledPpqPos, double ppqPosPerSt
 }
 
 int MidiProcessor::findNotePosInKey(int note, int keyIndex) {
-    if (keyIndex == 0) return 0; // "pressed note"
+    if (keyIndex == constants::PRESSED_KEY) return 0;
     keyIndex--;
     int notePosInKey = note % 12 - keyIndex; // 60 is C, so note % 12 is note position relative to C
     if (notePosInKey < 0) notePosInKey += 12;
