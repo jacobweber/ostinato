@@ -59,6 +59,56 @@ void State::resetToDefaults() {
     }
 }
 
+void State::shiftStepsLeft() {
+    int numSteps = stepsParameter->getIndex() + 1;
+    StepState::Temp temp{};
+    stepState[0].toTemp(temp);
+    for (int _stepNum = 0; _stepNum < numSteps - 1; _stepNum++) {
+        stepState[static_cast<size_t>(_stepNum)]
+            = stepState[static_cast<size_t>(_stepNum + 1)];
+    }
+    stepState[static_cast<size_t>(numSteps) - 1] = temp;
+}
+
+void State::shiftStepsRight() {
+    int numSteps = stepsParameter->getIndex() + 1;
+    StepState::Temp temp{};
+    stepState[static_cast<size_t>(numSteps) - 1].toTemp(temp);
+    for (int _stepNum = numSteps - 1; _stepNum > 0; _stepNum--) {
+        stepState[static_cast<size_t>(_stepNum)]
+            = stepState[static_cast<size_t>(_stepNum - 1)];
+    }
+    stepState[0] = temp;
+}
+
+void State::shiftVoicesDown() {
+    int numSteps = stepsParameter->getIndex() + 1;
+    int numVoices = voicesParameter->getIndex() + 1;
+    for (int _stepNum = 0; _stepNum < numSteps; _stepNum++) {
+        auto voiceParams = stepState[static_cast<size_t>(_stepNum)].voiceParameters;
+        bool temp = voiceParams[0]->get();
+        for (int voiceNum = 0; voiceNum < numVoices - 1; voiceNum++) {
+            *(voiceParams[static_cast<size_t>(voiceNum)])
+                = voiceParams[static_cast<size_t>(voiceNum + 1)]->get();
+        }
+        *(voiceParams[static_cast<size_t>(numVoices) - 1]) = temp;
+    }
+}
+
+void State::shiftVoicesUp() {
+    int numSteps = stepsParameter->getIndex() + 1;
+    int numVoices = voicesParameter->getIndex() + 1;
+    for (int _stepNum = 0; _stepNum < numSteps; _stepNum++) {
+        auto voiceParams = stepState[static_cast<size_t>(_stepNum)].voiceParameters;
+        bool temp = voiceParams[static_cast<size_t>(numVoices) - 1]->get();
+        for (int voiceNum = numVoices - 1; voiceNum > 0; voiceNum--) {
+            *(voiceParams[static_cast<size_t>(voiceNum)])
+                = voiceParams[static_cast<size_t>(voiceNum - 1)]->get();
+        }
+        *(voiceParams[0]) = temp;
+    }
+}
+
 void State::saveToFile(juce::File file) {
     exportSettingsToXml()->writeTo(file, {});
 }

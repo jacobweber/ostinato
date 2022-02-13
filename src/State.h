@@ -13,6 +13,11 @@ public:
 
     void resetToDefaults();
 
+    void shiftStepsLeft();
+    void shiftStepsRight();
+    void shiftVoicesDown();
+    void shiftVoicesUp();
+
     void saveToFile(juce::File file);
 
     juce::String saveToString();

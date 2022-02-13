@@ -109,6 +109,7 @@ target_sources(Ostinato
         src/Recorder.cpp
         src/MidiProcessor.cpp
         src/State.cpp
+        src/StepState.cpp
         src/Stretcher.cpp
         src/Timecode.cpp)
 

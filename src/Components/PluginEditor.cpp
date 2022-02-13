@@ -42,6 +42,37 @@ bool PluginEditor::keyPressed(const juce::KeyPress &key) {
         state.recordedRest = true;
         return true;
     }
+    int keyCode = key.getKeyCode();
+    bool shift = key.getModifiers().isShiftDown();
+    if (shift) {
+        if (keyCode == juce::KeyPress::leftKey) {
+            state.shiftStepsLeft();
+            return true;
+        } else if (keyCode == juce::KeyPress::rightKey) {
+            state.shiftStepsRight();
+            return true;
+        } else if (keyCode == juce::KeyPress::downKey) {
+            state.shiftVoicesDown();
+            return true;
+        } else if (keyCode == juce::KeyPress::upKey) {
+            state.shiftVoicesUp();
+            return true;
+        }
+    } else {
+        if (keyCode == juce::KeyPress::leftKey) {
+            *(state.stepsParameter) = std::max(0, state.stepsParameter->getIndex() - 1);
+            return true;
+        } else if (keyCode == juce::KeyPress::rightKey) {
+            *(state.stepsParameter) = std::min(constants::MAX_STEPS - 1, state.stepsParameter->getIndex() + 1);
+            return true;
+        } else if (keyCode == juce::KeyPress::downKey) {
+            *(state.voicesParameter) = std::max(0, state.voicesParameter->getIndex() - 1);
+            return true;
+        } else if (keyCode == juce::KeyPress::upKey) {
+           *(state.voicesParameter) = std::min(constants::MAX_VOICES - 1, state.voicesParameter->getIndex() + 1);
+            return true;
+        }
+    }
     return false;
 }
 
