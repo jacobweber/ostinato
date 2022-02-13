@@ -34,14 +34,14 @@ namespace constants {
         Fifth
     };
     enum chordScaleChoices {
-        Major,
-        MinorNatural,
-        MinorHarmonic,
-        Locrian,
-        Dorian,
-        Phrygian,
-        Lydian,
-        Mixolydian
+        CSMajor,
+        CSMinorNatural,
+        CSMinorHarmonic,
+        CSLocrian,
+        CSDorian,
+        CSPhrygian,
+        CSLydian,
+        CSMixolydian
     };
     enum voicingChoices {
         Triad,
