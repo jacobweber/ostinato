@@ -1,3 +1,10 @@
+### 0.0.12
+
+* Add mode menu and key/scale/voicing submenus.
+* Add mono mode.
+* Add scale mode, starting at specified key.
+* Add chord mode.
+
 ### 0.0.11
 
 * Add settings menu with options for matching pressed keys to voices.
