@@ -41,6 +41,7 @@ public:
 public:
     std::function<void()> onUpdateSteps = [] {};
     std::function<void()> onUpdateVoices = [] {};
+    std::function<void()> onUpdateMode = [] {};
     std::function<void()> onClickRecord = [] {};
     std::function<void()> onClickRandom = [] {};
 

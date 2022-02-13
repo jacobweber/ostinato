@@ -33,6 +33,8 @@ public:
 
     void refreshVoices();
 
+    void refreshActiveVoices();
+
     int getVoiceForPoint(int x, int y);
 
     void hoverVoice(int voiceNum, bool over);

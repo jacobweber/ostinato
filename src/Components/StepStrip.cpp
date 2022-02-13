@@ -163,6 +163,7 @@ void StepStrip::refreshActiveLight() {
 
 void StepStrip::refresh() {
     refreshVoices();
+    refreshActiveVoices();
 }
 
 void StepStrip::refreshVoices() {
@@ -173,6 +174,7 @@ void StepStrip::refreshVoices() {
             voices.push_back(std::make_unique<juce::TextButton>());
             voices[i]->setClickingTogglesState(true);
             voices[i]->setInterceptsMouseClicks(false, false);
+            voices[i]->onStateChange = [this] { refreshActiveVoices(); };
             addAndMakeVisible(*voices[i]);
             voicesAttachments.push_back(std::make_unique<ButtonAttachment>(
                     state.parameters,
@@ -187,6 +189,24 @@ void StepStrip::refreshVoices() {
             voices.pop_back();
         }
         resized();
+    }
+}
+
+void StepStrip::refreshActiveVoices() {
+    float inactiveAlpha = state.modeParameter->getIndex() == constants::modeChoices::Mono ? .5 : 1;
+    auto voiceParameters = state.stepState[static_cast<size_t>(stepNum)].voiceParameters;
+    int numActive = 0;
+    for (size_t i = 0; i < voices.size(); i++) {
+        if (voiceParameters[i]->get()) {
+            if (numActive == 0) {
+                voices[i]->setAlpha(1);
+            } else {
+                voices[i]->setAlpha(inactiveAlpha);
+            }
+            numActive++;
+        } else {
+            voices[i]->setAlpha(1);
+        }
     }
 }
 

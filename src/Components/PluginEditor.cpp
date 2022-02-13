@@ -13,6 +13,9 @@ PluginEditor::PluginEditor(PluginProcessor &p, State &s)
         refreshSize();
         stepStrips.refresh();
     };
+    header.onUpdateMode = [this] {
+        stepStrips.refresh();
+    };
     header.onClickRecord = [this] {
         stepStrips.refresh();
     };

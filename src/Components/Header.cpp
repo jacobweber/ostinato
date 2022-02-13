@@ -95,6 +95,7 @@ Header::Header(State &s, PluginProcessor &p) : state(s), pluginProcessor(p) {
         refreshMessage();
         repaint();
         resized();
+        onUpdateMode();
     };
 
     addChildComponent(scaleLabel);
