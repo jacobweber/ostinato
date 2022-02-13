@@ -93,52 +93,52 @@ Header::Header(State &s, PluginProcessor &p) : state(s), pluginProcessor(p) {
             // TODO: disable stretch params
         }
         refreshMessage();
-        refreshEnabled();
         repaint();
+        resized();
     };
 
-    addAndMakeVisible(scaleLabel);
+    addChildComponent(scaleLabel);
     scaleLabel.setFont(textFont);
     scaleLabel.attachToComponent(&scaleMenu, false);
     int scaleIndex = 1;
     for (const juce::String &value: state.scaleParameter->getAllValueStrings()) {
         scaleMenu.addItem(value, scaleIndex++);
     }
-    addAndMakeVisible(scaleMenu);
+    addChildComponent(scaleMenu);
     scaleAttachment = std::make_unique<ComboBoxAttachment>(state.parameters, "scale", scaleMenu);
     scaleMenu.onChange = [this] {
         // shouldn't do this in UI
         updateNumVoicesForScale();
     };
 
-    addAndMakeVisible(chordScaleLabel);
+    addChildComponent(chordScaleLabel);
     chordScaleLabel.setFont(textFont);
     chordScaleLabel.attachToComponent(&chordScaleMenu, false);
     int chordScaleIndex = 1;
     for (const juce::String &value: state.chordScaleParameter->getAllValueStrings()) {
         chordScaleMenu.addItem(value, chordScaleIndex++);
     }
-    addAndMakeVisible(chordScaleMenu);
+    addChildComponent(chordScaleMenu);
     chordScaleAttachment = std::make_unique<ComboBoxAttachment>(state.parameters, "chordScale", chordScaleMenu);
 
-    addAndMakeVisible(chordVoicingLabel);
+    addChildComponent(chordVoicingLabel);
     chordVoicingLabel.setFont(textFont);
     chordVoicingLabel.attachToComponent(&chordVoicingMenu, false);
     int chordVoicingIndex = 1;
     for (const juce::String &value: state.chordVoicingParameter->getAllValueStrings()) {
         chordVoicingMenu.addItem(value, chordVoicingIndex++);
     }
-    addAndMakeVisible(chordVoicingMenu);
+    addChildComponent(chordVoicingMenu);
     chordVoicingAttachment = std::make_unique<ComboBoxAttachment>(state.parameters, "chordVoicing", chordVoicingMenu);
 
-    addAndMakeVisible(keyLabel);
+    addChildComponent(keyLabel);
     keyLabel.setFont(textFont);
     keyLabel.attachToComponent(&keyMenu, false);
     int keyIndex = 1;
     for (const juce::String &value: state.keyParameter->getAllValueStrings()) {
         keyMenu.addItem(value, keyIndex++);
     }
-    addAndMakeVisible(keyMenu);
+    addChildComponent(keyMenu);
     keyAttachment = std::make_unique<ComboBoxAttachment>(state.parameters, "key", keyMenu);
 
     juce::Image gear = FontAwesome::getInstance()->getIcon(true,
@@ -222,20 +222,16 @@ void Header::refreshMessage() {
 
 void Header::refreshEnabled() {
     const bool notRecording = !state.recordButton;
-    const int mode = state.modeParameter->getIndex();
-    const bool hasScale = mode == constants::modeChoices::Scale;
-    const bool hasChord = mode == constants::modeChoices::Chord;
-    const bool hasKey = mode == constants::modeChoices::Scale || mode == constants::modeChoices::Chord;
     fileButton.setEnabled(notRecording);
     stepsMenu.setEnabled(notRecording);
     voicesMenu.setEnabled(notRecording);
     rateMenu.setEnabled(notRecording);
     rateTypeMenu.setEnabled(notRecording);
     modeMenu.setEnabled(notRecording);
-    scaleMenu.setEnabled(notRecording && hasScale);
-    chordScaleMenu.setEnabled(notRecording && hasChord);
-    chordVoicingMenu.setEnabled(notRecording && hasChord);
-    keyMenu.setEnabled(notRecording && hasKey);
+    scaleMenu.setEnabled(notRecording);
+    chordScaleMenu.setEnabled(notRecording);
+    chordVoicingMenu.setEnabled(notRecording);
+    keyMenu.setEnabled(notRecording);
     settingsButton.setEnabled(notRecording);
     // TODO: disable stretch if mode is Chord/Scale?
     randomButton.setEnabled(notRecording);
@@ -251,10 +247,14 @@ void Header::paint(juce::Graphics &g) {
 }
 
 void Header::resized() {
+    DBG("Header::resized");
     auto area = getLocalBounds();
     messageLabel.setBounds(area.removeFromBottom(25).withTrimmedRight(4).withTrimmedLeft(4).withTrimmedBottom(4));
 
-    juce::FlexItem::Margin margin{0.0, 5.0, 0.0, 0.0};
+    const juce::FlexItem::Margin margin{0.0, 5.0, 0.0, 0.0};
+    const int mode = state.modeParameter->getIndex();
+    const bool scaleMode = mode == constants::modeChoices::Scale;
+    const bool chordMode = mode == constants::modeChoices::Chord;
 
     auto toolbar2Rect = area.removeFromBottom(48).reduced(8);
     juce::FlexBox toolbar2;
@@ -262,14 +262,30 @@ void Header::resized() {
     toolbar2.alignItems = juce::FlexBox::AlignItems::center;
     toolbar2.items.add(juce::FlexItem(modeMenu).withAlignSelf(juce::FlexItem::AlignSelf::autoAlign).withHeight(
             MENU_HEIGHT).withWidth(90.0).withMargin(margin));
-    toolbar2.items.add(juce::FlexItem(scaleMenu).withAlignSelf(juce::FlexItem::AlignSelf::autoAlign).withHeight(
-            MENU_HEIGHT).withWidth(130.0).withMargin(margin));
-    toolbar2.items.add(juce::FlexItem(chordScaleMenu).withAlignSelf(juce::FlexItem::AlignSelf::autoAlign).withHeight(
-            MENU_HEIGHT).withWidth(130.0).withMargin(margin));
-    toolbar2.items.add(juce::FlexItem(chordVoicingMenu).withAlignSelf(juce::FlexItem::AlignSelf::autoAlign).withHeight(
-            MENU_HEIGHT).withWidth(130.0).withMargin(margin));
-    toolbar2.items.add(juce::FlexItem(keyMenu).withAlignSelf(juce::FlexItem::AlignSelf::autoAlign).withHeight(
-            MENU_HEIGHT).withWidth(130.0).withMargin(margin));
+    scaleLabel.setVisible(scaleMode);
+    scaleMenu.setVisible(scaleMode);
+    if (scaleMode) {
+        toolbar2.items.add(juce::FlexItem(scaleMenu).withAlignSelf(juce::FlexItem::AlignSelf::autoAlign).withHeight(
+                MENU_HEIGHT).withWidth(130.0).withMargin(margin));
+    }
+    chordScaleLabel.setVisible(chordMode);
+    chordScaleMenu.setVisible(chordMode);
+    if (chordMode) {
+        toolbar2.items.add(juce::FlexItem(chordScaleMenu).withAlignSelf(juce::FlexItem::AlignSelf::autoAlign).withHeight(
+                MENU_HEIGHT).withWidth(130.0).withMargin(margin));
+    }
+    keyLabel.setVisible(scaleMode || chordMode);
+    keyMenu.setVisible(scaleMode || chordMode);
+    if (scaleMode || chordMode) {
+        toolbar2.items.add(juce::FlexItem(keyMenu).withAlignSelf(juce::FlexItem::AlignSelf::autoAlign).withHeight(
+                MENU_HEIGHT).withWidth(130.0).withMargin(margin));
+    }
+    chordVoicingLabel.setVisible(chordMode);
+    chordVoicingMenu.setVisible(chordMode);
+    if (chordMode) {
+        toolbar2.items.add(juce::FlexItem(chordVoicingMenu).withAlignSelf(juce::FlexItem::AlignSelf::autoAlign).withHeight(
+                MENU_HEIGHT).withWidth(130.0).withMargin(margin));
+    }
     toolbar2.performLayout(toolbar2Rect);
 
     auto toolbarRect = area.removeFromBottom(48).reduced(8);
