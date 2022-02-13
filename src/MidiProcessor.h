@@ -46,7 +46,7 @@ private:
     /**
      * @param scale scales param (all scales must have 7 notes)
      * @param notePosInKey position of note relative to key root (0-11)
-     * @return scale degree closest to note, rounding down (0-7)
+     * @return scale degree closest to note, rounding up (0-7)
      */
     static int findClosestScaleDegree(const std::vector<int> &scale, int notePosInKey);
 
