@@ -21,7 +21,7 @@ set(CMAKE_OSX_ARCHITECTURES "x86_64" CACHE STRING "")
 # `project()` command. `project()` sets up some helpful variables that describe source/binary
 # directories, and the current project version. This is a standard CMake command.
 
-project(OSTINATO VERSION 0.0.12)
+project(OSTINATO VERSION 0.0.13)
 
 # If you've installed JUCE somehow (via a package manager, or directly using the CMake install
 # target), you'll need to tell this project that it depends on the installed copy of JUCE. If you've

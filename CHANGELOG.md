@@ -1,3 +1,8 @@
+### 0.0.13 (unreleased)
+
+* Add keyboard controls to add/remove voices and steps.
+* Add keyboard controls to shift left/right voices and steps.
+
 ### 0.0.12
 
 * Add mode menu and key/scale/voicing submenus.
