@@ -107,6 +107,8 @@ juce::AudioProcessorValueTreeState::ParameterLayout ParametersFactory::create() 
     voiceMatchingChoices.add("Stretch/shrink voice and step pattern");
     layout.add(std::make_unique<juce::AudioParameterChoice>("voiceMatching", "Voice Matching", voiceMatchingChoices, 0));
 
+    layout.add(std::make_unique<juce::AudioParameterBool>("autoPlay", "Auto Play", false));
+
     for (int i = 0; i < constants::MAX_STEPS; i++) {
         for (int j = 0; j < constants::MAX_VOICES; j++)
             layout.add(

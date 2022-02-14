@@ -192,6 +192,9 @@ void Header::showSettingsMenu() {
     }
 
     menu.addSeparator();
+    menu.addItem(index++, "Auto-play chords/scales", true, state.autoPlayParameter->get());
+
+    menu.addSeparator();
     menu.addItem(index++, juce::CharPointer_UTF8("Help\u2026"));
 
     menu.showMenuAsync(juce::PopupMenu::Options{}.withTargetComponent(settingsButton),
@@ -213,6 +216,12 @@ void Header::settingsMenuItemChosenCallback(int result, Header* component) {
     }
 
     if (result == lastValue + 1) {
+        component->state.autoPlayParameter->beginChangeGesture();
+        *(component->state.autoPlayParameter) = !(component->state.autoPlayParameter->get());
+        component->state.autoPlayParameter->endChangeGesture();
+    }
+
+    if (result == lastValue + 2) {
         component->onClickHelp();
     }
 }
