@@ -17,6 +17,8 @@ public:
 
     ~PluginEditor() override;
 
+    void showHelp();
+
     bool keyPressed(const juce::KeyPress &key) override;
 
     bool keyPressed(const juce::KeyPress &key, juce::Component *originatingComponent) override;

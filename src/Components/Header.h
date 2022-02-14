@@ -44,6 +44,7 @@ public:
     std::function<void()> onUpdateMode = [] {};
     std::function<void()> onClickRecord = [] {};
     std::function<void()> onClickRandom = [] {};
+    std::function<void()> onClickHelp = [] {};
 
 private:
     State &state;

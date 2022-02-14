@@ -191,6 +191,9 @@ void Header::showSettingsMenu() {
         menu.addItem(index++, value, true, value == current);
     }
 
+    menu.addSeparator();
+    menu.addItem(index++, juce::CharPointer_UTF8("Help\u2026"));
+
     menu.showMenuAsync(juce::PopupMenu::Options{}.withTargetComponent(settingsButton),
         juce::ModalCallbackFunction::forComponent(settingsMenuItemChosenCallback, this));
 }
@@ -207,6 +210,10 @@ void Header::settingsMenuItemChosenCallback(int result, Header* component) {
         *(component->state.voiceMatchingParameter) = result - firstValue;
         component->state.voiceMatchingParameter->endChangeGesture();
         return;
+    }
+
+    if (result == lastValue + 1) {
+        component->onClickHelp();
     }
 }
 

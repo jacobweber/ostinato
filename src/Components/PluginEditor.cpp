@@ -22,6 +22,9 @@ PluginEditor::PluginEditor(PluginProcessor &_processor, State &_state)
     header.onClickRandom = [this] {
         state.randomizeParams(false, false, false);
     };
+    header.onClickHelp = [this] {
+        showHelp();
+    };
     addAndMakeVisible(header);
     addAndMakeVisible(stepStrips);
 
@@ -35,6 +38,17 @@ PluginEditor::PluginEditor(PluginProcessor &_processor, State &_state)
 PluginEditor::~PluginEditor() {
     removeKeyListener(this);
     setLookAndFeel(nullptr);
+}
+
+void PluginEditor::showHelp() {
+    juce::AlertWindow::showMessageBoxAsync(juce::MessageBoxIconType::InfoIcon,
+        "Ostinato Help",
+        "Keyboard shortcuts:\n\n"
+        "left/right arrows: remove/add steps\n"
+        "down/up arrows: remove/add voices\n"
+        "shift + left/right arrows: shift steps left/right\n"
+        "shift + down/up arrows: shift voices down/up\n",
+        "OK", this);
 }
 
 bool PluginEditor::keyPressed(const juce::KeyPress &key) {
