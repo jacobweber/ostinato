@@ -52,11 +52,16 @@ void PluginEditor::showHelp() {
 }
 
 bool PluginEditor::keyPressed(const juce::KeyPress &key) {
-    if (state.recordButton && key.isKeyCode(juce::KeyPress::spaceKey)) {
+    int keyCode = key.getKeyCode();
+    if (state.recordButton && keyCode == juce::KeyPress::spaceKey) {
         state.recordedRest = true;
         return true;
     }
-    int keyCode = key.getKeyCode();
+    if (keyCode == juce::KeyPress::escapeKey) {
+        grabKeyboardFocus();
+        return true;
+    }
+
     bool shift = key.getModifiers().isShiftDown();
     if (shift) {
         if (keyCode == juce::KeyPress::leftKey) {
