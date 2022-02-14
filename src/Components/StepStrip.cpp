@@ -219,5 +219,7 @@ int StepStrip::getVoiceForPoint(int x, int y) {
 }
 
 void StepStrip::hoverVoice(int voiceNum, bool over) {
-    voices[static_cast<size_t>(voiceNum)]->setState(over ? juce::Button::buttonOver : juce::Button::buttonNormal);
+    if (voices.size() > static_cast<size_t>(voiceNum)) {
+        voices[static_cast<size_t>(voiceNum)]->setState(over ? juce::Button::buttonOver : juce::Button::buttonNormal);
+    }
 }

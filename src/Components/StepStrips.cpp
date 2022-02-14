@@ -29,13 +29,17 @@ void StepStrips::mouseMove(const juce::MouseEvent& event) {
     int prevMouseVoice = curMouseVoice;
     findMouseStepVoice(event);
     if (curMouseStep != prevMouseStep || curMouseVoice != prevMouseVoice) {
-        if (prevMouseStep != -1) strips[static_cast<size_t>(prevMouseStep)]->hoverVoice(prevMouseVoice, false);
+        if (prevMouseStep != -1 && strips.size() > static_cast<size_t>(prevMouseStep)) {
+            strips[static_cast<size_t>(prevMouseStep)]->hoverVoice(prevMouseVoice, false);
+        }
         if (curMouseStep != -1) strips[static_cast<size_t>(curMouseStep)]->hoverVoice(curMouseVoice, true);
     }
 }
 
 void StepStrips::mouseExit(const juce::MouseEvent&) {
-    if (curMouseStep != -1) strips[static_cast<size_t>(curMouseStep)]->hoverVoice(curMouseVoice, false);
+    if (curMouseStep != -1 && strips.size() > static_cast<size_t>(curMouseStep)) {
+        strips[static_cast<size_t>(curMouseStep)]->hoverVoice(curMouseVoice, false);
+    }
 }
 
 void StepStrips::mouseDrag(const juce::MouseEvent& event) {
@@ -45,7 +49,9 @@ void StepStrips::mouseDrag(const juce::MouseEvent& event) {
     int prevMouseVoice = curMouseVoice;
     findMouseStepVoice(event);
     if (curMouseStep != prevMouseStep || curMouseVoice != prevMouseVoice) {
-        if (prevMouseStep != -1) strips[static_cast<size_t>(prevMouseStep)]->hoverVoice(prevMouseVoice, false);
+        if (prevMouseStep != -1 && strips.size() > static_cast<size_t>(prevMouseStep)) {
+            strips[static_cast<size_t>(prevMouseStep)]->hoverVoice(prevMouseVoice, false);
+        }
         if (curMouseStep != -1) {
             *(state.stepState[static_cast<size_t>(curMouseStep)].voiceParameters[static_cast<size_t>(curMouseVoice)]) = clickTurnedVoiceOn;
             strips[static_cast<size_t>(curMouseStep)]->hoverVoice(curMouseVoice, true);
