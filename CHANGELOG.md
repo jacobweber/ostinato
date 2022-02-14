@@ -1,4 +1,4 @@
-### 0.0.13 (unreleased)
+### 0.0.13
 
 * Add keyboard controls to add/remove voices and steps.
 * Add keyboard controls to shift left/right voices and steps.
