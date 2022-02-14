@@ -11,7 +11,7 @@
 
 class StepStrips : public juce::Component {
 public:
-    explicit StepStrips(State &s);
+    explicit StepStrips(State &_state);
 
     void mouseDown(const juce::MouseEvent& event) override;
 

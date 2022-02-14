@@ -8,7 +8,7 @@
 #include "../State.h"
 #include "../Constants.h"
 
-StepStrips::StepStrips(State &s) : state(s) {
+StepStrips::StepStrips(State &_state) : state(_state) {
     refresh();
 }
 

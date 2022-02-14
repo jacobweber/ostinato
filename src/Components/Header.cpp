@@ -1,7 +1,7 @@
 #include "Header.h"
 #include "FontAwesome.h"
 
-Header::Header(State &s, PluginProcessor &p) : state(s), pluginProcessor(p) {
+Header::Header(State &_state, PluginProcessor &_processor) : state(_state), pluginProcessor(_processor) {
     juce::Image floppyDisk = FontAwesome::getInstance()->getIcon(true,
                                                            juce::String::fromUTF8(
                                                                    reinterpret_cast<const char *>(u8"\uf0c7")),

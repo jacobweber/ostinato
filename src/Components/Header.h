@@ -18,7 +18,7 @@ public:
     typedef juce::AudioProcessorValueTreeState::ComboBoxAttachment ComboBoxAttachment;
     typedef juce::AudioProcessorValueTreeState::ButtonAttachment ButtonAttachment;
 
-    Header(State &s, PluginProcessor &p);
+    Header(State &_state, PluginProcessor &_processor);
 
     void showSettingsMenu();
 

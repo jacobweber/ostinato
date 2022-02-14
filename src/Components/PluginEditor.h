@@ -13,7 +13,7 @@
 
 class PluginEditor : public juce::AudioProcessorEditor, private juce::Timer, private juce::KeyListener {
 public:
-    PluginEditor(PluginProcessor &, State &);
+    PluginEditor(PluginProcessor &_processor, State &_state);
 
     ~PluginEditor() override;
 

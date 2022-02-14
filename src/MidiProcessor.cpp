@@ -1,7 +1,7 @@
 #include "MidiProcessor.h"
 #include "Constants.h"
 
-MidiProcessor::MidiProcessor(State &s) : state(s) {
+MidiProcessor::MidiProcessor(State &_state) : state(_state) {
 }
 
 void MidiProcessor::prepareToPlay(double _sampleRate, int _maximumExpectedSamplesPerBlock) {

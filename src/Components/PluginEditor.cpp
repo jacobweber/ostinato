@@ -1,7 +1,7 @@
 #include "PluginEditor.h"
 
-PluginEditor::PluginEditor(PluginProcessor &p, State &s)
-        : AudioProcessorEditor(&p), state(s), pluginProcessor(p) {
+PluginEditor::PluginEditor(PluginProcessor &_processor, State &_state)
+        : AudioProcessorEditor(&_processor), state(_state), pluginProcessor(_processor) {
 
     setLookAndFeel(&lookAndFeel);
 
