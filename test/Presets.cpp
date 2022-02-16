@@ -11,7 +11,6 @@ TEST_CASE("Presets") {
         *(tester.state.rateParameter) = 3; // eighths
         *(tester.state.rateTypeParameter) = 1; // triplet
         *(tester.state.voiceMatchingParameter) = constants::voiceMatchingChoices::StretchVoiceStepsPattern;
-        *(tester.state.autoPlayParameter) = false;
         juce::String grid = "--*--\n"
                             "-*-*-\n"
                             "*---*\n";
@@ -25,7 +24,7 @@ TEST_CASE("Presets") {
         juce::String result = tester.state.saveToString();
 
         juce::String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n\n"
-            "<ostinato steps=\"5\" voices=\"3\" rate=\"Eighth\" rateType=\"Triplet\" mode=\"Poly\" scale=\"Major\" chordScale=\"Major\" chordVoicing=\"Triad\" key=\"Pressed Key\" voiceMatching=\"Stretch/shrink voice and step pattern\" autoPlay=\"false\">\n"
+            "<ostinato steps=\"5\" voices=\"3\" rate=\"Eighth\" rateType=\"Triplet\" mode=\"Poly\" scale=\"Major\" chordScale=\"Major\" chordVoicing=\"Triad\" key=\"Pressed Key\" voiceMatching=\"Stretch/shrink voice and step pattern\">\n"
             "  <step voices=\"100\" octave=\"-1\" length=\"0.5\" tie=\"false\" vol=\"0.5\" power=\"true\"/>\n"
             "  <step voices=\"010\" octave=\"0\" length=\"0.75\" tie=\"false\" vol=\"0.5\" power=\"true\"/>\n"
             "  <step voices=\"001\" octave=\"0\" length=\"0.5\" tie=\"true\" vol=\"0.5\" power=\"true\"/>\n"
@@ -37,7 +36,7 @@ TEST_CASE("Presets") {
 
     SECTION("load from string") {
         juce::String input = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n\n"
-            "<ostinato steps=\"5\" voices=\"3\" rate=\"Eighth\" rateType=\"Triplet\" notes=\"Poly\" scale=\"Major\" chordScale=\"Major\" chordVoicing=\"Triad\" key=\"Pressed Key\" voiceMatching=\"Stretch/shrink voice and step pattern\" autoPlay=\"false\">\n"
+            "<ostinato steps=\"5\" voices=\"3\" rate=\"Eighth\" rateType=\"Triplet\" notes=\"Poly\" scale=\"Major\" chordScale=\"Major\" chordVoicing=\"Triad\" key=\"Pressed Key\" voiceMatching=\"Stretch/shrink voice and step pattern\">\n"
             "  <step voices=\"100\" octave=\"-1\" length=\"0.5\" tie=\"false\" vol=\"0.5\" power=\"true\"/>\n"
             "  <step voices=\"010\" octave=\"0\" length=\"0.75\" tie=\"false\" vol=\"0.5\" power=\"true\"/>\n"
             "  <step voices=\"001\" octave=\"0\" length=\"0.5\" tie=\"true\" vol=\"0.5\" power=\"true\"/>\n"

@@ -17,7 +17,6 @@ State::State(juce::AudioProcessorValueTreeState &p) : parameters(p) {
     chordVoicingParameter = dynamic_cast<juce::AudioParameterChoice *> (parameters.getParameter("chordVoicing"));
     keyParameter = dynamic_cast<juce::AudioParameterChoice *> (parameters.getParameter("key"));
     voiceMatchingParameter = dynamic_cast<juce::AudioParameterChoice *> (parameters.getParameter("voiceMatching"));
-    autoPlayParameter = dynamic_cast<juce::AudioParameterBool *> (parameters.getParameter("autoPlay"));
     for (size_t i = 0; i < static_cast<size_t>(constants::MAX_STEPS); i++) {
         for (size_t j = 0; j < static_cast<size_t>(constants::MAX_VOICES); j++) {
             juce::AudioParameterBool *voiceParameter = dynamic_cast<juce::AudioParameterBool *> (parameters.getParameter(
@@ -48,7 +47,6 @@ void State::resetToDefaults() {
     *(chordVoicingParameter) = 0; // index
     *(keyParameter) = 0; // index
     *(voiceMatchingParameter) = constants::voiceMatchingChoices::StartFromBottom; // index
-    *(autoPlayParameter) = false;
     for (size_t i = 0; i < static_cast<size_t>(constants::MAX_STEPS); i++) {
         for (size_t j = 0; j < static_cast<size_t>(constants::MAX_VOICES); j++) {
             *(stepState[i].voiceParameters[j]) = i == j && j < 4;
@@ -211,7 +209,6 @@ std::unique_ptr<juce::XmlElement> State::exportSettingsToXml() {
     xml.setAttribute("chordVoicing", chordVoicingParameter->getCurrentValueAsText());
     xml.setAttribute("key", keyParameter->getCurrentValueAsText());
     xml.setAttribute("voiceMatching", voiceMatchingParameter->getCurrentValueAsText());
-    xml.setAttribute("autoPlay", autoPlayParameter->get() ? "true" : "false");
     for (size_t i = 0; i < static_cast<size_t>(numSteps); i++) {
         juce::XmlElement* step = new juce::XmlElement("step");
         juce::String voices = "";
@@ -248,7 +245,6 @@ void State::importSettingsFromXml(juce::XmlDocument xmlDoc) {
     *(chordVoicingParameter) = std::max(0, chordVoicingParameter->getAllValueStrings().indexOf(xml->getStringAttribute("chordVoicing")));
     *(keyParameter) = std::max(0, keyParameter->getAllValueStrings().indexOf(xml->getStringAttribute("key")));
     *(voiceMatchingParameter) = std::max(0, voiceMatchingParameter->getAllValueStrings().indexOf(xml->getStringAttribute("voiceMatching")));
-    *(autoPlayParameter) = xml->getBoolAttribute("autoPlay", false);
     size_t _stepNum = 0;
     for (auto* step : xml->getChildIterator()) {
         if (!step->hasTagName("step")) continue;
