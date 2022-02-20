@@ -37,25 +37,73 @@ State::State(juce::AudioProcessorValueTreeState &p) : parameters(p) {
 }
 
 void State::resetToDefaults() {
+    stepsParameter->beginChangeGesture();
     *(stepsParameter) = 3; // index
+    stepsParameter->endChangeGesture();
+
+    voicesParameter->beginChangeGesture();
     *(voicesParameter) = 3; // index
+    voicesParameter->endChangeGesture();
+
+    rateParameter->beginChangeGesture();
     *(rateParameter) = 3; // index
+    rateParameter->endChangeGesture();
+
+    rateTypeParameter->beginChangeGesture();
     *(rateTypeParameter) = 0; // index
+    rateTypeParameter->endChangeGesture();
+
+    modeParameter->beginChangeGesture();
     *(modeParameter) = constants::modeChoices::Poly; // index
+    modeParameter->endChangeGesture();
+
+    scaleParameter->beginChangeGesture();
     *(scaleParameter) = 0; // index
+    scaleParameter->endChangeGesture();
+
+    chordScaleParameter->beginChangeGesture();
     *(chordScaleParameter) = 0; // index
+    chordScaleParameter->endChangeGesture();
+
+    chordVoicingParameter->beginChangeGesture();
     *(chordVoicingParameter) = 0; // index
+    chordVoicingParameter->endChangeGesture();
+
+    keyParameter->beginChangeGesture();
     *(keyParameter) = 0; // index
+    keyParameter->endChangeGesture();
+
+    voiceMatchingParameter->beginChangeGesture();
     *(voiceMatchingParameter) = constants::voiceMatchingChoices::StartFromBottom; // index
+    voiceMatchingParameter->endChangeGesture();
+
     for (size_t i = 0; i < static_cast<size_t>(constants::MAX_STEPS); i++) {
         for (size_t j = 0; j < static_cast<size_t>(constants::MAX_VOICES); j++) {
-            *(stepState[i].voiceParameters[j]) = i == j && j < 4;
+            auto param = stepState[i].voiceParameters[j];
+            param->beginChangeGesture();
+            *param = i == j && j < 4;
+            param->endChangeGesture();
         }
+
+        stepState[i].octaveParameter->beginChangeGesture();
         *(stepState[i].octaveParameter) = constants::MAX_OCTAVES; // index; 0
+        stepState[i].octaveParameter->endChangeGesture();
+
+        stepState[i].lengthParameter->beginChangeGesture();
         *(stepState[i].lengthParameter) = .5;
+        stepState[i].lengthParameter->endChangeGesture();
+
+        stepState[i].tieParameter->beginChangeGesture();
         *(stepState[i].tieParameter) = false;
+        stepState[i].tieParameter->endChangeGesture();
+
+        stepState[i].volParameter->beginChangeGesture();
         *(stepState[i].volParameter) = .5;
+        stepState[i].volParameter->endChangeGesture();
+
+        stepState[i].powerParameter->beginChangeGesture();
         *(stepState[i].powerParameter) = true;
+        stepState[i].powerParameter->endChangeGesture();
     }
 }
 
@@ -88,10 +136,16 @@ void State::shiftVoicesDown() {
         auto voiceParams = stepState[static_cast<size_t>(stepNum)].voiceParameters;
         bool temp = voiceParams[0]->get();
         for (int voiceNum = 0; voiceNum < numVoices - 1; voiceNum++) {
-            *(voiceParams[static_cast<size_t>(voiceNum)])
-                = voiceParams[static_cast<size_t>(voiceNum + 1)]->get();
+            auto param = voiceParams[static_cast<size_t>(voiceNum)];
+            param->beginChangeGesture();
+            *param = voiceParams[static_cast<size_t>(voiceNum + 1)]->get();
+            param->endChangeGesture();
         }
-        *(voiceParams[static_cast<size_t>(numVoices) - 1]) = temp;
+
+        auto param = voiceParams[static_cast<size_t>(numVoices) - 1];
+        param->beginChangeGesture();
+        *param = temp;
+        param->endChangeGesture();
     }
 }
 
@@ -102,10 +156,15 @@ void State::shiftVoicesUp() {
         auto voiceParams = stepState[static_cast<size_t>(stepNum)].voiceParameters;
         bool temp = voiceParams[static_cast<size_t>(numVoices) - 1]->get();
         for (int voiceNum = numVoices - 1; voiceNum > 0; voiceNum--) {
-            *(voiceParams[static_cast<size_t>(voiceNum)])
-                = voiceParams[static_cast<size_t>(voiceNum - 1)]->get();
+            auto param = voiceParams[static_cast<size_t>(voiceNum)];
+            param->beginChangeGesture();
+            *param = voiceParams[static_cast<size_t>(voiceNum - 1)]->get();
+            param->endChangeGesture();
         }
+
+        voiceParams[0]->beginChangeGesture();
         *(voiceParams[0]) = temp;
+        voiceParams[0]->endChangeGesture();
     }
 }
 
@@ -156,8 +215,14 @@ void State::randomizeParams(bool stepsAndVoices, bool rate, bool scale) {
         std::uniform_int_distribution<int> randNumVoices(1, constants::MAX_VOICES);
         numSteps = randNumSteps(mt);
         numVoices = randNumVoices(mt);
+
+        stepsParameter->beginChangeGesture();
         *(stepsParameter) = numSteps - 1; // index
+        stepsParameter->endChangeGesture();
+
+        voicesParameter->beginChangeGesture();
         *(voicesParameter) = numVoices - 1; // index
+        voicesParameter->endChangeGesture();
     } else {
         numSteps = stepsParameter->getIndex() + 1;
         numVoices = voicesParameter->getIndex() + 1;
@@ -166,32 +231,64 @@ void State::randomizeParams(bool stepsAndVoices, bool rate, bool scale) {
     if (rate) {
         std::uniform_int_distribution<int> randRate(0, rateParameter->getAllValueStrings().size() - 1);
         std::uniform_int_distribution<int> randRateType(0, rateTypeParameter->getAllValueStrings().size() - 1);
+
+        rateParameter->beginChangeGesture();
         *(rateParameter) = randRate(mt); // index
+        rateParameter->endChangeGesture();
+
+        rateTypeParameter->beginChangeGesture();
         *(rateTypeParameter) = randRateType(mt); // index
+        rateTypeParameter->endChangeGesture();
     }
 
     std::uniform_int_distribution<int> randMainVoice(0, numVoices - 1);
 
     if (scale) {
         std::uniform_int_distribution<int> randScale(0, scaleParameter->getAllValueStrings().size() - 1);
+        scaleParameter->beginChangeGesture();
         *(scaleParameter) = randScale(mt); // index
+        scaleParameter->endChangeGesture();
+
         std::uniform_int_distribution<int> randChordScale(0, chordScaleParameter->getAllValueStrings().size() - 1);
+        chordScaleParameter->beginChangeGesture();
         *(chordScaleParameter) = randChordScale(mt); // index
+        chordScaleParameter->endChangeGesture();
+
         std::uniform_int_distribution<int> randChordVoicing(0, chordVoicingParameter->getAllValueStrings().size() - 1);
+        chordVoicingParameter->beginChangeGesture();
         *(chordVoicingParameter) = randChordVoicing(mt); // index
+        chordVoicingParameter->endChangeGesture();
     }
 
     for (size_t i = 0; i < static_cast<size_t>(numSteps); i++) {
         int mainVoice = randMainVoice(mt);
         for (size_t j = 0; j < static_cast<size_t>(numVoices); j++) {
             bool enabled = j == static_cast<size_t>(mainVoice) || randVoiceEnabled(mt) == 0;
-            *(stepState[i].voiceParameters[j]) = enabled;
+            auto param = stepState[i].voiceParameters[j];
+            param->beginChangeGesture();
+            *param = enabled;
+            param->endChangeGesture();
         }
+
+        stepState[i].octaveParameter->beginChangeGesture();
         *(stepState[i].octaveParameter) = randOctave(mt); // index
+        stepState[i].octaveParameter->endChangeGesture();
+
+        stepState[i].lengthParameter->beginChangeGesture();
         *(stepState[i].lengthParameter) = randLength(mt);
+        stepState[i].lengthParameter->endChangeGesture();
+
+        stepState[i].tieParameter->beginChangeGesture();
         *(stepState[i].tieParameter) = randTie(mt) == 0;
+        stepState[i].tieParameter->endChangeGesture();
+
+        stepState[i].volParameter->beginChangeGesture();
         *(stepState[i].volParameter) = randVolume(mt);
+        stepState[i].volParameter->endChangeGesture();
+
+        stepState[i].powerParameter->beginChangeGesture();
         *(stepState[i].powerParameter) = randPower(mt) != 0;
+        stepState[i].powerParameter->endChangeGesture();
     }
 }
 
@@ -234,29 +331,78 @@ void State::importSettingsFromXml(juce::XmlDocument xmlDoc) {
     if (!xml->hasTagName("ostinato")) return;
 
     int numSteps = std::min(constants::MAX_STEPS, xml->getIntAttribute("steps", 1));
+    stepsParameter->beginChangeGesture();
     *(stepsParameter) = numSteps - 1; // index
+    stepsParameter->endChangeGesture();
+
     int numVoices = std::min(constants::MAX_VOICES, xml->getIntAttribute("voices", 1));
+    voicesParameter->beginChangeGesture();
     *(voicesParameter) = numVoices - 1; // index
+    voicesParameter->endChangeGesture();
+
+    rateParameter->beginChangeGesture();
     *(rateParameter) = std::max(0, rateParameter->getAllValueStrings().indexOf(xml->getStringAttribute("rate")));
+    rateParameter->endChangeGesture();
+
+    rateTypeParameter->beginChangeGesture();
     *(rateTypeParameter) = std::max(0, rateTypeParameter->getAllValueStrings().indexOf(xml->getStringAttribute("rateType")));
+    rateTypeParameter->endChangeGesture();
+
+    modeParameter->beginChangeGesture();
     *(modeParameter) = std::max(0, modeParameter->getAllValueStrings().indexOf(xml->getStringAttribute("mode")));
+    modeParameter->endChangeGesture();
+
+    scaleParameter->beginChangeGesture();
     *(scaleParameter) = std::max(0, scaleParameter->getAllValueStrings().indexOf(xml->getStringAttribute("scale")));
+    scaleParameter->endChangeGesture();
+
+    chordScaleParameter->beginChangeGesture();
     *(chordScaleParameter) = std::max(0, chordScaleParameter->getAllValueStrings().indexOf(xml->getStringAttribute("chordScale")));
+    chordScaleParameter->endChangeGesture();
+
+    chordVoicingParameter->beginChangeGesture();
     *(chordVoicingParameter) = std::max(0, chordVoicingParameter->getAllValueStrings().indexOf(xml->getStringAttribute("chordVoicing")));
+    chordVoicingParameter->endChangeGesture();
+
+    keyParameter->beginChangeGesture();
     *(keyParameter) = std::max(0, keyParameter->getAllValueStrings().indexOf(xml->getStringAttribute("key")));
+    keyParameter->endChangeGesture();
+
+    voiceMatchingParameter->beginChangeGesture();
     *(voiceMatchingParameter) = std::max(0, voiceMatchingParameter->getAllValueStrings().indexOf(xml->getStringAttribute("voiceMatching")));
+    voiceMatchingParameter->endChangeGesture();
+
     size_t stepNum = 0;
     for (auto* step : xml->getChildIterator()) {
         if (!step->hasTagName("step")) continue;
         juce::String voicesStr = step->getStringAttribute("voices", "0");
         for (int voice = 0; voice < std::min(voicesStr.length(), numVoices); voice++) {
-            *(stepState[stepNum].voiceParameters[static_cast<size_t>(voice)]) = voicesStr[voice] == '1';
+            auto param = stepState[stepNum].voiceParameters[static_cast<size_t>(voice)];
+            param->beginChangeGesture();
+            *param = voicesStr[voice] == '1';
+            param->endChangeGesture();
         }
+
+        stepState[stepNum].octaveParameter->beginChangeGesture();
         *(stepState[stepNum].octaveParameter) = -(step->getIntAttribute("octave", 0)) + constants::MAX_OCTAVES; // index
+        stepState[stepNum].octaveParameter->endChangeGesture();
+
+        stepState[stepNum].lengthParameter->beginChangeGesture();
         *(stepState[stepNum].lengthParameter) = static_cast<float>(step->getDoubleAttribute("length", 0.0));
+        stepState[stepNum].lengthParameter->endChangeGesture();
+
+        stepState[stepNum].tieParameter->beginChangeGesture();
         *(stepState[stepNum].tieParameter) = step->getBoolAttribute("tie", false);
+        stepState[stepNum].tieParameter->endChangeGesture();
+
+        stepState[stepNum].volParameter->beginChangeGesture();
         *(stepState[stepNum].volParameter) = static_cast<float>(step->getDoubleAttribute("vol", 0.0));
+        stepState[stepNum].volParameter->endChangeGesture();
+
+        stepState[stepNum].powerParameter->beginChangeGesture();
         *(stepState[stepNum].powerParameter) = step->getBoolAttribute("power", true);
+        stepState[stepNum].powerParameter->endChangeGesture();
+
         stepNum++;
     }
 }

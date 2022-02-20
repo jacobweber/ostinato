@@ -55,7 +55,10 @@ void StepStrips::mouseDrag(const juce::MouseEvent& event) {
             strips[static_cast<size_t>(prevMouseStep)]->hoverVoice(prevMouseVoice, false);
         }
         if (curMouseStep != -1) {
-            *(state.stepState[static_cast<size_t>(curMouseStep)].voiceParameters[static_cast<size_t>(curMouseVoice)]) = clickTurnedVoiceOn;
+            auto param = state.stepState[static_cast<size_t>(curMouseStep)].voiceParameters[static_cast<size_t>(curMouseVoice)];
+            param->beginChangeGesture();
+            *param = clickTurnedVoiceOn;
+            param->endChangeGesture();
             strips[static_cast<size_t>(curMouseStep)]->hoverVoice(curMouseVoice, true);
         }
     }
