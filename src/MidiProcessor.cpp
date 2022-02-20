@@ -115,7 +115,7 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midiIn, juce::MidiBuffe
             cycleOn = true;
             nextStepNum = 0;
             state.playing = true;
-            state.stepNum = 0;
+            state.displayStepNum = 0;
             // we're not taking into account offset within block of pressing notes
             if (transportOn) {
                 ppqPosPerStep = getPpqPosPerStep(state);
@@ -253,7 +253,7 @@ void MidiProcessor::getCurrentStep() {
         stretcher.getNextStretchedStep(numHeldNotes, currentStep);
         currentStep.numVoices = stretcher.getNumVoices();
 
-        state.stepNum = stretcher.getOrigStepNum();
+        state.displayStepNum = stretcher.getOrigStepNum();
     } else {
         if (stretchStepsActive) {
             stretchStepsActive = false;
@@ -266,7 +266,7 @@ void MidiProcessor::getCurrentStep() {
         if (nextStepNum >= numSteps) {
             nextStepNum = 0;
         }
-        state.stepNum = nextStepNum;
+        state.displayStepNum = nextStepNum;
 
         StepState step = state.stepState[static_cast<size_t>(nextStepNum)];
         currentStep.power = step.powerParameter->get();

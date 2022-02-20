@@ -63,9 +63,9 @@ void State::shiftStepsLeft() {
     int numSteps = stepsParameter->getIndex() + 1;
     StepState::Temp temp{};
     stepState[0].toTemp(temp);
-    for (int _stepNum = 0; _stepNum < numSteps - 1; _stepNum++) {
-        stepState[static_cast<size_t>(_stepNum)]
-            = stepState[static_cast<size_t>(_stepNum + 1)];
+    for (int stepNum = 0; stepNum < numSteps - 1; stepNum++) {
+        stepState[static_cast<size_t>(stepNum)]
+            = stepState[static_cast<size_t>(stepNum + 1)];
     }
     stepState[static_cast<size_t>(numSteps) - 1] = temp;
 }
@@ -74,9 +74,9 @@ void State::shiftStepsRight() {
     int numSteps = stepsParameter->getIndex() + 1;
     StepState::Temp temp{};
     stepState[static_cast<size_t>(numSteps) - 1].toTemp(temp);
-    for (int _stepNum = numSteps - 1; _stepNum > 0; _stepNum--) {
-        stepState[static_cast<size_t>(_stepNum)]
-            = stepState[static_cast<size_t>(_stepNum - 1)];
+    for (int stepNum = numSteps - 1; stepNum > 0; stepNum--) {
+        stepState[static_cast<size_t>(stepNum)]
+            = stepState[static_cast<size_t>(stepNum - 1)];
     }
     stepState[0] = temp;
 }
@@ -84,8 +84,8 @@ void State::shiftStepsRight() {
 void State::shiftVoicesDown() {
     int numSteps = stepsParameter->getIndex() + 1;
     int numVoices = voicesParameter->getIndex() + 1;
-    for (int _stepNum = 0; _stepNum < numSteps; _stepNum++) {
-        auto voiceParams = stepState[static_cast<size_t>(_stepNum)].voiceParameters;
+    for (int stepNum = 0; stepNum < numSteps; stepNum++) {
+        auto voiceParams = stepState[static_cast<size_t>(stepNum)].voiceParameters;
         bool temp = voiceParams[0]->get();
         for (int voiceNum = 0; voiceNum < numVoices - 1; voiceNum++) {
             *(voiceParams[static_cast<size_t>(voiceNum)])
@@ -98,8 +98,8 @@ void State::shiftVoicesDown() {
 void State::shiftVoicesUp() {
     int numSteps = stepsParameter->getIndex() + 1;
     int numVoices = voicesParameter->getIndex() + 1;
-    for (int _stepNum = 0; _stepNum < numSteps; _stepNum++) {
-        auto voiceParams = stepState[static_cast<size_t>(_stepNum)].voiceParameters;
+    for (int stepNum = 0; stepNum < numSteps; stepNum++) {
+        auto voiceParams = stepState[static_cast<size_t>(stepNum)].voiceParameters;
         bool temp = voiceParams[static_cast<size_t>(numVoices) - 1]->get();
         for (int voiceNum = numVoices - 1; voiceNum > 0; voiceNum--) {
             *(voiceParams[static_cast<size_t>(voiceNum)])
@@ -245,18 +245,18 @@ void State::importSettingsFromXml(juce::XmlDocument xmlDoc) {
     *(chordVoicingParameter) = std::max(0, chordVoicingParameter->getAllValueStrings().indexOf(xml->getStringAttribute("chordVoicing")));
     *(keyParameter) = std::max(0, keyParameter->getAllValueStrings().indexOf(xml->getStringAttribute("key")));
     *(voiceMatchingParameter) = std::max(0, voiceMatchingParameter->getAllValueStrings().indexOf(xml->getStringAttribute("voiceMatching")));
-    size_t _stepNum = 0;
+    size_t stepNum = 0;
     for (auto* step : xml->getChildIterator()) {
         if (!step->hasTagName("step")) continue;
         juce::String voicesStr = step->getStringAttribute("voices", "0");
         for (int voice = 0; voice < std::min(voicesStr.length(), numVoices); voice++) {
-            *(stepState[_stepNum].voiceParameters[static_cast<size_t>(voice)]) = voicesStr[voice] == '1';
+            *(stepState[stepNum].voiceParameters[static_cast<size_t>(voice)]) = voicesStr[voice] == '1';
         }
-        *(stepState[_stepNum].octaveParameter) = -(step->getIntAttribute("octave", 0)) + constants::MAX_OCTAVES; // index
-        *(stepState[_stepNum].lengthParameter) = static_cast<float>(step->getDoubleAttribute("length", 0.0));
-        *(stepState[_stepNum].tieParameter) = step->getBoolAttribute("tie", false);
-        *(stepState[_stepNum].volParameter) = static_cast<float>(step->getDoubleAttribute("vol", 0.0));
-        *(stepState[_stepNum].powerParameter) = step->getBoolAttribute("power", true);
-        _stepNum++;
+        *(stepState[stepNum].octaveParameter) = -(step->getIntAttribute("octave", 0)) + constants::MAX_OCTAVES; // index
+        *(stepState[stepNum].lengthParameter) = static_cast<float>(step->getDoubleAttribute("length", 0.0));
+        *(stepState[stepNum].tieParameter) = step->getBoolAttribute("tie", false);
+        *(stepState[stepNum].volParameter) = static_cast<float>(step->getDoubleAttribute("vol", 0.0));
+        *(stepState[stepNum].powerParameter) = step->getBoolAttribute("power", true);
+        stepNum++;
     }
 }

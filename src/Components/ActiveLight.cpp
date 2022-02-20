@@ -12,7 +12,7 @@ void ActiveLight::enablementChanged() {
 }
 
 void ActiveLight::paint(juce::Graphics &g) {
-    bool highlighted = state.playing && state.stepNum == stepNum;
+    bool highlighted = state.playing && state.displayStepNum == stepNum;
     if (isEnabled()) {
         g.setColour(highlighted ? constants::COLOR_LIGHT_ACTIVE : constants::COLOR_LIGHT_INACTIVE);
     } else {

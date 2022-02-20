@@ -48,7 +48,7 @@ public:
     juce::AudioParameterChoice *voiceMatchingParameter = nullptr;
     std::array<StepState, constants::MAX_STEPS> stepState;
 
-    std::atomic<int> stepNum{0};
+    std::atomic<int> displayStepNum{0};
     std::atomic<bool> playing{false};
     std::atomic<bool> recordButton{false};
     std::atomic<bool> recordedRest{false};
