@@ -36,10 +36,10 @@ State::State(juce::AudioProcessorValueTreeState &p) : parameters(p) {
     }
 
     juce::PropertiesFile::Options options;
-    options.applicationName = constants::APP_NAME;
+    options.applicationName = JucePlugin_Name;
     options.filenameSuffix = ".xml";
     options.osxLibrarySubFolder = "Application Support";
-    options.folderName = constants::APP_NAME;
+    options.folderName = JucePlugin_Name;
     props.setStorageParameters(options);
 }
 

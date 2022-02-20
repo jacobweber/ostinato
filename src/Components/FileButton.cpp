@@ -80,7 +80,7 @@ juce::File FileButton::getPresetsDir() {
         #if JUCE_MAC
         .getChildFile("Application Support")
         #endif
-        .getChildFile(constants::APP_NAME)
+        .getChildFile(JucePlugin_Name)
         .getChildFile("Presets");
 }
 
