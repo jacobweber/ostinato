@@ -34,6 +34,13 @@ State::State(juce::AudioProcessorValueTreeState &p) : parameters(p) {
         stepState[i].powerParameter = dynamic_cast<juce::AudioParameterBool *> (parameters.getParameter(
                 "step" + std::to_string(i) + "_power"));
     }
+
+    juce::PropertiesFile::Options options;
+    options.applicationName = constants::APP_NAME;
+    options.filenameSuffix = ".xml";
+    options.osxLibrarySubFolder = "Application Support";
+    options.folderName = constants::APP_NAME;
+    props.setStorageParameters(options);
 }
 
 void State::resetToDefaults() {
