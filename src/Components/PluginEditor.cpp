@@ -44,10 +44,10 @@ void PluginEditor::showHelp() {
     juce::AlertWindow::showMessageBoxAsync(juce::MessageBoxIconType::InfoIcon,
         "Ostinato Help",
         "Keyboard shortcuts:\n\n"
-        "left/right arrows: remove/add steps\n"
-        "down/up arrows: remove/add voices\n"
-        "shift + left/right arrows: shift steps left/right\n"
-        "shift + down/up arrows: shift voices down/up\n",
+        "left/right arrows: move steps left/right\n"
+        "down/up arrows: move voices down/up\n",
+        "shift + left/right arrows: remove/add steps\n"
+        "shift + down/up arrows: remove/add voices\n"
         "OK", this);
 }
 
@@ -64,20 +64,6 @@ bool PluginEditor::keyPressed(const juce::KeyPress &key) {
 
     bool shift = key.getModifiers().isShiftDown();
     if (shift) {
-        if (keyCode == juce::KeyPress::leftKey) {
-            state.shiftStepsLeft();
-            return true;
-        } else if (keyCode == juce::KeyPress::rightKey) {
-            state.shiftStepsRight();
-            return true;
-        } else if (keyCode == juce::KeyPress::downKey) {
-            state.shiftVoicesDown();
-            return true;
-        } else if (keyCode == juce::KeyPress::upKey) {
-            state.shiftVoicesUp();
-            return true;
-        }
-    } else {
         if (keyCode == juce::KeyPress::leftKey) {
             state.stepsParameter->beginChangeGesture();
             *(state.stepsParameter) = std::max(0, state.stepsParameter->getIndex() - 1);
@@ -97,6 +83,20 @@ bool PluginEditor::keyPressed(const juce::KeyPress &key) {
             state.voicesParameter->beginChangeGesture();
             *(state.voicesParameter) = std::min(constants::MAX_VOICES - 1, state.voicesParameter->getIndex() + 1);
             state.voicesParameter->endChangeGesture();
+            return true;
+        }
+    } else {
+        if (keyCode == juce::KeyPress::leftKey) {
+            state.shiftStepsLeft();
+            return true;
+        } else if (keyCode == juce::KeyPress::rightKey) {
+            state.shiftStepsRight();
+            return true;
+        } else if (keyCode == juce::KeyPress::downKey) {
+            state.shiftVoicesDown();
+            return true;
+        } else if (keyCode == juce::KeyPress::upKey) {
+            state.shiftVoicesUp();
             return true;
         }
     }
