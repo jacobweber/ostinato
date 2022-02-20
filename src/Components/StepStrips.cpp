@@ -18,7 +18,9 @@ void StepStrips::mouseDown(const juce::MouseEvent& event) {
     if (isDraggingVoices) {
         juce::AudioParameterBool* param = state.stepState[static_cast<size_t>(curMouseStep)].voiceParameters[static_cast<size_t>(curMouseVoice)];
         clickTurnedVoiceOn = !(param->get());
+        param->beginChangeGesture();
         *param = clickTurnedVoiceOn;
+        param->endChangeGesture();
         strips[static_cast<size_t>(curMouseStep)]->hoverVoice(curMouseVoice, true);
     }
 }

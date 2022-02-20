@@ -112,7 +112,9 @@ Header::Header(State &_state, PluginProcessor &_processor) : state(_state), plug
         if (!changingScale) {
             int matchingChordScaleIndex = state.chordScaleParameter->getAllValueStrings().indexOf(state.scaleParameter->getCurrentValueAsText());
             changingChordScale = true;
+            state.chordScaleParameter->beginChangeGesture();
             *(state.chordScaleParameter) = matchingChordScaleIndex == -1 ? constants::chordScaleChoices::CSMajor : matchingChordScaleIndex;
+            state.chordScaleParameter->endChangeGesture();
             changingChordScale = false;
             DBG("change scale to " << (matchingChordScaleIndex == -1 ? constants::chordScaleChoices::CSMajor : matchingChordScaleIndex));
         } else {
@@ -135,7 +137,9 @@ Header::Header(State &_state, PluginProcessor &_processor) : state(_state), plug
         if (!changingChordScale) {
             int matchingScaleIndex = state.scaleParameter->getAllValueStrings().indexOf(state.chordScaleParameter->getCurrentValueAsText());
             changingScale = true;
+            state.scaleParameter->beginChangeGesture();
             *(state.scaleParameter) = matchingScaleIndex == -1 ? constants::scaleChoices::Major : matchingScaleIndex;
+            state.scaleParameter->endChangeGesture();
             changingScale = false;
             DBG("change chord scale to " << (matchingScaleIndex == -1 ? constants::scaleChoices::Major : matchingScaleIndex));
         } else {
@@ -226,7 +230,9 @@ void Header::timerCallback() {
 void Header::updateNumVoicesForScale() {
     int scaleIndex = state.scaleParameter->getIndex();
     const std::vector<int> &scale = scales.allScales[static_cast<size_t>(scaleIndex)];
+    state.voicesParameter->beginChangeGesture();
     *(state.voicesParameter) = juce::jmin(constants::MAX_VOICES, static_cast<int>(scale.size()) + 1) - 1;
+    state.voicesParameter->endChangeGesture();
 }
 
 void Header::refresh() {

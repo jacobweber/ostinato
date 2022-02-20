@@ -79,16 +79,24 @@ bool PluginEditor::keyPressed(const juce::KeyPress &key) {
         }
     } else {
         if (keyCode == juce::KeyPress::leftKey) {
+            state.stepsParameter->beginChangeGesture();
             *(state.stepsParameter) = std::max(0, state.stepsParameter->getIndex() - 1);
+            state.stepsParameter->endChangeGesture();
             return true;
         } else if (keyCode == juce::KeyPress::rightKey) {
+            state.stepsParameter->beginChangeGesture();
             *(state.stepsParameter) = std::min(constants::MAX_STEPS - 1, state.stepsParameter->getIndex() + 1);
+            state.stepsParameter->endChangeGesture();
             return true;
         } else if (keyCode == juce::KeyPress::downKey) {
+            state.voicesParameter->beginChangeGesture();
             *(state.voicesParameter) = std::max(0, state.voicesParameter->getIndex() - 1);
+            state.voicesParameter->endChangeGesture();
             return true;
         } else if (keyCode == juce::KeyPress::upKey) {
-           *(state.voicesParameter) = std::min(constants::MAX_VOICES - 1, state.voicesParameter->getIndex() + 1);
+            state.voicesParameter->beginChangeGesture();
+            *(state.voicesParameter) = std::min(constants::MAX_VOICES - 1, state.voicesParameter->getIndex() + 1);
+            state.voicesParameter->endChangeGesture();
             return true;
         }
     }

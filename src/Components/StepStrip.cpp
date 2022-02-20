@@ -22,8 +22,12 @@ StepStrip::StepStrip(State &_state, int _stepNum) : stepNum(_stepNum), state(_st
     clearButton.setImages(true, false, true, square, 1.0f, {}, {}, 1.0f, {}, {}, 1.0f,
                             constants::COLOR_TOGGLE_INACTIVE);
     clearButton.onClick = [this] {
-        for (size_t i = 0; i < voices.size(); i++)
-            *(state.stepState[static_cast<size_t>(stepNum)].voiceParameters[i]) = false;
+        for (size_t i = 0; i < voices.size(); i++) {
+            auto param = state.stepState[static_cast<size_t>(stepNum)].voiceParameters[i];
+            param->beginChangeGesture();
+            *param = false;
+            param->endChangeGesture();
+        }
     };
     clearButton.setTooltip(constants::TOOLTIP_VOICES_CLEAR);
     addAndMakeVisible(clearButton);
@@ -36,8 +40,12 @@ StepStrip::StepStrip(State &_state, int _stepNum) : stepNum(_stepNum), state(_st
     fillButton.setImages(true, false, true, checkSquare, 1.0f, {}, {}, 1.0f, {}, {}, 1.0f,
                             constants::COLOR_TOGGLE_INACTIVE);
     fillButton.onClick = [this] {
-        for (size_t i = 0; i < voices.size(); i++)
-            *(state.stepState[static_cast<size_t>(stepNum)].voiceParameters[i]) = true;
+        for (size_t i = 0; i < voices.size(); i++) {
+            auto param = state.stepState[static_cast<size_t>(stepNum)].voiceParameters[i];
+            param->beginChangeGesture();
+            *param = true;
+            param->endChangeGesture();
+        }
     };
     fillButton.setTooltip(constants::TOOLTIP_VOICES_FILL);
     addAndMakeVisible(fillButton);
