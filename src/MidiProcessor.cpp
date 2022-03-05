@@ -240,7 +240,6 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midiIn, juce::MidiBuffe
 void MidiProcessor::getCurrentStep() {
     int mode = state.modeParameter->getIndex();
     int voiceMatching = state.voiceMatching;
-    DBG("voice matching is " << voiceMatching);
     bool stretchStepsParam = voiceMatching == constants::voiceMatchingChoices::StretchVoiceStepsPattern
         && mode != constants::modeChoices::Scale
         && mode != constants::modeChoices::Chord; // stretch can't be on while using a scale/chord
