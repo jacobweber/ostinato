@@ -45,9 +45,9 @@ void PluginEditor::showHelp() {
         "Ostinato Help",
         "Keyboard shortcuts:\n\n"
         "left/right arrows: move steps left/right\n"
-        "down/up arrows: move voices down/up\n",
+        "down/up arrows: move voices down/up\n"
         "shift + left/right arrows: remove/add steps\n"
-        "shift + down/up arrows: remove/add voices\n"
+        "shift + down/up arrows: remove/add voices",
         "OK", this);
 }
 
