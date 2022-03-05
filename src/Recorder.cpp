@@ -98,11 +98,11 @@ void Recorder::finalizeStep(bool allowEmpty) {
         recording = RanOutOfSteps;
     }
     // should avoid copying
-    state.updateStepsFromAudioThread.try_enqueue(getUpdatedSteps());
+    state.recordedStepsFromAudioThread.try_enqueue(getUpdatedSteps());
 }
 
-UpdatedSteps Recorder::getUpdatedSteps() {
-    UpdatedSteps steps{};
+RecordedSteps Recorder::getUpdatedSteps() {
+    RecordedSteps steps{};
     juce::SortedSet<int> voices;
     steps.numSteps = numSteps;
     for (size_t stepNum = 0; stepNum < static_cast<size_t>(steps.numSteps); stepNum++) {

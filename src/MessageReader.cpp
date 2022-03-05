@@ -9,12 +9,12 @@ MessageReader::MessageReader(State &_state) : state(_state) {
 }
 
 void MessageReader::timerCallback() {
-    if (state.updateStepsFromAudioThread.try_dequeue(updatedSteps)) {
-        updateSteps(updatedSteps);
+    if (state.recordedStepsFromAudioThread.try_dequeue(recordedSteps)) {
+        updateSteps(recordedSteps);
     }
 }
 
-void MessageReader::updateSteps(const UpdatedSteps &steps) {
+void MessageReader::updateSteps(const RecordedSteps &steps) {
     DBG("get refresh state with " << steps.numSteps << " steps and " << steps.numVoices << " voices");
 
     state.voicesParameter->beginChangeGesture();

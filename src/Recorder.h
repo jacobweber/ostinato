@@ -34,7 +34,7 @@ public:
 private:
     void finalizeStep(bool allowEmpty);
 
-    UpdatedSteps getUpdatedSteps();
+    RecordedSteps getUpdatedSteps();
 
 private:
     State &state;

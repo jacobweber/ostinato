@@ -24,13 +24,13 @@ struct StepSettings {
     bool power;
 };
 
-struct UpdatedStep {
+struct RecordedStep {
     std::array<bool, constants::MAX_VOICES> voices;
     float length;
     float volume;
 };
-struct UpdatedSteps {
-    std::array<UpdatedStep, static_cast<size_t>(constants::MAX_STEPS)> steps;
+struct RecordedSteps {
+    std::array<RecordedStep, static_cast<size_t>(constants::MAX_STEPS)> steps;
     int numSteps;
     int numVoices;
 };

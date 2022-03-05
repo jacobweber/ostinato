@@ -12,9 +12,9 @@ public:
 
     void timerCallback() override;
 
-    void updateSteps(const UpdatedSteps &steps);
+    void updateSteps(const RecordedSteps &steps);
 
 private:
     State &state;
-    UpdatedSteps updatedSteps{};
+    RecordedSteps recordedSteps{};
 };
