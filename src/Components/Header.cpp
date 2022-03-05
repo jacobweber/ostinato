@@ -198,6 +198,14 @@ void Header::showSettingsMenu() {
     menu.addItem(index++, "Stretch/shrink voice and step pattern", true, value++ == current);
 
     menu.addSeparator();
+    menu.addItem(index++, "Randomizer:", false);
+    current = state.random;
+    value = 0;
+    menu.addItem(index++, "Off", true, value++ == current);
+    menu.addItem(index++, "On", true, value++ == current);
+    menu.addItem(index++, "Sticky", true, value++ == current);
+
+    menu.addSeparator();
     menu.addItem(index++, juce::CharPointer_UTF8("Help\u2026"));
 
     menu.showMenuAsync(juce::PopupMenu::Options{}.withTargetComponent(settingsButton),
@@ -210,10 +218,19 @@ void Header::settingsMenuItemChosenCallback(int result, Header* component) {
 
     int current = component->state.voiceMatching;
     int firstValue = 2;
-    int lastValue = firstValue + 4 - 1;
+    int lastValue = firstValue + 3;
     if (result >= firstValue && result <= lastValue) {
         component->state.voiceMatching = result - firstValue;
         component->state.userSettings->setValue("voiceMatching", result - firstValue);
+        return;
+    }
+
+    current = component->state.random;
+    firstValue = lastValue + 2;
+    lastValue = firstValue + 2;
+    if (result >= firstValue && result <= lastValue) {
+        component->state.random = result - firstValue;
+        component->state.userSettings->setValue("random", result - firstValue);
         return;
     }
 

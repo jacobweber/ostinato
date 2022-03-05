@@ -43,6 +43,7 @@ State::State(juce::AudioProcessorValueTreeState &p) : parameters(p) {
     userSettings = props.getUserSettings();
 
     voiceMatching = userSettings->getIntValue("voiceMatching", constants::voiceMatchingChoices::StartFromBottom);
+    random = userSettings->getIntValue("random", constants::randomChoices::Off);
 }
 
 void State::resetToDefaults() {

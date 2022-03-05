@@ -4,17 +4,23 @@
 #include <cstddef>
 
 namespace constants {
-    enum modeChoices {
-        Poly,
-        Mono,
-        Scale,
-        Chord
-    };
     enum voiceMatchingChoices {
         StartFromBottom,
         UseHigherOctaves,
         StretchVoicePattern,
         StretchVoiceStepsPattern
+    };
+    enum randomChoices {
+        Off,
+        On,
+        Sticky,
+    };
+
+    enum modeChoices {
+        Poly,
+        Mono,
+        Scale,
+        Chord
     };
     enum scaleChoices {
         Major,
