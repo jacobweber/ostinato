@@ -268,7 +268,7 @@ void MidiProcessor::getCurrentStep() {
         }
         state.displayStepNum = nextStepNum;
 
-        StepState step = state.stepState[static_cast<size_t>(nextStepNum)];
+        StepState &step = state.stepState[static_cast<size_t>(nextStepNum)];
         currentStep.power = step.powerParameter->get();
         currentStep.volume = step.volParameter->get();
         currentStep.octave = step.octaveParameter->getIndex();
