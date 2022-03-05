@@ -57,4 +57,5 @@ public:
     moodycamel::ReaderWriterQueue<UpdatedSteps> updateStepsFromAudioThread{16};
 
     juce::ApplicationProperties props{};
+    juce::PropertiesFile* userSettings{};
 };

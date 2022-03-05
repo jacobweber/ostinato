@@ -40,8 +40,9 @@ State::State(juce::AudioProcessorValueTreeState &p) : parameters(p) {
     options.osxLibrarySubFolder = "Application Support";
     options.folderName = JucePlugin_Name;
     props.setStorageParameters(options);
+    userSettings = props.getUserSettings();
 
-    voiceMatching = props.getUserSettings()->getIntValue("voiceMatching", constants::voiceMatchingChoices::StartFromBottom);
+    voiceMatching = userSettings->getIntValue("voiceMatching", constants::voiceMatchingChoices::StartFromBottom);
 }
 
 void State::resetToDefaults() {

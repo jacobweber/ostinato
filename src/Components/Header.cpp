@@ -213,7 +213,7 @@ void Header::settingsMenuItemChosenCallback(int result, Header* component) {
     int lastValue = firstValue + 4 - 1;
     if (result >= firstValue && result <= lastValue) {
         component->state.voiceMatching = result - firstValue;
-        component->state.props.getUserSettings()->setValue("voiceMatching", result - firstValue);
+        component->state.userSettings->setValue("voiceMatching", result - firstValue);
         return;
     }
 
