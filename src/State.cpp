@@ -115,8 +115,8 @@ void State::resetToDefaults() {
 
 void State::shiftStepsLeft() {
     int numSteps = stepsParameter->getIndex() + 1;
-    StepState::Temp temp{};
-    stepState[0].toTemp(temp);
+    StepSettings temp{};
+    stepState[0].toStepSettings(temp);
     for (int stepNum = 0; stepNum < numSteps - 1; stepNum++) {
         stepState[static_cast<size_t>(stepNum)]
             = stepState[static_cast<size_t>(stepNum + 1)];
@@ -126,8 +126,8 @@ void State::shiftStepsLeft() {
 
 void State::shiftStepsRight() {
     int numSteps = stepsParameter->getIndex() + 1;
-    StepState::Temp temp{};
-    stepState[static_cast<size_t>(numSteps) - 1].toTemp(temp);
+    StepSettings temp{};
+    stepState[static_cast<size_t>(numSteps) - 1].toStepSettings(temp);
     for (int stepNum = numSteps - 1; stepNum > 0; stepNum--) {
         stepState[static_cast<size_t>(stepNum)]
             = stepState[static_cast<size_t>(stepNum - 1)];

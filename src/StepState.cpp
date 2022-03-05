@@ -1,5 +1,6 @@
 #include "StepState.h"
 #include "Constants.h"
+#include "Step.h"
 
 StepState& StepState::operator=(const StepState& otherStep) {
     for (size_t voiceNum = 0; voiceNum < static_cast<size_t>(constants::MAX_VOICES); voiceNum++) {
@@ -31,43 +32,43 @@ StepState& StepState::operator=(const StepState& otherStep) {
     return *this;
 }
 
-StepState& StepState::operator=(const StepState::Temp& otherStep) {
+StepState& StepState::operator=(const StepSettings& otherStep) {
     for (size_t voiceNum = 0; voiceNum < static_cast<size_t>(constants::MAX_VOICES); voiceNum++) {
         voiceParameters[voiceNum]->beginChangeGesture();
-        *(voiceParameters[voiceNum]) = otherStep.voiceParameters[voiceNum];
+        *(voiceParameters[voiceNum]) = otherStep.voices[voiceNum];
         voiceParameters[voiceNum]->endChangeGesture();
     }
 
     octaveParameter->beginChangeGesture();
-    *(octaveParameter) = otherStep.octaveParameter;
+    *(octaveParameter) = otherStep.octave;
     octaveParameter->endChangeGesture();
 
     lengthParameter->beginChangeGesture();
-    *(lengthParameter) = otherStep.lengthParameter;
+    *(lengthParameter) = otherStep.length;
     lengthParameter->endChangeGesture();
 
     tieParameter->beginChangeGesture();
-    *(tieParameter) = otherStep.tieParameter;
+    *(tieParameter) = otherStep.tie;
     tieParameter->endChangeGesture();
 
     volParameter->beginChangeGesture();
-    *(volParameter) = otherStep.volParameter;
+    *(volParameter) = otherStep.vol;
     volParameter->endChangeGesture();
 
     powerParameter->beginChangeGesture();
-    *(powerParameter) = otherStep.powerParameter;
+    *(powerParameter) = otherStep.power;
     powerParameter->endChangeGesture();
 
     return *this;
 }
 
-void StepState::toTemp(StepState::Temp& outStep) {
+void StepState::toStepSettings(StepSettings& outStep) {
     for (size_t voiceNum = 0; voiceNum < static_cast<size_t>(constants::MAX_VOICES); voiceNum++) {
-        outStep.voiceParameters[voiceNum] = voiceParameters[voiceNum]->get();
+        outStep.voices[voiceNum] = voiceParameters[voiceNum]->get();
     }
-    outStep.octaveParameter = octaveParameter->getIndex();
-    outStep.lengthParameter = lengthParameter->get();
-    outStep.tieParameter = tieParameter->get();
-    outStep.volParameter = volParameter->get();
-    outStep.powerParameter = powerParameter->get();
+    outStep.octave = octaveParameter->getIndex();
+    outStep.length = lengthParameter->get();
+    outStep.tie = tieParameter->get();
+    outStep.vol = volParameter->get();
+    outStep.power = powerParameter->get();
 }

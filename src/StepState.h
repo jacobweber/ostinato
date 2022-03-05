@@ -3,18 +3,10 @@
 #include <juce_audio_utils/juce_audio_utils.h>
 
 #include "Constants.h"
+#include "Step.h"
 
 class StepState {
 public:
-    struct Temp {
-        std::array<bool, constants::MAX_VOICES> voiceParameters;
-        int octaveParameter;
-        float lengthParameter;
-        bool tieParameter;
-        float volParameter;
-        bool powerParameter;
-    };
-
     std::array<juce::AudioParameterBool *, constants::MAX_VOICES> voiceParameters;
     juce::AudioParameterChoice *octaveParameter = nullptr;
     juce::AudioParameterFloat *lengthParameter = nullptr;
@@ -24,7 +16,7 @@ public:
 
 	StepState& operator=(const StepState& otherStep);
 
-	StepState& operator=(const StepState::Temp& otherStep);
+	StepState& operator=(const StepSettings& otherStep);
 
-	void toTemp(StepState::Temp& outStep);
+	void toStepSettings(StepSettings& outStep);
 };

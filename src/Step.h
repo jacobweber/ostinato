@@ -15,6 +15,15 @@ struct CurrentStep {
     bool tie = false;
 };
 
+struct StepSettings {
+    std::array<bool, constants::MAX_VOICES> voices;
+    int octave;
+    float length;
+    bool tie;
+    float vol;
+    bool power;
+};
+
 struct UpdatedStep {
     std::array<bool, constants::MAX_VOICES> voices;
     float length;
