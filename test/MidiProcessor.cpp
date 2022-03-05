@@ -37,7 +37,7 @@ TEST_CASE("MidiProcessor without transport") {
         *(tester.state.rateParameter) = 3; // eighths
         *(tester.state.stepState[0].voiceParameters[0]) = true;
         *(tester.state.stepState[1].voiceParameters[1]) = true;
-        *(tester.state.voiceMatchingParameter) = constants::voiceMatchingChoices::StretchVoiceStepsPattern;
+        tester.state.voiceMatching = constants::voiceMatchingChoices::StretchVoiceStepsPattern;
 
         tester.midiIn.addEvent(juce::MidiMessage::noteOn(1, 60, (juce::uint8) 100), 10);
         tester.midiIn.addEvent(juce::MidiMessage::noteOn(2, 62, (juce::uint8) 101), 9);
@@ -136,7 +136,7 @@ TEST_CASE("MidiProcessor without transport") {
         *(tester.state.stepState[1].voiceParameters[1]) = true;
         *(tester.state.stepState[2].voiceParameters[2]) = true;
         *(tester.state.stepState[3].voiceParameters[3]) = true;
-        *(tester.state.voiceMatchingParameter) = constants::voiceMatchingChoices::UseHigherOctaves;
+        tester.state.voiceMatching = constants::voiceMatchingChoices::UseHigherOctaves;
 
         tester.midiIn.addEvent(juce::MidiMessage::noteOn(1, 60, (juce::uint8) 100), 10);
         tester.midiIn.addEvent(juce::MidiMessage::noteOn(2, 74, (juce::uint8) 101), 9);
@@ -160,7 +160,7 @@ TEST_CASE("MidiProcessor without transport") {
         *(tester.state.stepState[0].voiceParameters[0]) = true;
         *(tester.state.stepState[1].voiceParameters[2]) = true;
         *(tester.state.stepState[2].voiceParameters[1]) = true;
-        *(tester.state.voiceMatchingParameter) = constants::voiceMatchingChoices::StretchVoicePattern;
+        tester.state.voiceMatching = constants::voiceMatchingChoices::StretchVoicePattern;
 
         tester.midiIn.addEvent(juce::MidiMessage::noteOn(1, 60, (juce::uint8) 100), 10);
         tester.midiIn.addEvent(juce::MidiMessage::noteOn(2, 62, (juce::uint8) 101), 9);
@@ -186,7 +186,7 @@ TEST_CASE("MidiProcessor without transport") {
         *(tester.state.stepState[1].voiceParameters[4]) = true;
         *(tester.state.stepState[2].voiceParameters[3]) = true;
         *(tester.state.stepState[3].voiceParameters[2]) = true;
-        *(tester.state.voiceMatchingParameter) = constants::voiceMatchingChoices::StretchVoicePattern;
+        tester.state.voiceMatching = constants::voiceMatchingChoices::StretchVoicePattern;
 
         tester.midiIn.addEvent(juce::MidiMessage::noteOn(1, 60, (juce::uint8) 100), 10);
         tester.midiIn.addEvent(juce::MidiMessage::noteOn(2, 62, (juce::uint8) 101), 9);

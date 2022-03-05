@@ -10,7 +10,6 @@ TEST_CASE("Presets") {
     SECTION("save to string") {
         *(tester.state.rateParameter) = 3; // eighths
         *(tester.state.rateTypeParameter) = 1; // triplet
-        tester.state.voiceMatching = constants::voiceMatchingChoices::StretchVoiceStepsPattern;
         juce::String grid = "--*--\n"
                             "-*-*-\n"
                             "*---*\n";
@@ -47,7 +46,6 @@ TEST_CASE("Presets") {
 
         REQUIRE(tester.state.rateParameter->getIndex() == 3); // eighths
         REQUIRE(tester.state.rateTypeParameter->getIndex() == 1); // triplet
-        REQUIRE(tester.state.voiceMatching == constants::voiceMatchingChoices::StretchVoiceStepsPattern);
         juce::String grid = "--*--\n"
                             "-*-*-\n"
                             "*---*\n";
