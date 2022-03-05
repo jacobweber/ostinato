@@ -65,7 +65,7 @@ void MessageReader::updateSteps(const UpdatedStepSettings &stepSettings) {
 
     int numVoices = state.voicesParameter->getIndex() + 1;
 
-    StepState& step = state.stepState[stepSettings.stepNum];
+    StepState& step = state.stepState[static_cast<size_t>(stepSettings.stepNum)];
     for (size_t voiceNum = 0; voiceNum < static_cast<size_t>(numVoices); voiceNum++) {
         auto param = step.voiceParameters[voiceNum];
         param->beginChangeGesture();
