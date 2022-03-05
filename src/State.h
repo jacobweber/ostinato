@@ -49,6 +49,7 @@ public:
 
     std::atomic<int> voiceMatching{constants::voiceMatchingChoices::StartFromBottom};
     std::atomic<int> random{constants::randomChoices::Off};
+    std::atomic<int> randomness{0};
 
     std::atomic<int> displayStepNum{0};
     std::atomic<bool> playing{false};

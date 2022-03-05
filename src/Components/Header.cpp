@@ -181,6 +181,18 @@ Header::Header(State &_state, PluginProcessor &_processor) : state(_state), plug
     messageLabel.setFont(messageFont);
     messageLabel.setColour(juce::Label::ColourIds::textColourId, constants::COLOR_MESSAGE_TEXT);
 
+	addAndMakeVisible(randomnessSlider);
+    randomnessSlider.setMouseClickGrabsKeyboardFocus(false);
+    randomnessSlider.setSliderStyle(juce::Slider::LinearHorizontal);
+    randomnessSlider.setRange(0, 100, 1);
+    randomnessSlider.setTextValueSuffix(" %");
+    randomnessSlider.setValue(static_cast<double>(state.randomness));
+    randomnessSlider.onValueChange = [this] {
+        int value = static_cast<int>(randomnessSlider.getValue());
+        state.randomness = value;
+        state.userSettings->setValue("randomness", value);
+    };
+
     refresh();
 }
 
@@ -204,6 +216,7 @@ void Header::showSettingsMenu() {
     menu.addItem(index++, "Off", true, value++ == current);
     menu.addItem(index++, "On", true, value++ == current);
     menu.addItem(index++, "Sticky", true, value++ == current);
+    menu.addCustomItem(index++, randomnessSlider, 200, 20, false);
 
     menu.addSeparator();
     menu.addItem(index++, juce::CharPointer_UTF8("Help\u2026"));
@@ -234,7 +247,7 @@ void Header::settingsMenuItemChosenCallback(int result, Header* component) {
         return;
     }
 
-    if (result == lastValue + 1) {
+    if (result == lastValue + 2) {
         component->onClickHelp();
     }
 }

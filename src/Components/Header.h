@@ -80,6 +80,7 @@ private:
     juce::ComboBox keyMenu;
     juce::ImageButton settingsButton{};
     juce::Label messageLabel{{}};
+    juce::Slider randomnessSlider;
 
     // use unique_ptr so it can be destroyed when UI is
     // declare after components so it's destroyed before them
