@@ -23,6 +23,10 @@ struct StepSettings {
     float vol;
     bool power;
 };
+struct UpdatedStepSettings {
+    StepSettings step;
+    int stepNum;
+};
 
 struct RecordedStep {
     std::array<bool, constants::MAX_VOICES> voices;

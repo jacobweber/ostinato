@@ -56,6 +56,7 @@ public:
     std::atomic<bool> recordedRest{false};
 
     moodycamel::ReaderWriterQueue<RecordedSteps> recordedStepsFromAudioThread{16};
+    moodycamel::ReaderWriterQueue<UpdatedStepSettings> updatedStepFromAudioThread{16};
 
     juce::ApplicationProperties props{};
     juce::PropertiesFile* userSettings{};

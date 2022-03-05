@@ -14,7 +14,10 @@ public:
 
     void updateSteps(const RecordedSteps &steps);
 
+    void updateSteps(const UpdatedStepSettings &stepSettings);
+
 private:
     State &state;
     RecordedSteps recordedSteps{};
+    UpdatedStepSettings updatedStepSettings{};
 };

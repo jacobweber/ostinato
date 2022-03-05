@@ -12,6 +12,9 @@ void MessageReader::timerCallback() {
     if (state.recordedStepsFromAudioThread.try_dequeue(recordedSteps)) {
         updateSteps(recordedSteps);
     }
+    if (state.updatedStepFromAudioThread.try_dequeue(updatedStepSettings)) {
+        updateSteps(updatedStepSettings);
+    }
 }
 
 void MessageReader::updateSteps(const RecordedSteps &steps) {
@@ -26,7 +29,7 @@ void MessageReader::updateSteps(const RecordedSteps &steps) {
     state.stepsParameter->endChangeGesture();
 
     for (size_t stepNum = 0; stepNum < static_cast<size_t>(steps.numSteps); stepNum++) {
-        auto step = state.stepState[stepNum];
+        StepState& step = state.stepState[stepNum];
         for (size_t voiceNum = 0; voiceNum < static_cast<size_t>(steps.numVoices); voiceNum++) {
             auto param = step.voiceParameters[voiceNum];
             param->beginChangeGesture();
@@ -55,4 +58,38 @@ void MessageReader::updateSteps(const RecordedSteps &steps) {
         *(step.lengthParameter) = steps.steps[stepNum].length;
         step.lengthParameter->endChangeGesture();
     }
+}
+
+void MessageReader::updateSteps(const UpdatedStepSettings &stepSettings) {
+    DBG("get updated state for step " << stepSettings.stepNum);
+
+    int numVoices = state.voicesParameter->getIndex() + 1;
+
+    StepState& step = state.stepState[stepSettings.stepNum];
+    for (size_t voiceNum = 0; voiceNum < static_cast<size_t>(numVoices); voiceNum++) {
+        auto param = step.voiceParameters[voiceNum];
+        param->beginChangeGesture();
+        *param = stepSettings.step.voices[voiceNum];
+        param->endChangeGesture();
+    }
+
+    step.powerParameter->beginChangeGesture();
+    *(step.powerParameter) = stepSettings.step.power;
+    step.powerParameter->endChangeGesture();
+
+    step.tieParameter->beginChangeGesture();
+    *(step.tieParameter) = stepSettings.step.tie;
+    step.tieParameter->endChangeGesture();
+
+    step.octaveParameter->beginChangeGesture();
+    *(step.octaveParameter) = stepSettings.step.octave;
+    step.octaveParameter->endChangeGesture();
+
+    step.volParameter->beginChangeGesture();
+    *(step.volParameter) = stepSettings.step.vol;
+    step.volParameter->endChangeGesture();
+
+    step.lengthParameter->beginChangeGesture();
+    *(step.lengthParameter) = stepSettings.step.length;
+    step.lengthParameter->endChangeGesture();
 }
