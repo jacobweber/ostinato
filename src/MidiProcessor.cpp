@@ -268,18 +268,27 @@ void MidiProcessor::getCurrentStep() {
         }
         state.displayStepNum = nextStepNum;
 
-        StepState &step = state.stepState[static_cast<size_t>(nextStepNum)];
-        currentStep.power = step.powerParameter->get();
-        currentStep.volume = step.volParameter->get();
-        currentStep.octave = step.octaveParameter->getIndex();
-        currentStep.length = step.lengthParameter->get();
-        currentStep.tie = step.tieParameter->get();
+        StepSettings stepSettings{};
+        state.stepState[static_cast<size_t>(nextStepNum)].toStepSettings(stepSettings);
+
+        // TODO: make this work in stretch mode
+        int randomSetting = state.random;
+        if (randomSetting) {
+            randomizeCurrentStep(randomSetting == constants::randomChoices::Sticky, stepSettings);
+        }
+
+        // TODO: avoid extra copying
+        currentStep.power = stepSettings.power;
+        currentStep.volume = stepSettings.vol;
+        currentStep.octave = stepSettings.octave;
+        currentStep.length = stepSettings.length;
+        currentStep.tie = stepSettings.tie;
         if (voiceMatching == constants::voiceMatchingChoices::StretchVoicePattern) {
-            Stretcher::getStretchedVoices(state, nextStepNum, numHeldNotes, currentStep);
+            Stretcher::getStretchedVoices(stepSettings, numVoices, numHeldNotes, currentStep);
         } else {
             currentStep.numVoices = numVoices;
             for (size_t voiceNum = 0; voiceNum < static_cast<size_t>(numVoices); voiceNum++) {
-                currentStep.voices[voiceNum] = step.voiceParameters[voiceNum]->get();
+                currentStep.voices[voiceNum] = stepSettings.voices[voiceNum];
             }
         }
 
@@ -287,6 +296,31 @@ void MidiProcessor::getCurrentStep() {
         if (nextStepNum >= numSteps) {
             nextStepNum = 0;
         }
+    }
+}
+
+void MidiProcessor::randomizeCurrentStep(bool sticky, StepSettings& outStepSettings) {
+    // voices
+    int numVoices = state.voicesParameter->getIndex() + 1;
+    for (size_t voiceNum = 0; voiceNum < static_cast<size_t>(numVoices); voiceNum++) {
+        if (random.nextInt(30) == 0) {
+            bool& voice = outStepSettings.voices[voiceNum];
+            voice = !voice;
+        }
+    }
+
+    // octave
+    // length
+    // tie
+    // vol
+    // power
+
+    if (sticky) {
+        UpdatedStepSettings updatedStepSettings{};
+        updatedStepSettings.stepNum = nextStepNum;
+        updatedStepSettings.step = outStepSettings;
+        // should avoid copying
+        state.updatedStepFromAudioThread.try_enqueue(updatedStepSettings);
     }
 }
 

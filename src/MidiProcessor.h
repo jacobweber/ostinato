@@ -28,6 +28,8 @@ private:
 
     void getCurrentStep();
 
+    void randomizeCurrentStep(bool sticky, StepSettings& outStepSettings);
+
     void playCurrentStep(juce::MidiBuffer &midiOut, int playSampleOffsetWithinBlock);
 
     static double getPpqPosPerStep(State &state);
@@ -80,4 +82,6 @@ private:
 
     Scales scales;
     Voicings voicings;
+
+    juce::Random random{};
 };
