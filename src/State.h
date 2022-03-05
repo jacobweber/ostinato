@@ -45,8 +45,9 @@ public:
     juce::AudioParameterChoice *chordScaleParameter = nullptr;
     juce::AudioParameterChoice *chordVoicingParameter = nullptr;
     juce::AudioParameterChoice *keyParameter = nullptr;
-    juce::AudioParameterChoice *voiceMatchingParameter = nullptr;
     std::array<StepState, constants::MAX_STEPS> stepState;
+
+    std::atomic<int> voiceMatching{constants::voiceMatchingChoices::StartFromBottom};
 
     std::atomic<int> displayStepNum{0};
     std::atomic<bool> playing{false};

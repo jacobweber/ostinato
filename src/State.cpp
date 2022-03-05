@@ -16,7 +16,6 @@ State::State(juce::AudioProcessorValueTreeState &p) : parameters(p) {
     chordScaleParameter = dynamic_cast<juce::AudioParameterChoice *> (parameters.getParameter("chordScale"));
     chordVoicingParameter = dynamic_cast<juce::AudioParameterChoice *> (parameters.getParameter("chordVoicing"));
     keyParameter = dynamic_cast<juce::AudioParameterChoice *> (parameters.getParameter("key"));
-    voiceMatchingParameter = dynamic_cast<juce::AudioParameterChoice *> (parameters.getParameter("voiceMatching"));
     for (size_t i = 0; i < static_cast<size_t>(constants::MAX_STEPS); i++) {
         for (size_t j = 0; j < static_cast<size_t>(constants::MAX_VOICES); j++) {
             juce::AudioParameterBool *voiceParameter = dynamic_cast<juce::AudioParameterBool *> (parameters.getParameter(
@@ -41,6 +40,8 @@ State::State(juce::AudioProcessorValueTreeState &p) : parameters(p) {
     options.osxLibrarySubFolder = "Application Support";
     options.folderName = JucePlugin_Name;
     props.setStorageParameters(options);
+
+    voiceMatching = props.getUserSettings()->getIntValue("voiceMatching", constants::voiceMatchingChoices::StartFromBottom);
 }
 
 void State::resetToDefaults() {
@@ -79,10 +80,6 @@ void State::resetToDefaults() {
     keyParameter->beginChangeGesture();
     *(keyParameter) = 0; // index
     keyParameter->endChangeGesture();
-
-    voiceMatchingParameter->beginChangeGesture();
-    *(voiceMatchingParameter) = constants::voiceMatchingChoices::StartFromBottom; // index
-    voiceMatchingParameter->endChangeGesture();
 
     for (size_t i = 0; i < static_cast<size_t>(constants::MAX_STEPS); i++) {
         for (size_t j = 0; j < static_cast<size_t>(constants::MAX_VOICES); j++) {
@@ -312,7 +309,6 @@ std::unique_ptr<juce::XmlElement> State::exportSettingsToXml() {
     xml.setAttribute("chordScale", chordScaleParameter->getCurrentValueAsText());
     xml.setAttribute("chordVoicing", chordVoicingParameter->getCurrentValueAsText());
     xml.setAttribute("key", keyParameter->getCurrentValueAsText());
-    xml.setAttribute("voiceMatching", voiceMatchingParameter->getCurrentValueAsText());
     for (size_t i = 0; i < static_cast<size_t>(numSteps); i++) {
         juce::XmlElement* step = new juce::XmlElement("step");
         juce::String voices = "";
@@ -374,10 +370,6 @@ void State::importSettingsFromXml(juce::XmlDocument xmlDoc) {
     keyParameter->beginChangeGesture();
     *(keyParameter) = std::max(0, keyParameter->getAllValueStrings().indexOf(xml->getStringAttribute("key")));
     keyParameter->endChangeGesture();
-
-    voiceMatchingParameter->beginChangeGesture();
-    *(voiceMatchingParameter) = std::max(0, voiceMatchingParameter->getAllValueStrings().indexOf(xml->getStringAttribute("voiceMatching")));
-    voiceMatchingParameter->endChangeGesture();
 
     size_t stepNum = 0;
     for (auto* step : xml->getChildIterator()) {

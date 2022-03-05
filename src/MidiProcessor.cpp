@@ -239,7 +239,8 @@ MidiProcessor::process(int numSamples, juce::MidiBuffer &midiIn, juce::MidiBuffe
 
 void MidiProcessor::getCurrentStep() {
     int mode = state.modeParameter->getIndex();
-    int voiceMatching = state.voiceMatchingParameter->getIndex();
+    int voiceMatching = state.voiceMatching;
+    DBG("voice matching is " << voiceMatching);
     bool stretchStepsParam = voiceMatching == constants::voiceMatchingChoices::StretchVoiceStepsPattern
         && mode != constants::modeChoices::Scale
         && mode != constants::modeChoices::Chord; // stretch can't be on while using a scale/chord
@@ -291,7 +292,7 @@ void MidiProcessor::getCurrentStep() {
 }
 
 void MidiProcessor::playCurrentStep(juce::MidiBuffer &midiOut, int playSampleOffsetWithinBlock) {
-    int voiceMatching = state.voiceMatchingParameter->getIndex();
+    int voiceMatching = state.voiceMatching;
     int octaveRange = (pressedNotes[pressedNotes.size() - 1].note - pressedNotes[0].note) / 12 + 1;
     DBG("octave range: " << octaveRange);
     MidiValue noteValue{};

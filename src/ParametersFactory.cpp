@@ -100,13 +100,6 @@ juce::AudioProcessorValueTreeState::ParameterLayout ParametersFactory::create() 
     keyChoices.add("B");
     layout.add(std::make_unique<juce::AudioParameterChoice>("key", "Key", keyChoices, 0));
 
-    juce::StringArray voiceMatchingChoices; // update constants::voiceMatchingChoices
-    voiceMatchingChoices.add("Start from bottom");
-    voiceMatchingChoices.add("Use higher octaves if necessary");
-    voiceMatchingChoices.add("Stretch/shrink voice pattern");
-    voiceMatchingChoices.add("Stretch/shrink voice and step pattern");
-    layout.add(std::make_unique<juce::AudioParameterChoice>("voiceMatching", "Voice Matching", voiceMatchingChoices, 0));
-
     for (int i = 0; i < constants::MAX_STEPS; i++) {
         for (int j = 0; j < constants::MAX_VOICES; j++)
             layout.add(

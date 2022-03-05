@@ -190,10 +190,12 @@ void Header::showSettingsMenu() {
     int index = 1;
 
     menu.addItem(index++, "Matching pressed keys to voices:", false);
-    auto current = state.voiceMatchingParameter->getCurrentValueAsText();
-    for (const juce::String &value: state.voiceMatchingParameter->getAllValueStrings()) {
-        menu.addItem(index++, value, true, value == current);
-    }
+    int current = state.voiceMatching;
+    int value = 0;
+    menu.addItem(index++, "Start from bottom", true, value++ == current);
+    menu.addItem(index++, "Use higher octaves if necessary", true, value++ == current);
+    menu.addItem(index++, "Stretch/shrink voice pattern", true, value++ == current);
+    menu.addItem(index++, "Stretch/shrink voice and step pattern", true, value++ == current);
 
     menu.addSeparator();
     menu.addItem(index++, juce::CharPointer_UTF8("Help\u2026"));
@@ -206,13 +208,12 @@ void Header::settingsMenuItemChosenCallback(int result, Header* component) {
     if (component == nullptr) return;
     if (result == 0) return;
 
-    auto voiceMatchingParameter = component->state.voiceMatchingParameter;
+    int current = component->state.voiceMatching;
     int firstValue = 2;
-    int lastValue = firstValue + voiceMatchingParameter->getAllValueStrings().size() - 1;
+    int lastValue = firstValue + 4 - 1;
     if (result >= firstValue && result <= lastValue) {
-        component->state.voiceMatchingParameter->beginChangeGesture();
-        *(component->state.voiceMatchingParameter) = result - firstValue;
-        component->state.voiceMatchingParameter->endChangeGesture();
+        component->state.voiceMatching = result - firstValue;
+        DBG("voice matching set to " << result - firstValue);
         return;
     }
 
