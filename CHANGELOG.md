@@ -1,3 +1,10 @@
+### 0.0.14
+
+* Add randomize mode.
+* Switch shift key on keyboard controls.
+* Add user settings file.
+* Store voice matching in settings file instead of automation parameter.
+
 ### 0.0.13
 
 * Add keyboard controls to add/remove voices and steps.
