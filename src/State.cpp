@@ -44,7 +44,7 @@ State::State(juce::AudioProcessorValueTreeState &p) : parameters(p) {
 
     voiceMatching = userSettings->getIntValue("voiceMatching", constants::voiceMatchingChoices::StartFromBottom);
     random = userSettings->getIntValue("random", constants::randomChoices::Off);
-    randomness = userSettings->getIntValue("randomness", 50);
+    randomness = userSettings->getIntValue("randomness", constants::DEFAULT_RANDOMNESS);
 }
 
 void State::resetToDefaults() {

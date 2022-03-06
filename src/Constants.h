@@ -67,6 +67,7 @@ namespace constants {
     constexpr int MAX_STEPS = 16;
     constexpr int MAX_VOICES = 8;
     constexpr int MAX_OCTAVES = 4;
+    constexpr int DEFAULT_RANDOMNESS = 50;
 
     const juce::Colour COLOR_STANDARD = juce::Colours::white;
     const juce::Colour COLOR_SLIDER = juce::Colours::white;
