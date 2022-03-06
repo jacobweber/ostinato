@@ -187,6 +187,7 @@ Header::Header(State &_state, PluginProcessor &_processor) : state(_state), plug
     randomnessSlider.setRange(0, 100, 1);
     randomnessSlider.setTextValueSuffix(" %");
     randomnessSlider.setValue(static_cast<double>(state.randomness));
+    randomnessSlider.setTextBoxIsEditable(false);
     randomnessSlider.onValueChange = [this] {
         int value = static_cast<int>(randomnessSlider.getValue());
         state.randomness = value;
