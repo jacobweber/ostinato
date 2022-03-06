@@ -300,25 +300,46 @@ void MidiProcessor::getCurrentStep() {
 }
 
 void MidiProcessor::randomizeCurrentStep(bool sticky, StepSettings& outStepSettings) {
+    int randomness = state.randomness;
+    if (randomness == 0.0) return;
+    double randomCeil = std::pow(static_cast<double>(randomness) / 100, 4.0); // midpoint is still low randomness
+
     // voices
     int numVoices = state.voicesParameter->getIndex() + 1;
     for (size_t voiceNum = 0; voiceNum < static_cast<size_t>(numVoices); voiceNum++) {
-        if (random.nextInt(30) == 0) {
+        if (random.nextFloat() < randomCeil) {
             bool& voice = outStepSettings.voices[voiceNum];
             voice = !voice;
         }
     }
 
     // octave
+    if (random.nextDouble() < randomCeil) {
+        outStepSettings.octave = random.nextInt(constants::MAX_OCTAVES * 2 + 1); // index
+    }
+
     // length
+    if (random.nextDouble() < randomCeil) {
+        outStepSettings.length = random.nextFloat();
+    }
+
     // tie
+    if (random.nextDouble() < randomCeil) {
+        outStepSettings.tie = random.nextInt(10) > 8;
+    }
+
     // vol
+    if (random.nextDouble() < randomCeil) {
+        outStepSettings.vol = random.nextFloat();
+    }
+
     // power
+    if (random.nextDouble() < randomCeil) {
+        outStepSettings.power = random.nextInt(10) > 3;
+    }
 
     if (sticky) {
-        UpdatedStepSettings updatedStepSettings{};
-        updatedStepSettings.stepNum = nextStepNum;
-        updatedStepSettings.step = outStepSettings;
+        UpdatedStepSettings updatedStepSettings{ outStepSettings, nextStepNum };
         // should avoid copying
         state.updatedStepFromAudioThread.try_enqueue(updatedStepSettings);
     }
