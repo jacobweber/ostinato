@@ -101,6 +101,7 @@ juce::AudioPlayHead::CurrentPositionInfo PluginProcessor::updateCurrentTimeInfoF
     if (auto *ph = getPlayHead()) {
         juce::AudioPlayHead::CurrentPositionInfo result{};
 
+        // TODO: use getPosition
         if (ph->getCurrentPosition(result))
             return result;
     }
