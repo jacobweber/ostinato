@@ -146,40 +146,33 @@ jobs:
     #    xcrun notarytool submit ${{ env.PRODUCT_NAME }}.dmg --apple-id ${{ secrets.NOTARIZATION_USERNAME }} --password ${{ secrets.NOTARIZATION_PASSWORD }} --team-id ${{ secrets.TEAM_ID }} --wait
     #    xcrun stapler staple ${{ env.PRODUCT_NAME }}.dmg
 
-    - name: Zip
-      if: ${{ matrix.name == 'Linux' }}
-      working-directory: ${{ env.ARTIFACTS_PATH }}
-      run: 7z a -tzip ${{ env.PRODUCT_NAME }}.zip .
+    #- name: Zip
+    #  if: ${{ matrix.name == 'Linux' }}
+    #  working-directory: ${{ env.ARTIFACTS_PATH }}
+    #  run: 7z a -tzip ${{ env.PRODUCT_NAME }}.zip .
 
-    - name: Generate Installer and Sign with EV cert on Azure (Windows)
-      if: ${{ matrix.name == 'Windows' }}
-      shell: bash
-      run: |
-        iscc "packaging\installer.iss"
-        mv "packaging/Output/${{ env.PRODUCT_NAME }}.exe" ${{ env.ARTIFACTS_PATH }}/
-        dotnet tool install --global AzureSignTool 
-        AzureSignTool sign -kvu "${{ secrets.AZURE_KEY_VAULT_URI }}" -kvi "${{ secrets.AZURE_CLIENT_ID }}" -kvt "${{ secrets.AZURE_TENANT_ID }}" -kvs "${{ secrets.AZURE_CLIENT_SECRET }}" -kvc ${{ secrets.AZURE_CERT_NAME }} -tr http://timestamp.digicert.com -v "${{ env.ARTIFACTS_PATH }}/${{ env.PRODUCT_NAME }}.exe"
+    #- name: Generate Installer and Sign with EV cert on Azure (Windows)
+    #  if: ${{ matrix.name == 'Windows' }}
+    #  shell: bash
+    #  run: |
+    #    iscc "packaging\installer.iss"
+    #    mv "packaging/Output/${{ env.PRODUCT_NAME }}.exe" ${{ env.ARTIFACTS_PATH }}/
+    #    dotnet tool install --global AzureSignTool 
+    #    AzureSignTool sign -kvu "${{ secrets.AZURE_KEY_VAULT_URI }}" -kvi "${{ secrets.AZURE_CLIENT_ID }}" -kvt "${{ secrets.AZURE_TENANT_ID }}" -kvs "${{ secrets.AZURE_CLIENT_SECRET }}" -kvc ${{ secrets.AZURE_CERT_NAME }} -tr http://timestamp.digicert.com -v "${{ env.ARTIFACTS_PATH }}/${{ env.PRODUCT_NAME }}.exe"
 
-    - name: Upload Exe (Windows)
-      if: ${{ matrix.name == 'Windows' }}
-      uses: actions/upload-artifact@v3
-      with:
-        name: ${{ env.PRODUCT_NAME }}.exe
-        path: '${{ env.ARTIFACTS_PATH }}/${{ env.PRODUCT_NAME }}.exe'
+    #- name: Upload Exe (Windows)
+    #  if: ${{ matrix.name == 'Windows' }}
+    #  uses: actions/upload-artifact@v3
+    #  with:
+    #    name: ${{ env.PRODUCT_NAME }}.exe
+    #    path: '${{ env.ARTIFACTS_PATH }}/${{ env.PRODUCT_NAME }}.exe'
 
-    - name: Upload Zip (Linux)
-      if: ${{ matrix.name == 'Linux' }}
-      uses: actions/upload-artifact@v3
-      with:
-        name: ${{ env.PRODUCT_NAME }}.zip
-        path: '${{ env.ARTIFACTS_PATH }}/${{ env.PRODUCT_NAME }}.zip'
-
-    - name: Upload Zip (MacOS)
-      if: ${{ matrix.name == 'macOS' }}
-      uses: actions/upload-artifact@v3
-      with:
-        name: ${{ env.PRODUCT_NAME }}.zip
-        path: '${{ env.ARTIFACTS_PATH }}/${{ env.PRODUCT_NAME }}.zip'
+    #- name: Upload Zip (Linux)
+    #  if: ${{ matrix.name == 'Linux' }}
+    #  uses: actions/upload-artifact@v3
+    #  with:
+    #    name: ${{ env.PRODUCT_NAME }}.zip
+    #    path: '${{ env.ARTIFACTS_PATH }}/${{ env.PRODUCT_NAME }}.zip'
 
     #- name: Upload DMG (MacOS)
     #  if: ${{ matrix.name == 'macOS' }}
@@ -188,6 +181,15 @@ jobs:
     #    name: ${{ env.PRODUCT_NAME }}.dmg
     #    path: packaging/${{ env.PRODUCT_NAME }}.dmg
 
+    - name: Zip
+      working-directory: ${{ env.ARTIFACTS_PATH }}
+      run: cmake -E tar cfv ${{ env.PRODUCT_NAME }}.zip --format=zip
+
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: ${{ env.PRODUCT_NAME }}
+        path: '${{ env.ARTIFACTS_PATH }}/${{ env.PRODUCT_NAME }}.zip'
 
   release:
     if: contains(github.ref, 'tags/v')
