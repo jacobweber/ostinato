@@ -74,12 +74,12 @@ jobs:
       with:
         key: v2-${{ matrix.os }}-${{ matrix.type }}
 
-    - name: Import Certificates (macOS)
-      uses: apple-actions/import-codesign-certs@v1
-      if: ${{ matrix.name == 'macOS' }}
-      with:
-        p12-file-base64: ${{ secrets.DEV_ID_APP_CERT }}
-        p12-password: ${{ secrets.DEV_ID_APP_PASSWORD }}
+    #- name: Import Certificates (macOS)
+    #  uses: apple-actions/import-codesign-certs@v1
+    #  if: ${{ matrix.name == 'macOS' }}
+    #  with:
+    #    p12-file-base64: ${{ secrets.DEV_ID_APP_CERT }}
+    #    p12-password: ${{ secrets.DEV_ID_APP_PASSWORD }}
 
     - name: Configure
       shell: bash
