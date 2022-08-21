@@ -1,9 +1,11 @@
-### 0.0.14
+### 0.0.14 (beta)
 
 * Add randomize mode.
 * Switch shift key on keyboard controls.
 * Add user settings file.
 * Store voice matching in settings file instead of automation parameter.
+* Upgrade to JUCE 7
+* Use Pamplejuce format
 
 ### 0.0.13
 
