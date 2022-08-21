@@ -209,9 +209,9 @@ jobs:
         name: ${{ github.ref }}
         draft: true
         files: |
-          ${{ env.PRODUCT_NAME }}-Linux.zip/*
-          ${{ env.PRODUCT_NAME }}-Windows.zip/*
-          ${{ env.PRODUCT_NAME }}-macOS.zip/*
+          ${{ env.PRODUCT_NAME }}-Linux.zip
+          ${{ env.PRODUCT_NAME }}-Windows.zip
+          ${{ env.PRODUCT_NAME }}-macOS.zip
         #${{ env.PROJECT_NAME }}-Linux.zip/*
         #${{ env.PROJECT_NAME }}-Windows.zip/*
         #${{ env.PROJECT_NAME }}-macOS.dmg/*
