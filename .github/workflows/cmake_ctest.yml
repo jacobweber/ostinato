@@ -182,14 +182,13 @@ jobs:
     #    path: packaging/${{ env.PRODUCT_NAME }}.dmg
 
     - name: Zip
-      working-directory: ${{ env.ARTIFACTS_PATH }}
-      run: cmake -E tar cfv ${{ env.PRODUCT_NAME }}.zip --format=zip --exclude=${{ env.PRODUCT_NAME }}.zip .
+      run: cmake -E tar cfv ${{ env.PRODUCT_NAME }}.zip --format=zip ${{ env.ARTIFACTS_PATH }}
 
     - name: Upload Artifact
       uses: actions/upload-artifact@v3
       with:
         name: ${{ env.PRODUCT_NAME }}
-        path: '${{ env.ARTIFACTS_PATH }}/${{ env.PRODUCT_NAME }}.zip'
+        path: '${{ env.PRODUCT_NAME }}.zip'
 
   release:
     if: contains(github.ref, 'tags/v')
