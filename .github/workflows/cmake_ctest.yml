@@ -185,7 +185,7 @@ jobs:
       working-directory: ${{ env.ARTIFACTS_PATH }}
       run: |
         rm *.*
-        cmake -E tar cfv ${{ github.workspace }} /${{ env.PRODUCT_NAME }}.zip --format=zip .
+        cmake -E tar cfv ${{ github.workspace }}/${{ env.PRODUCT_NAME }}.zip --format=zip .
 
     - name: Upload Artifact
       uses: actions/upload-artifact@v3
